@@ -17,12 +17,12 @@
 
 > **🦞 Why We Forked OpenClaw: The Lean, Strong Claw**
 >
-> We fell in love with OpenClaw's **brilliant memory-context management** and **agent chain architecture**.
+> We fell in love with OpenClaw's **brilliant memory-context management** and **persistent session architecture**.
 > But for crypto security, we needed something **leaner and meaner**.
 >
 > **PM-E (Since 2023)** directly protected the apM community.
-> **In 2025, it met the claw** — evolved into **apM Claw** by borrowing its power.
-> The claw on a **security diet** — **lost weight, gained muscle**.
+> **In 2025, it met the claw** — evolved into **apM Claw** by borrowing its context power.
+> The claw on a **security diet** — **kept the brain, shed the fat**.
 >
 > 🔐 **Leaner but stronger. Purpose-built for crypto communities.**
 
@@ -71,7 +71,8 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 ### Powered by OpenClaw Framework
 - **Telegram + Discord Only** - Focused on crypto community platforms
-- **Single AI Agent** - One agent manages all chat rooms with individual context per room
+- **Context Architecture Kept** - OpenClaw's memory & session management preserved
+- **Routing Simplified** - Single agent per instance (vs complex multi-agent routing)
 - **30+ LLM Providers** - OpenAI, Anthropic, Gemini, local models, etc.
 - **Persistent Sessions** - Context maintained across conversations per chat room
 
@@ -94,8 +95,9 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 | **Focus** | Personal AI assistant | Crypto community security manager |
 | **Target** | Single-user, multi-device | Crypto community groups |
 | **Channels** | 20+ platforms | Telegram + Discord only |
+| **Context System** | ✅ Full architecture | ✅ **Kept** (core value) |
+| **Agent Routing** | Multi-agent routing | Simplified to single agent |
 | **DM Policy** | Pairing allowed | ❌ Completely blocked (group admin only) |
-| **Multi-Agent** | Supported | ❌ Single agent for all rooms (intentional) |
 | **Device Control** | Voice, camera, system | ❌ Removed (security) |
 | **Gateway Nodes** | Multiple nodes, remote | ❌ CLI-only, chat room focused |
 
@@ -104,7 +106,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 **For security and attack surface reduction:**
 - ❌ **All channels except Telegram/Discord** - Reduces maintenance and attack vectors
 - ❌ **DM access** - Prevents token-wasting attacks and phishing attempts
-- ❌ **Multi-agent routing** - Single agent manages all rooms (simpler, more secure)
+- ❌ **Multi-agent routing complexity** - Simplified to single agent per instance (kept context system)
 - ❌ **Voice wake, phone calls, TTS** - Not needed for text-based community management
 - ❌ **Camera/screen recording** - Device control removed
 - ❌ **System command execution** (system.run) - Prevents arbitrary code execution
@@ -123,7 +125,8 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 - ✅ **Telegram + Discord** (core platforms)
 - ✅ **Browser automation** (limited, monitored)
-- ✅ **Context-aware AI** (full conversation analysis)
+- ✅ **Memory & context architecture** (OpenClaw's core strength)
+- ✅ **Persistent sessions** (conversation continuity per room)
 - ✅ **Admin permission verification**
 - ✅ **Plugin system** (vetted extensions only)
 

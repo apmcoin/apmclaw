@@ -1,20 +1,20 @@
 {
-  "name": "openclaw",
+  "name": "apmclaw",
   "version": "2026.3.3",
-  "description": "Multi-channel AI gateway with extensible messaging integrations",
-  "keywords": [],
-  "homepage": "https://github.com/openclaw/openclaw#readme",
+  "description": "Your AI intern working from AM to PM. Protecting the community the apM way, powered by the claw.",
+  "keywords": ["telegram", "community-manager", "ai-bot", "anti-spam", "openclaw"],
+  "homepage": "https://github.com/apmcoin/apmclaw#readme",
   "bugs": {
-    "url": "https://github.com/openclaw/openclaw/issues"
+    "url": "https://github.com/apmcoin/apmclaw/issues"
   },
   "license": "MIT",
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openclaw/openclaw.git"
+    "url": "git+https://github.com/apmcoin/apmclaw.git"
   },
   "bin": {
-    "openclaw": "openclaw.mjs"
+    "apmclaw": "apmclaw.mjs"
   },
   "directories": {
     "doc": "docs",

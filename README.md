@@ -134,32 +134,56 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 ## Quick Start
 
 ### Prerequisites
+- **Docker & Docker Compose** (required)
 - **Linux** (recommended for production)
-- Node.js ≥22.12.0
 - Telegram Bot Token ([get from @BotFather](https://t.me/botfather))
-- AI model API key (OpenAI, Anthropic, etc.)
+- AI model API key (Anthropic, OpenAI, etc.)
 
-### Installation
+### Installation (Docker Only)
+
+apM Claw uses Docker for consistent, secure deployments.
 
 ```bash
-npm install -g apmclaw@latest
+# 1. Clone repository
+git clone https://github.com/apmcoin/apmclaw.git
+cd apmclaw
 
-apmclaw onboard --install-daemon
+# 2. Create .env file
+cp .env.example .env
+# Edit .env and fill in:
+# - OPENCLAW_GATEWAY_TOKEN (generate with: openssl rand -hex 32)
+# - TELEGRAM_BOT_TOKEN (from @BotFather)
+# - ANTHROPIC_API_KEY or OPENAI_API_KEY
+
+# 3. Start with Docker Compose
+docker compose up -d
+
+# 4. Check logs
+docker compose logs -f
+
+# 5. Check health
+curl http://localhost:18789/healthz
 ```
 
-📚 **Detailed guide**: [OpenClaw Getting Started](https://docs.openclaw.ai/start/getting-started)
+📚 **Why Docker only?**: Consistent environments, better isolation, easier deployment. No npm global installs or daemon configuration needed.
 
 ### Basic Usage
 
 ```bash
-# Start gateway
-apmclaw gateway --port 18789 --verbose
+# View logs
+docker compose logs -f apmclaw
 
-# Send message (admin-approved chats only)
-apmclaw message send --to <chat-id> --message "Hello!"
+# Restart service
+docker compose restart apmclaw
 
-# Query AI (context-aware)
-apmclaw agent --message "What's the latest FUD?"
+# Stop service
+docker compose down
+
+# Rebuild after code changes
+docker compose build && docker compose up -d
+
+# CLI access (for debugging)
+docker compose --profile cli run apmclaw-cli agent --message "Hello!"
 ```
 
 ---
@@ -247,10 +271,22 @@ The AI will reference these documents when answering user questions.
 ## Telegram Setup
 
 1. Create bot: [@BotFather](https://t.me/botfather) → `/newbot`
-2. Add to group, **make admin** (required for moderation and admin verification)
-3. Run `apmclaw onboard`, select Telegram
-4. Paste bot token
-5. **Verify DM policy is "blocked"**
+2. Copy bot token
+3. Add bot to your group
+4. **Make bot admin** (required for moderation and admin verification)
+5. Add token to `.env` file: `TELEGRAM_BOT_TOKEN=your-token-here`
+6. Create `config/openclaw.json` (optional, for custom settings):
+   ```json5
+   {
+     channels: {
+       telegram: {
+         enabled: true,
+         dmPolicy: "blocked"  // DMs disabled by default
+       }
+     }
+   }
+   ```
+7. Start: `docker compose up -d`
 
 📚 **Detailed setup**: [OpenClaw Telegram Guide](https://docs.openclaw.ai/channels/telegram)
 
@@ -296,16 +332,26 @@ For comprehensive technical documentation:
 apM Claw is designed to be forked:
 
 ```bash
+# 1. Fork on GitHub
+# 2. Clone your fork
 git clone https://github.com/your-org/apmclaw.git
 cd apmclaw
-pnpm install
-pnpm build
 
-# Customize SOUL.md for your project
-# Configure anti-spam rules
-# Add your project documentation URLs for FAQ
+# 3. Customize configuration
+cp .env.example .env
+# Edit .env with your tokens
 
-./apmclaw.mjs gateway
+# 4. Customize bot personality (optional)
+mkdir -p config
+# Create config/SOUL.md with your project's personality
+# Create config/AGENTS.md for custom memory/context
+
+# 5. Build and run
+docker compose build
+docker compose up -d
+
+# 6. Check logs
+docker compose logs -f
 ```
 
 **Security checklist for forking:**
@@ -314,17 +360,28 @@ pnpm build
 - ✅ Verify admin permissions before moderation
 - ✅ Review AI decisions regularly
 - ✅ Separate from financial systems
+- ✅ Change OPENCLAW_GATEWAY_TOKEN to unique value
 
 ---
 
 ## Development
 
 ```bash
+# Clone
 git clone https://github.com/apmcoin/apmclaw.git
 cd apmclaw
+
+# Install dependencies
 pnpm install
+
+# Build
 pnpm build
-./apmclaw.mjs gateway
+
+# Run with Docker (recommended)
+docker compose up --build
+
+# Or run locally (for development)
+./apmclaw.mjs gateway --allow-unconfigured --verbose
 ```
 
 📚 **Development guide**: [OpenClaw Development](https://docs.openclaw.ai/pi-dev)

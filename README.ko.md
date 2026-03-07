@@ -1,6 +1,7 @@
 # apM Claw
 
 <p align="center">
+  <img src=".github/images/icon-pm-e.png" alt="PM-E" width="120"/><br>
   <strong>AM부터 PM까지 일하는 AI 인턴.</strong><br>
   집게발의 힘을 빌려 apM 방식으로 커뮤니티를 보호합니다.
 </p>
@@ -42,7 +43,7 @@
 apM Claw는 크립토 및 Web3 프로젝트를 위한 **24시간 AI 기반 텔레그램 커뮤니티 매니저**입니다.
 
 **헤리티지:**
-- **2023년부터**: PM-E가 AI 기반 스팸 탐지로 apM 커뮤니티를 지원
+- **2023년부터**: <img src=".github/images/icon-pm-e.png" alt="PM-E" width="20" style="vertical-align: middle;"/> PM-E가 AI 기반 스팸 탐지로 apM 커뮤니티를 지원
 - **2025년**: OpenClaw의 아키텍처 기반, 크립토 보안에 특화하여 재탄생
 
 **왜 "apM"?**

@@ -1,6 +1,7 @@
 # apM Claw
 
 <p align="center">
+  <img src=".github/images/icon-pm-e.png" alt="PM-E" width="120"/><br>
   <strong>Your AI intern working from AM to PM.</strong><br>
   Protecting crypto communities the apM way, powered by the claw.
 </p>
@@ -42,7 +43,7 @@
 apM Claw is a **24/7 AI-powered Telegram community manager** built for crypto and Web3 projects.
 
 **Heritage:**
-- **Since 2023**: PM-E served the apM community with AI-based spam detection
+- **Since 2023**: <img src=".github/images/icon-pm-e.png" alt="PM-E" width="20" style="vertical-align: middle;"/> PM-E served the apM community with AI-based spam detection
 - **2025**: Rebuilt on OpenClaw's architecture, hardened for crypto security
 
 **Why "apM"?**

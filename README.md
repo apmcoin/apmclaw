@@ -258,7 +258,6 @@ See `.env.example` for all options.
 ## Documentation
 
 **apM Claw specific:**
-- See [IMPLEMENTATION.md](IMPLEMENTATION.md) for development progress
 - See [.env.example](.env.example) for all configuration options
 
 **OpenClaw reference (for advanced users):**

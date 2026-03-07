@@ -70,7 +70,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 - **Multi-Language** - Separate handling for Korean/English channels
 
 ### Powered by OpenClaw Framework
-- **Telegram + Discord Only** - Focused on crypto community platforms
+- **Telegram Only** - Focused on crypto community platform
 - **Context Architecture Kept** - OpenClaw's memory & session management preserved
 - **Routing Simplified** - Single agent per instance (vs complex multi-agent routing)
 - **30+ LLM Providers** - OpenAI, Anthropic, Gemini, local models, etc.
@@ -94,7 +94,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 |---------|----------|----------|
 | **Focus** | Personal AI assistant | Crypto community security manager |
 | **Target** | Single-user, multi-device | Crypto community groups |
-| **Channels** | 20+ platforms | Telegram + Discord only |
+| **Channels** | 20+ platforms | Telegram only |
 | **Context System** | ✅ Full architecture | ✅ **Kept** (core value) |
 | **Agent Routing** | Multi-agent routing | Simplified to single agent |
 | **DM Policy** | Pairing allowed | ❌ Completely blocked (group admin only) |
@@ -104,7 +104,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 ### Removed Features
 
 **For security and attack surface reduction:**
-- ❌ **All channels except Telegram/Discord** - Reduces maintenance and attack vectors
+- ❌ **All channels except Telegram** - Reduces maintenance and attack vectors
 - ❌ **DM access** - Prevents token-wasting attacks and phishing attempts
 - ❌ **Multi-agent routing complexity** - Simplified to single agent per instance (kept context system)
 - ❌ **Voice wake, phone calls, TTS** - Not needed for text-based community management
@@ -122,7 +122,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 ### Kept Features (Essential for Communities)
 
-- ✅ **Telegram + Discord** (core platforms)
+- ✅ **Telegram only** (core platform)
 - ✅ **Browser automation** (limited, monitored)
 - ✅ **Memory & context architecture** (OpenClaw's core strength)
 - ✅ **Persistent sessions** (conversation continuity per room)
@@ -221,50 +221,26 @@ If you're unsure about security configuration, **contact the apM team** for assi
 
 ## Configuration
 
-Key config files:
-- `~/.config/apmclaw/openclaw.json` - Main config (JSON5 format)
-- `~/.config/apmclaw/AGENTS.md` - Agent memory and context
-- `~/.config/apmclaw/SOUL.md` - Bot personality
+All configuration via `.env` file and optional `config/openclaw.json`.
 
-📚 **Full reference**: [OpenClaw Configuration Guide](https://docs.openclaw.ai/gateway/configuration)
+**Required (.env):**
+- `OPENCLAW_GATEWAY_TOKEN` - Random token for gateway auth
+- `TELEGRAM_BOT_TOKEN` - From @BotFather
+- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` - AI provider
 
-### Example: Telegram Security Config
-
+**Optional (config/openclaw.json):**
 ```json5
 {
   channels: {
     telegram: {
       enabled: true,
-      botToken: "YOUR_BOT_TOKEN",
-      dmPolicy: "blocked",  // DMs completely disabled
-      allowFrom: ["tg:@YourProjectAdmin"]  // Admin whitelist
-    }
-  },
-  agents: {
-    defaults: {
-      model: { primary: "anthropic/claude-opus-4-6" },
-      workspace: "~/.config/apmclaw/workspace"
+      dmPolicy: "blocked"  // DMs disabled by default
     }
   }
 }
 ```
 
-### FAQ Auto-Reply Setup
-
-apM Claw can auto-generate responses from your project documentation:
-
-```bash
-# Add your whitepaper URL
-apmclaw faq add --url https://yourproject.com/whitepaper.pdf
-
-# Add Medium articles
-apmclaw faq add --url https://medium.com/@yourproject
-
-# Add website
-apmclaw faq add --url https://yourproject.com/docs
-```
-
-The AI will reference these documents when answering user questions.
+See `.env.example` for all options.
 
 ---
 
@@ -273,57 +249,21 @@ The AI will reference these documents when answering user questions.
 1. Create bot: [@BotFather](https://t.me/botfather) → `/newbot`
 2. Copy bot token
 3. Add bot to your group
-4. **Make bot admin** (required for moderation and admin verification)
-5. Add token to `.env` file: `TELEGRAM_BOT_TOKEN=your-token-here`
-6. Create `config/openclaw.json` (optional, for custom settings):
-   ```json5
-   {
-     channels: {
-       telegram: {
-         enabled: true,
-         dmPolicy: "blocked"  // DMs disabled by default
-       }
-     }
-   }
-   ```
-7. Start: `docker compose up -d`
-
-📚 **Detailed setup**: [OpenClaw Telegram Guide](https://docs.openclaw.ai/channels/telegram)
+4. **Make bot admin** (required for moderation)
+5. Add token to `.env`: `TELEGRAM_BOT_TOKEN=your-token-here`
+6. Start: `docker compose up -d`
 
 ---
 
 ## Documentation
 
-### OpenClaw Official Docs
-For comprehensive technical documentation:
+**apM Claw specific:**
+- See [IMPLEMENTATION.md](IMPLEMENTATION.md) for development progress
+- See [.env.example](.env.example) for all configuration options
 
-- **[Getting Started](https://docs.openclaw.ai/start/getting-started)** - Installation & setup
-- **[Architecture & Concepts](https://docs.openclaw.ai/concepts/architecture)** - Gateway, agents, sessions
-- **[Gateway Configuration](https://docs.openclaw.ai/gateway/configuration)** - Complete config reference
-- **[Channels: Telegram](https://docs.openclaw.ai/channels/telegram)** - Telegram-specific setup
-- **[Tools & Skills](https://docs.openclaw.ai/tools)** - Browser, web fetch (limited in apM Claw)
-- **[Security](https://docs.openclaw.ai/gateway/security)** - Security best practices
-- **[Full Index](https://docs.openclaw.ai)** - Complete documentation
-
-### apM Claw Specific Changes
-
-**Removed** (for security):
-- Multi-channel gateway (Telegram/Discord only)
-- DM access (blocked completely)
-- Multi-agent routing (single agent for all rooms)
-- Voice, camera, system control
-- Companion apps (CLI-only)
-- Remote gateway nodes
-
-**Limited** (under review):
-- Web fetch/search (attack prevention)
-- Live Canvas (reviewing use cases)
-
-**Emphasized** (crypto-friendly):
-- Full context analysis for sophisticated scams
-- Admin permission verification
-- FAQ from project documentation
-- Browser automation for monitoring
+**OpenClaw reference (for advanced users):**
+- [Architecture](https://docs.openclaw.ai/concepts/architecture) - Gateway + Agent system
+- [Security](https://docs.openclaw.ai/gateway/security) - Best practices
 
 ---
 

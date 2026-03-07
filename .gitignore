@@ -86,6 +86,9 @@ USER.md
 .tgz
 .idea
 
+# Development tracking (not for public repo)
+IMPLEMENTATION.md
+
 # local tooling
 .serena/
 

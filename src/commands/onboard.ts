@@ -13,6 +13,29 @@ import type { OnboardOptions, ResetScope } from "./onboard-types.js";
 const VALID_RESET_SCOPES = new Set<ResetScope>(["config", "config+creds+sessions", "full"]);
 
 export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv = defaultRuntime) {
+  // apM Claw uses Docker Compose for deployment only
+  runtime.error(
+    [
+      "⚠️  apM Claw uses Docker Compose for deployment.",
+      "",
+      "The 'onboard' command is disabled. Instead:",
+      "",
+      "1. Copy .env.example to .env",
+      "2. Fill in required values:",
+      "   - OPENCLAW_GATEWAY_TOKEN",
+      "   - TELEGRAM_BOT_TOKEN",
+      "   - ANTHROPIC_API_KEY (or OPENAI_API_KEY)",
+      "",
+      "3. Start with Docker Compose:",
+      "   docker compose up -d",
+      "",
+      "See README.md for complete setup instructions.",
+    ].join("\n"),
+  );
+  runtime.exit(1);
+  return;
+
+  // Original OpenClaw onboarding code disabled below
   assertSupportedRuntime(runtime);
   const originalAuthChoice = opts.authChoice;
   const normalizedAuthChoice = normalizeLegacyOnboardAuthChoice(originalAuthChoice);

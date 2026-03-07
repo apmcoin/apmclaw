@@ -110,7 +110,7 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 - ❌ **Voice wake, phone calls, TTS** - Not needed for text-based community management
 - ❌ **Camera/screen recording** - Device control removed
 - ❌ **System command execution** (system.run) - Prevents arbitrary code execution
-- ❌ **Canvas/A2UI desktop rendering** - Under review for potential use cases
+- ❌ **Canvas/A2UI desktop rendering** - Removed (desktop UI not needed for Telegram bots)
 - ❌ **iOS/Android companion apps** - CLI-only deployment
 - ❌ **SMS/iMessage bridging** - Outside crypto community scope
 - ❌ **Multi-gateway nodes** - Single instance, CLI-focused
@@ -119,7 +119,6 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 **Under review for security hardening:**
 - ⚠️ **Web fetch/search** - Limited scope to prevent malicious URL exploitation
-- ⚠️ **Live Canvas** - Reviewing use cases vs security implications
 
 ### Kept Features (Essential for Communities)
 

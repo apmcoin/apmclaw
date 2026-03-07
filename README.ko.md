@@ -258,7 +258,6 @@ docker compose --profile cli run apmclaw-cli agent --message "안녕!"
 ## 문서
 
 **apM Claw 전용:**
-- [IMPLEMENTATION.md](IMPLEMENTATION.md)에서 개발 진행 상황 확인
 - [.env.example](.env.example)에서 모든 설정 옵션 확인
 
 **OpenClaw 레퍼런스 (고급 사용자용):**

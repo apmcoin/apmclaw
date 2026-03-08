@@ -6,19 +6,24 @@ import { promisify } from "node:util";
 import type { OpenClawConfig } from "../config/config.js";
 import { resolveGatewayPort, resolveIsNixMode } from "../config/paths.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
-import {
-  findExtraGatewayServices,
-  renderGatewayServiceCleanupHints,
-  type ExtraGatewayService,
-} from "../daemon/inspect.js";
-import { renderSystemNodeWarning, resolveSystemNodeInfo } from "../daemon/runtime-paths.js";
-import {
-  auditGatewayServiceConfig,
-  needsNodeRuntimeMigration,
-  SERVICE_AUDIT_CODES,
-} from "../daemon/service-audit.js";
-import { resolveGatewayService } from "../daemon/service.js";
-import { uninstallLegacySystemdUnits } from "../daemon/systemd.js";
+// Daemon removed (Docker-only deployment) - inline stubs
+type ExtraGatewayService = { label: string; scope: string; detail: string; legacy?: boolean; platform?: string };
+const findExtraGatewayServices = async () => [] as ExtraGatewayService[];
+const renderGatewayServiceCleanupHints = () => [] as string[];
+const renderSystemNodeWarning = () => null as string | null;
+const resolveSystemNodeInfo = async () => ({ supported: false, path: null });
+const auditGatewayServiceConfig = async () => ({ issues: [] as any[] });
+const needsNodeRuntimeMigration = () => false;
+const SERVICE_AUDIT_CODES = {
+  gatewayTokenMismatch: "gateway-token-mismatch",
+  gatewayEntrypointMismatch: "gateway-entrypoint-mismatch",
+};
+const resolveGatewayService = () => ({
+  name: "gateway",
+  readCommand: async () => null,
+  install: async () => {},
+});
+const uninstallLegacySystemdUnits = async () => [] as any[];
 import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { buildGatewayInstallPlan } from "./daemon-install-helpers.js";

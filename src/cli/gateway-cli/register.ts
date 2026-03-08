@@ -12,7 +12,7 @@ import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { formatTokenCount, formatUsd } from "../../utils/usage-format.js";
 import { runCommandWithRuntime } from "../cli-utils.js";
 import { inheritOptionFromParent } from "../command-options.js";
-import { addGatewayServiceCommands } from "../daemon-cli.js";
+// Daemon removed (Docker-only deployment)
 import { formatHelpExamples } from "../help-format.js";
 import { withProgress } from "../progress.js";
 import { callGatewayCli, gatewayCallOpts } from "./call.js";
@@ -107,9 +107,7 @@ export function registerGatewayCli(program: Command) {
     gateway.command("run").description("Run the WebSocket Gateway (foreground)"),
   );
 
-  addGatewayServiceCommands(gateway, {
-    statusDescription: "Show gateway service status + probe the Gateway",
-  });
+  // Daemon service commands removed (Docker-only deployment)
 
   gatewayCallOpts(
     gateway

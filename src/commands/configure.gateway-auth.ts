@@ -12,7 +12,6 @@ import {
   promptDefaultModel,
   promptModelAllowlist,
 } from "./model-picker.js";
-import { promptCustomApiConfig } from "./onboard-custom.js";
 import { randomToken } from "./onboard-helpers.js";
 
 type GatewayAuthChoice = "token" | "password" | "trusted-proxy";
@@ -89,10 +88,7 @@ export async function promptAuthConfig(
   });
 
   let next = cfg;
-  if (authChoice === "custom-api-key") {
-    const customResult = await promptCustomApiConfig({ prompter, runtime, config: next });
-    next = customResult.config;
-  } else if (authChoice !== "skip") {
+  if (authChoice !== "skip") {
     const applied = await applyAuthChoice({
       authChoice,
       config: next,
@@ -120,8 +116,7 @@ export async function promptAuthConfig(
   const anthropicOAuth =
     authChoice === "setup-token" || authChoice === "token" || authChoice === "oauth";
 
-  if (authChoice !== "custom-api-key") {
-    const allowlistSelection = await promptModelAllowlist({
+  const allowlistSelection = await promptModelAllowlist({
       config: next,
       prompter,
       allowedKeys: anthropicOAuth ? ANTHROPIC_OAUTH_MODEL_KEYS : undefined,
@@ -132,7 +127,6 @@ export async function promptAuthConfig(
       next = applyModelAllowlist(next, allowlistSelection.models);
       next = applyModelFallbacksFromSelection(next, allowlistSelection.models);
     }
-  }
 
   return next;
 }

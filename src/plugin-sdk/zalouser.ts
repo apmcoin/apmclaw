@@ -15,12 +15,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { promptChannelAccessConfig } from "../channels/plugins/onboarding/channel-access.js";
-export {
-  addWildcardAllowFrom,
-  mergeAllowFromEntries,
-  promptAccountId,
-} from "../channels/plugins/onboarding/helpers.js";
 export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,

@@ -41,32 +41,6 @@ const coreEntries: CoreCliEntry[] = [
   {
     commands: [
       {
-        name: "setup",
-        description: "Initialize local config and agent workspace",
-        hasSubcommands: false,
-      },
-    ],
-    register: async ({ program }) => {
-      const mod = await import("./register.setup.js");
-      mod.registerSetupCommand(program);
-    },
-  },
-  {
-    commands: [
-      {
-        name: "onboard",
-        description: "Interactive onboarding wizard for gateway, workspace, and skills",
-        hasSubcommands: false,
-      },
-    ],
-    register: async ({ program }) => {
-      const mod = await import("./register.onboard.js");
-      mod.registerOnboardCommand(program);
-    },
-  },
-  {
-    commands: [
-      {
         name: "configure",
         description:
           "Interactive setup wizard for credentials, channels, gateway, and agent defaults",

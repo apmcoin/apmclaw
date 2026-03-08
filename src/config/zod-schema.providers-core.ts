@@ -2,9 +2,6 @@ import { z } from "zod";
 import { isSafeScpRemoteHost } from "../infra/scp-host.js";
 import { isValidInboundPathRootPattern } from "../media/inbound-path-policy.js";
 import {
-  resolveDiscordPreviewStreamMode,
-  resolveSlackNativeStreaming,
-  resolveSlackStreamingMode,
   resolveTelegramPreviewStreamMode,
 } from "./discord-preview-streaming.js";
 import {
@@ -29,12 +26,10 @@ import {
   SecretInputSchema,
   ReplyToModeSchema,
   RetryConfigSchema,
-  TtsConfigSchema,
   requireAllowlistAllowFrom,
   requireOpenAllowFrom,
 } from "./zod-schema.core.js";
 import {
-  validateSlackSigningSecretRequirements,
   validateTelegramWebhookSecretRequirements,
 } from "./zod-schema.secret-input-validation.js";
 import { sensitive } from "./zod-schema.sensitive.js";

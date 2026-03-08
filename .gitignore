@@ -125,3 +125,4 @@ dist/protocol.schema.json
 
 # Synthing
 **/.stfolder/
+build.log

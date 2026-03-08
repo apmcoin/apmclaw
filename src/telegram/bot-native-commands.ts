@@ -198,20 +198,24 @@ async function resolveTelegramCommandAuth(params: {
     effectiveGroupAllow,
     hasGroupAllowOverride,
   } = groupAllowContext;
-  // Use direct config dmPolicy override if available for DMs
-  const effectiveDmPolicy =
-    !isGroup && groupConfig && "dmPolicy" in groupConfig
-      ? (groupConfig.dmPolicy ?? telegramCfg.dmPolicy ?? "pairing")
-      : (telegramCfg.dmPolicy ?? "pairing");
-  const requireTopic = (groupConfig as TelegramDirectConfig | undefined)?.requireTopic;
-  if (!isGroup && requireTopic === true && dmThreadId == null) {
-    logVerbose(`Blocked telegram command in DM ${chatId}: requireTopic=true but no topic present`);
+  if (!isGroup) {
+    logVerbose(`Blocked telegram command in DM ${chatId}: apM Claw is group-only`);
     return null;
   }
-  // For DMs, prefer per-DM/topic allowFrom (groupAllowOverride) over account-level allowFrom
-  const dmAllowFrom = groupAllowOverride ?? allowFrom;
+
   const senderId = msg.from?.id ? String(msg.from.id) : "";
   const senderUsername = msg.from?.username ?? "";
+
+  // Resolve admin status for command authorization
+  let senderIsAdmin = false;
+  if (senderId) {
+    try {
+      const member = await bot.api.getChatMember(chatId, Number(senderId));
+      senderIsAdmin = member.status === "administrator" || member.status === "creator";
+    } catch (err) {
+      logVerbose(`telegram: failed to resolve admin status for command from ${senderId} in ${chatId}: ${String(err)}`);
+    }
+  }
 
   const sendAuthMessage = async (text: string) => {
     const threadParams = buildTelegramThreadParams(threadSpec) ?? {};
@@ -279,21 +283,19 @@ async function resolveTelegramCommandAuth(params: {
     }
   }
 
-  const dmAllow = normalizeDmAllowFromWithStore({
-    allowFrom: dmAllowFrom,
-    storeAllowFrom: isGroup ? [] : storeAllowFrom,
-    dmPolicy: effectiveDmPolicy,
-  });
   const senderAllowed = isSenderAllowed({
-    allow: dmAllow,
+    allow: groupAllowOverride ?? allowFrom,
     senderId,
     senderUsername,
   });
-  const commandAuthorized = resolveCommandAuthorizedFromAuthorizers({
+  
+  // Physical bypass: Real administrators are always authorized
+  const commandAuthorized = senderIsAdmin || resolveCommandAuthorizedFromAuthorizers({
     useAccessGroups,
-    authorizers: [{ configured: dmAllow.hasEntries, allowed: senderAllowed }],
+    authorizers: [{ configured: (groupAllowOverride ?? allowFrom).hasEntries, allowed: senderAllowed }],
     modeWhenAccessGroupsOff: "configured",
   });
+
   if (requireAuth && !commandAuthorized) {
     return await rejectNotAuthorized();
   }

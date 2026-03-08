@@ -100,13 +100,7 @@ const SUBSYSTEM_MAX_SEGMENTS = 2;
 // Keep local to avoid importing channel registry into hot logging paths.
 const CHANNEL_SUBSYSTEM_PREFIXES = new Set<string>([
   "telegram",
-  "whatsapp",
-  "discord",
-  "irc",
-  "googlechat",
-  "slack",
-  "signal",
-  "imessage",
+  "tui",
 ]);
 
 function pickSubsystemColor(color: ChalkInstance, subsystem: string): ChalkInstance {
@@ -152,7 +146,7 @@ export function stripRedundantSubsystemPrefixForConsole(
     return message;
   }
 
-  // Common duplication: "[discord] discord: ..." (when a message manually includes the subsystem tag).
+  // Common duplication: "[telegram] telegram: ..." (when a message manually includes the subsystem tag).
   if (message.startsWith("[")) {
     const closeIdx = message.indexOf("]");
     if (closeIdx > 1) {

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { resolveStorePath, resolveSessionTranscriptsDirForAgent } from "../config/sessions.js";
 import { note } from "../terminal/note.js";
 import { noteStateIntegrity } from "./doctor-state-integrity.js";
@@ -13,17 +13,17 @@ vi.mock("../terminal/note.js", () => ({
 
 type EnvSnapshot = {
   HOME?: string;
-  OPENCLAW_HOME?: string;
-  OPENCLAW_STATE_DIR?: string;
-  OPENCLAW_OAUTH_DIR?: string;
+  APMCLAW_HOME?: string;
+  APMCLAW_STATE_DIR?: string;
+  APMCLAW_OAUTH_DIR?: string;
 };
 
 function captureEnv(): EnvSnapshot {
   return {
     HOME: process.env.HOME,
-    OPENCLAW_HOME: process.env.OPENCLAW_HOME,
-    OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
-    OPENCLAW_OAUTH_DIR: process.env.OPENCLAW_OAUTH_DIR,
+    APMCLAW_HOME: process.env.APMCLAW_HOME,
+    APMCLAW_STATE_DIR: process.env.APMCLAW_STATE_DIR,
+    APMCLAW_OAUTH_DIR: process.env.APMCLAW_OAUTH_DIR,
   };
 }
 
@@ -38,7 +38,7 @@ function restoreEnv(snapshot: EnvSnapshot) {
   }
 }
 
-function setupSessionState(cfg: OpenClawConfig, env: NodeJS.ProcessEnv, homeDir: string) {
+function setupSessionState(cfg: ApmClawConfig, env: NodeJS.ProcessEnv, homeDir: string) {
   const agentId = "main";
   const sessionsDir = resolveSessionTranscriptsDirForAgent(agentId, env, () => homeDir);
   const storePath = resolveStorePath(cfg.session?.store, { agentId });
@@ -58,7 +58,7 @@ const OAUTH_PROMPT_MATCHER = expect.objectContaining({
   message: expect.stringContaining("Create OAuth dir at"),
 });
 
-async function runStateIntegrity(cfg: OpenClawConfig) {
+async function runStateIntegrity(cfg: ApmClawConfig) {
   setupSessionState(cfg, process.env, process.env.HOME ?? "");
   const confirmSkipInNonInteractive = vi.fn(async () => false);
   await noteStateIntegrity(cfg, { confirmSkipInNonInteractive });
@@ -66,7 +66,7 @@ async function runStateIntegrity(cfg: OpenClawConfig) {
 }
 
 function writeSessionStore(
-  cfg: OpenClawConfig,
+  cfg: ApmClawConfig,
   sessions: Record<string, { sessionId: string; updatedAt: number }>,
 ) {
   setupSessionState(cfg, process.env, process.env.HOME ?? "");
@@ -74,7 +74,7 @@ function writeSessionStore(
   fs.writeFileSync(storePath, JSON.stringify(sessions, null, 2));
 }
 
-async function runStateIntegrityText(cfg: OpenClawConfig): Promise<string> {
+async function runStateIntegrityText(cfg: ApmClawConfig): Promise<string> {
   await noteStateIntegrity(cfg, { confirmSkipInNonInteractive: vi.fn(async () => false) });
   return stateIntegrityText();
 }
@@ -87,10 +87,10 @@ describe("doctor state integrity oauth dir checks", () => {
     envSnapshot = captureEnv();
     tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-state-integrity-"));
     process.env.HOME = tempHome;
-    process.env.OPENCLAW_HOME = tempHome;
-    process.env.OPENCLAW_STATE_DIR = path.join(tempHome, ".openclaw");
-    delete process.env.OPENCLAW_OAUTH_DIR;
-    fs.mkdirSync(process.env.OPENCLAW_STATE_DIR, { recursive: true, mode: 0o700 });
+    process.env.APMCLAW_HOME = tempHome;
+    process.env.APMCLAW_STATE_DIR = path.join(tempHome, ".apmclaw");
+    delete process.env.APMCLAW_OAUTH_DIR;
+    fs.mkdirSync(process.env.APMCLAW_STATE_DIR, { recursive: true, mode: 0o700 });
     vi.mocked(note).mockClear();
   });
 
@@ -100,7 +100,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not prompt for oauth dir when no whatsapp/pairing config is active", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: ApmClawConfig = {};
     const confirmSkipInNonInteractive = await runStateIntegrity(cfg);
     expect(confirmSkipInNonInteractive).not.toHaveBeenCalledWith(OAUTH_PROMPT_MATCHER);
     const text = stateIntegrityText();
@@ -109,7 +109,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("prompts for oauth dir when whatsapp is configured", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       channels: {
         whatsapp: {},
       },
@@ -120,7 +120,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("prompts for oauth dir when a channel dmPolicy is pairing", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       channels: {
         telegram: {
           dmPolicy: "pairing",
@@ -131,16 +131,16 @@ describe("doctor state integrity oauth dir checks", () => {
     expect(confirmSkipInNonInteractive).toHaveBeenCalledWith(OAUTH_PROMPT_MATCHER);
   });
 
-  it("prompts for oauth dir when OPENCLAW_OAUTH_DIR is explicitly configured", async () => {
-    process.env.OPENCLAW_OAUTH_DIR = path.join(tempHome, ".oauth");
-    const cfg: OpenClawConfig = {};
+  it("prompts for oauth dir when APMCLAW_OAUTH_DIR is explicitly configured", async () => {
+    process.env.APMCLAW_OAUTH_DIR = path.join(tempHome, ".oauth");
+    const cfg: ApmClawConfig = {};
     const confirmSkipInNonInteractive = await runStateIntegrity(cfg);
     expect(confirmSkipInNonInteractive).toHaveBeenCalledWith(OAUTH_PROMPT_MATCHER);
     expect(stateIntegrityText()).toContain("CRITICAL: OAuth dir missing");
   });
 
   it("detects orphan transcripts and offers archival remediation", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: ApmClawConfig = {};
     setupSessionState(cfg, process.env, process.env.HOME ?? "");
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     fs.writeFileSync(path.join(sessionsDir, "orphan-session.jsonl"), '{"type":"session"}\n');
@@ -159,7 +159,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("prints openclaw-only verification hints when recent sessions are missing transcripts", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: ApmClawConfig = {};
     writeSessionStore(cfg, {
       "agent:main:main": {
         sessionId: "missing-transcript",
@@ -178,7 +178,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("ignores slash-routing sessions for recent missing transcript warnings", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: ApmClawConfig = {};
     writeSessionStore(cfg, {
       "agent:main:telegram:slash:6790081233": {
         sessionId: "missing-slash-transcript",

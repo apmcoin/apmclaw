@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 // Daemon removed (Docker-only deployment) - inline constants
 const resolveGatewayLaunchAgentLabel = (profile?: string) =>
-  profile ? `ai.openclaw.gateway.${profile}` : "ai.openclaw.gateway";
+  profile ? `ai.apmclaw.gateway.${profile}` : "ai.apmclaw.gateway";
 const resolveGatewaySystemdServiceName = (profile?: string) =>
   profile ? `openclaw-gateway-${profile}` : "openclaw-gateway";
 import { createSubsystemLogger } from "../logging/subsystem.js";
@@ -289,7 +289,7 @@ function normalizeSystemdUnit(raw?: string, profile?: string): string {
   return unit.endsWith(".service") ? unit : `${unit}.service`;
 }
 
-export function triggerOpenClawRestart(): RestartAttempt {
+export function triggerApmClawRestart(): RestartAttempt {
   if (process.env.VITEST || process.env.NODE_ENV === "test") {
     return { ok: true, method: "supervisor", detail: "test mode" };
   }
@@ -300,8 +300,8 @@ export function triggerOpenClawRestart(): RestartAttempt {
   if (process.platform !== "darwin") {
     if (process.platform === "linux") {
       const unit = normalizeSystemdUnit(
-        process.env.OPENCLAW_SYSTEMD_UNIT,
-        process.env.OPENCLAW_PROFILE,
+        process.env.APMCLAW_SYSTEMD_UNIT,
+        process.env.APMCLAW_PROFILE,
       );
       const userArgs = ["--user", "restart", unit];
       tried.push(`systemctl ${userArgs.join(" ")}`);
@@ -335,8 +335,8 @@ export function triggerOpenClawRestart(): RestartAttempt {
   }
 
   const label =
-    process.env.OPENCLAW_LAUNCHD_LABEL ||
-    resolveGatewayLaunchAgentLabel(process.env.OPENCLAW_PROFILE);
+    process.env.APMCLAW_LAUNCHD_LABEL ||
+    resolveGatewayLaunchAgentLabel(process.env.APMCLAW_PROFILE);
   const uid = typeof process.getuid === "function" ? process.getuid() : undefined;
   const domain = uid !== undefined ? `gui/${uid}` : "gui/501";
   const target = `${domain}/${label}`;

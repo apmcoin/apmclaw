@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "./config.js";
+import type { ApmClawConfig } from "./config.js";
 
-export function ensurePluginAllowlisted(cfg: OpenClawConfig, pluginId: string): OpenClawConfig {
+export function ensurePluginAllowlisted(cfg: ApmClawConfig, pluginId: string): ApmClawConfig {
   const allow = cfg.plugins?.allow;
   if (!Array.isArray(allow) || allow.includes(pluginId)) {
     return cfg;

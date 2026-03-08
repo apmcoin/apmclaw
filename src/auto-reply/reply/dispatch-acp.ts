@@ -8,7 +8,7 @@ import {
   resolveSessionIdentityFromMeta,
 } from "../../acp/runtime/session-identity.js";
 import { readAcpSessionEntry } from "../../acp/runtime/session-meta.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { ApmClawConfig } from "../../config/config.js";
 import { logVerbose } from "../../globals.js";
 import { getSessionBindingService } from "../../infra/outbound/session-binding-service.js";
 import { generateSecureUuid } from "../../infra/secure-random.js";
@@ -61,7 +61,7 @@ function resolveCommandCandidateText(ctx: FinalizedMsgContext): string {
 
 export function shouldBypassAcpDispatchForCommand(
   ctx: FinalizedMsgContext,
-  cfg: OpenClawConfig,
+  cfg: ApmClawConfig,
 ): boolean {
   const candidate = resolveCommandCandidateText(ctx);
   if (!candidate) {
@@ -143,7 +143,7 @@ export type AcpDispatchAttemptResult = {
 
 export async function tryDispatchAcpReply(params: {
   ctx: FinalizedMsgContext;
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   dispatcher: ReplyDispatcher;
   sessionKey?: string;
   inboundAudio: boolean;

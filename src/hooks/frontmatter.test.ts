@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   parseFrontmatter,
-  resolveOpenClawMetadata,
+  resolveApmClawMetadata,
   resolveHookInvocationPolicy,
 } from "./frontmatter.js";
 
@@ -58,8 +58,8 @@ metadata:
 
     // Verify the metadata is valid JSON
     const parsed = JSON.parse(result.metadata);
-    expect(parsed.openclaw.emoji).toBe("💾");
-    expect(parsed.openclaw.events).toEqual(["command:new"]);
+    expect(parsed.apmclaw.emoji).toBe("💾");
+    expect(parsed.apmclaw.events).toEqual(["command:new"]);
   });
 
   it("parses multi-line metadata with complex nested structure", () => {
@@ -83,10 +83,10 @@ metadata:
     expect(result.metadata).toBeDefined();
 
     const parsed = JSON.parse(result.metadata);
-    expect(parsed.openclaw.emoji).toBe("📝");
-    expect(parsed.openclaw.events).toEqual(["command"]);
-    expect(parsed.openclaw.requires.config).toEqual(["workspace.dir"]);
-    expect(parsed.openclaw.install[0].kind).toBe("bundled");
+    expect(parsed.apmclaw.emoji).toBe("📝");
+    expect(parsed.apmclaw.events).toEqual(["command"]);
+    expect(parsed.apmclaw.requires.config).toEqual(["workspace.dir"]);
+    expect(parsed.apmclaw.install[0].kind).toBe("bundled");
   });
 
   it("handles single-line metadata (inline JSON)", () => {
@@ -148,7 +148,7 @@ description: 'single-quoted'
   });
 });
 
-describe("resolveOpenClawMetadata", () => {
+describe("resolveApmClawMetadata", () => {
   it("extracts openclaw metadata from parsed frontmatter", () => {
     const frontmatter = {
       name: "test-hook",
@@ -164,7 +164,7 @@ describe("resolveOpenClawMetadata", () => {
       }),
     };
 
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result).toBeDefined();
     expect(result?.emoji).toBe("🔥");
     expect(result?.events).toEqual(["command:new", "command:reset"]);
@@ -174,7 +174,7 @@ describe("resolveOpenClawMetadata", () => {
 
   it("returns undefined when metadata is missing", () => {
     const frontmatter = { name: "no-metadata" };
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result).toBeUndefined();
   });
 
@@ -182,7 +182,7 @@ describe("resolveOpenClawMetadata", () => {
     const frontmatter = {
       metadata: JSON.stringify({ other: "data" }),
     };
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result).toBeUndefined();
   });
 
@@ -190,7 +190,7 @@ describe("resolveOpenClawMetadata", () => {
     const frontmatter = {
       metadata: "not valid json {",
     };
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result).toBeUndefined();
   });
 
@@ -200,14 +200,14 @@ describe("resolveOpenClawMetadata", () => {
         openclaw: {
           events: ["command"],
           install: [
-            { id: "bundled", kind: "bundled", label: "Bundled with OpenClaw" },
+            { id: "bundled", kind: "bundled", label: "Bundled with ApmClaw" },
             { id: "npm", kind: "npm", package: "@openclaw/hook" },
           ],
         },
       }),
     };
 
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result?.install).toHaveLength(2);
     expect(result?.install?.[0].kind).toBe("bundled");
     expect(result?.install?.[1].kind).toBe("npm");
@@ -224,7 +224,7 @@ describe("resolveOpenClawMetadata", () => {
       }),
     };
 
-    const result = resolveOpenClawMetadata(frontmatter);
+    const result = resolveApmClawMetadata(frontmatter);
     expect(result?.os).toEqual(["darwin", "linux"]);
   });
 
@@ -233,7 +233,7 @@ describe("resolveOpenClawMetadata", () => {
     const content = `---
 name: session-memory
 description: "Save session context to memory when /new or /reset command is issued"
-homepage: https://docs.openclaw.ai/automation/hooks#session-memory
+homepage: https://docs.apmclaw.ai/automation/hooks#session-memory
 metadata:
   {
     "openclaw":
@@ -241,7 +241,7 @@ metadata:
         "emoji": "💾",
         "events": ["command:new", "command:reset"],
         "requires": { "config": ["workspace.dir"] },
-        "install": [{ "id": "bundled", "kind": "bundled", "label": "Bundled with OpenClaw" }],
+        "install": [{ "id": "bundled", "kind": "bundled", "label": "Bundled with ApmClaw" }],
       },
   }
 ---
@@ -253,7 +253,7 @@ metadata:
     expect(frontmatter.name).toBe("session-memory");
     expect(frontmatter.metadata).toBeDefined();
 
-    const openclaw = resolveOpenClawMetadata(frontmatter);
+    const openclaw = resolveApmClawMetadata(frontmatter);
     expect(openclaw).toBeDefined();
     expect(openclaw?.emoji).toBe("💾");
     expect(openclaw?.events).toEqual(["command:new", "command:reset"]);
@@ -272,7 +272,7 @@ metadata:
 ---
 `;
     const frontmatter = parseFrontmatter(content);
-    const openclaw = resolveOpenClawMetadata(frontmatter);
+    const openclaw = resolveApmClawMetadata(frontmatter);
     expect(openclaw?.emoji).toBe("disk");
     expect(openclaw?.events).toEqual(["command:new"]);
   });

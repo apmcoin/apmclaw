@@ -1,13 +1,13 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
 import type { WizardPrompter } from "../commands/types.js";
 
 export type PromptAccountIdParams = {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   prompter: WizardPrompter;
   label: string;
   currentId?: string;
-  listAccountIds: (cfg: OpenClawConfig) => string[];
+  listAccountIds: (cfg: ApmClawConfig) => string[];
   defaultAccountId: string;
 };
 

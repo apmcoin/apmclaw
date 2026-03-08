@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 
 export function applyOnboardingLocalWorkspaceConfig(
-  cfg: OpenClawConfig,
+  cfg: ApmClawConfig,
   _workspaceDir?: string,
-): OpenClawConfig {
+): ApmClawConfig {
   return cfg;
 }

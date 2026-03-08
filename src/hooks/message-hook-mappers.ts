@@ -1,5 +1,5 @@
 import type { FinalizedMsgContext } from "../auto-reply/templating.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import type {
   PluginHookMessageContext,
   PluginHookMessageReceivedEvent,
@@ -211,8 +211,8 @@ export function toInternalMessageReceivedContext(
 
 export function toInternalMessageTranscribedContext(
   canonical: CanonicalInboundMessageHookContext,
-  cfg: OpenClawConfig,
-): MessageTranscribedHookContext & { cfg: OpenClawConfig } {
+  cfg: ApmClawConfig,
+): MessageTranscribedHookContext & { cfg: ApmClawConfig } {
   return {
     from: canonical.from,
     to: canonical.to,
@@ -236,8 +236,8 @@ export function toInternalMessageTranscribedContext(
 
 export function toInternalMessagePreprocessedContext(
   canonical: CanonicalInboundMessageHookContext,
-  cfg: OpenClawConfig,
-): MessagePreprocessedHookContext & { cfg: OpenClawConfig } {
+  cfg: ApmClawConfig,
+): MessagePreprocessedHookContext & { cfg: ApmClawConfig } {
   return {
     from: canonical.from,
     to: canonical.to,

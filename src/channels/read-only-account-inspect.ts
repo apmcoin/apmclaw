@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import {
   inspectTelegramAccount,
   type InspectedTelegramAccount,
@@ -9,7 +9,7 @@ export type ReadOnlyInspectedAccount = InspectedTelegramAccount;
 
 export function inspectReadOnlyChannelAccount(params: {
   channelId: ChannelId;
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   accountId?: string | null;
 }): ReadOnlyInspectedAccount | null {
   if (params.channelId === "telegram") {

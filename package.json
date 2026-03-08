@@ -2,7 +2,7 @@
   "name": "apmclaw",
   "version": "2026.3.3",
   "description": "Your AI intern working from AM to PM. Protecting the community the apM way, powered by the claw.",
-  "keywords": ["telegram", "community-manager", "ai-bot", "anti-spam", "openclaw"],
+  "keywords": ["telegram", "community-manager", "ai-bot", "anti-spam", "crypto", "apmclaw"],
   "homepage": "https://github.com/apmcoin/apmclaw#readme",
   "bugs": {
     "url": "https://github.com/apmcoin/apmclaw/issues"
@@ -23,7 +23,7 @@
   "files": [
     "CHANGELOG.md",
     "LICENSE",
-    "openclaw.mjs",
+    "apmclaw.mjs",
     "README-header.png",
     "README.md",
     "assets/",
@@ -208,7 +208,7 @@
       "types": "./dist/plugin-sdk/keyed-async-queue.d.ts",
       "default": "./dist/plugin-sdk/keyed-async-queue.js"
     },
-    "./cli-entry": "./openclaw.mjs"
+    "./cli-entry": "./apmclaw.mjs"
   },
   "scripts": {
     "android:assemble": "cd apps/android && ./gradlew :app:assembleDebug",
@@ -278,8 +278,8 @@
     "mac:package": "bash scripts/package-mac-app.sh",
     "mac:restart": "bash scripts/restart-mac.sh",
     "moltbot:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
-    "openclaw": "node scripts/run-node.mjs",
-    "openclaw:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
+    "apmclaw": "node scripts/run-node.mjs",
+    "apmclaw:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
     "plugins:sync": "node --import tsx scripts/sync-plugin-versions.ts",
     "prepack": "pnpm build && pnpm ui:build",
     "prepare": "command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git config core.hooksPath git-hooks || exit 0",

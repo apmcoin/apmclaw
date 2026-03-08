@@ -1,25 +1,25 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 
 export function applyAuthProfileConfig(
-  cfg: OpenClawConfig,
+  cfg: ApmClawConfig,
   _profile?: unknown,
-): OpenClawConfig {
+): ApmClawConfig {
   return cfg;
 }
 
-export function setAnthropicApiKey(_cfg: OpenClawConfig, _apiKey: unknown): void {
+export function setAnthropicApiKey(_cfg: ApmClawConfig, _apiKey: unknown): void {
   // Stub
 }
 
-export function setOpenaiApiKey(_cfg: OpenClawConfig, _apiKey: unknown): void {
+export function setOpenaiApiKey(_cfg: ApmClawConfig, _apiKey: unknown): void {
   // Stub
 }
 
-export function setByteplusApiKey(_cfg: OpenClawConfig, _apiKey: unknown): void {
+export function setByteplusApiKey(_cfg: ApmClawConfig, _apiKey: unknown): void {
   // Stub
 }
 
-export function setVolcengineApiKey(_cfg: OpenClawConfig, _apiKey: unknown): void {
+export function setVolcengineApiKey(_cfg: ApmClawConfig, _apiKey: unknown): void {
   // Stub
 }
 

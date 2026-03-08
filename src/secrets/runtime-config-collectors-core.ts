@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { evaluateGatewayAuthSurfaceStates } from "./runtime-gateway-auth-surfaces.js";
 import {
   collectSecretInputAssignment,
@@ -60,7 +60,7 @@ function collectSkillAssignments(params: {
 }
 
 function collectAgentMemorySearchAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -145,7 +145,7 @@ function collectAgentMemorySearchAssignments(params: {
 }
 
 function collectTalkAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -185,7 +185,7 @@ function collectTalkAssignments(params: {
 }
 
 function collectGatewayAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -255,7 +255,7 @@ function collectGatewayAssignments(params: {
 }
 
 function collectToolsWebSearchAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -316,7 +316,7 @@ function collectToolsWebSearchAssignments(params: {
 }
 
 function collectCronAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -337,7 +337,7 @@ function collectCronAssignments(params: {
 }
 
 export function collectCoreConfigAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {

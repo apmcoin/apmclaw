@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { coerceSecretRef, resolveSecretInputRef } from "../config/types.secrets.js";
 import {
   collectSecretInputAssignment,
@@ -130,7 +130,7 @@ function collectSimpleChannelFieldAssignments(params: {
 }
 
 function collectTelegramAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -249,7 +249,7 @@ function collectTelegramAssignments(params: {
 }
 
 function collectSlackAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -363,7 +363,7 @@ function collectSlackAssignments(params: {
 }
 
 function collectDiscordAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -427,7 +427,7 @@ function collectDiscordAssignments(params: {
 }
 
 function collectIrcAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -489,7 +489,7 @@ function collectIrcAssignments(params: {
 }
 
 function collectBlueBubblesAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -515,7 +515,7 @@ function collectBlueBubblesAssignments(params: {
 }
 
 function collectMSTeamsAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -542,7 +542,7 @@ function collectMSTeamsAssignments(params: {
 }
 
 function collectMattermostAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -568,7 +568,7 @@ function collectMattermostAssignments(params: {
 }
 
 function collectMatrixAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -641,7 +641,7 @@ function collectMatrixAssignments(params: {
 }
 
 function collectZaloAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -739,7 +739,7 @@ function collectZaloAssignments(params: {
 }
 
 function collectFeishuAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -816,7 +816,7 @@ function collectFeishuAssignments(params: {
 }
 
 function collectNextcloudTalkAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
@@ -994,7 +994,7 @@ function collectGoogleChatAssignments(params: {
 }
 
 export function collectChannelConfigAssignments(params: {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {

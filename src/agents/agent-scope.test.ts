@@ -1,6 +1,6 @@
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import {
   hasConfiguredModelFallbacks,
   resolveAgentConfig,
@@ -21,13 +21,13 @@ afterEach(() => {
 
 describe("resolveAgentConfig", () => {
   it("should return undefined when no agents config exists", () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: ApmClawConfig = {};
     const result = resolveAgentConfig(cfg, "main");
     expect(result).toBeUndefined();
   });
 
   it("should return undefined when agent id does not exist", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [{ id: "main", workspace: "~/openclaw" }],
       },
@@ -37,14 +37,14 @@ describe("resolveAgentConfig", () => {
   });
 
   it("should return basic agent config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [
           {
             id: "main",
             name: "Main Agent",
             workspace: "~/openclaw",
-            agentDir: "~/.openclaw/agents/main",
+            agentDir: "~/.apmclaw/agents/main",
             model: "anthropic/claude-opus-4",
           },
         ],
@@ -54,7 +54,7 @@ describe("resolveAgentConfig", () => {
     expect(result).toEqual({
       name: "Main Agent",
       workspace: "~/openclaw",
-      agentDir: "~/.openclaw/agents/main",
+      agentDir: "~/.apmclaw/agents/main",
       model: "anthropic/claude-opus-4",
       identity: undefined,
       groupChat: undefined,
@@ -72,13 +72,13 @@ describe("resolveAgentConfig", () => {
         },
         list: [{ id: "main" }],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as ApmClawConfig;
     expect(resolveAgentExplicitModelPrimary(cfgWithStringDefault, "main")).toBeUndefined();
     expect(resolveAgentEffectiveModelPrimary(cfgWithStringDefault, "main")).toBe(
       "anthropic/claude-sonnet-4",
     );
 
-    const cfgWithObjectDefault: OpenClawConfig = {
+    const cfgWithObjectDefault: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -92,7 +92,7 @@ describe("resolveAgentConfig", () => {
     expect(resolveAgentExplicitModelPrimary(cfgWithObjectDefault, "main")).toBeUndefined();
     expect(resolveAgentEffectiveModelPrimary(cfgWithObjectDefault, "main")).toBe("openai/gpt-5.2");
 
-    const cfgNoDefaults: OpenClawConfig = {
+    const cfgNoDefaults: ApmClawConfig = {
       agents: {
         list: [{ id: "main" }],
       },
@@ -102,7 +102,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("supports per-agent model primary+fallbacks", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -128,7 +128,7 @@ describe("resolveAgentConfig", () => {
     expect(resolveAgentModelFallbacksOverride(cfg, "linus")).toEqual(["openai/gpt-5.2"]);
 
     // If fallbacks isn't present, we don't override the global fallbacks.
-    const cfgNoOverride: OpenClawConfig = {
+    const cfgNoOverride: ApmClawConfig = {
       agents: {
         list: [
           {
@@ -143,7 +143,7 @@ describe("resolveAgentConfig", () => {
     expect(resolveAgentModelFallbacksOverride(cfgNoOverride, "linus")).toBe(undefined);
 
     // Explicit empty list disables global fallbacks for that agent.
-    const cfgDisable: OpenClawConfig = {
+    const cfgDisable: ApmClawConfig = {
       agents: {
         list: [
           {
@@ -180,7 +180,7 @@ describe("resolveAgentConfig", () => {
       }),
     ).toEqual([]);
 
-    const cfgInheritDefaults: OpenClawConfig = {
+    const cfgInheritDefaults: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -231,7 +231,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("resolves run fallback overrides via shared helper", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -266,7 +266,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("computes whether any model fallbacks are configured via shared helper", () => {
-    const cfgDefaultsOnly: OpenClawConfig = {
+    const cfgDefaultsOnly: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -283,7 +283,7 @@ describe("resolveAgentConfig", () => {
       }),
     ).toBe(true);
 
-    const cfgAgentOverrideOnly: OpenClawConfig = {
+    const cfgAgentOverrideOnly: ApmClawConfig = {
       agents: {
         defaults: {
           model: {
@@ -317,7 +317,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("should return agent-specific sandbox config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [
           {
@@ -345,7 +345,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("should return agent-specific tools config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [
           {
@@ -375,7 +375,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("should return both sandbox and tools config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [
           {
@@ -399,7 +399,7 @@ describe("resolveAgentConfig", () => {
   });
 
   it("should normalize agent id", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: ApmClawConfig = {
       agents: {
         list: [{ id: "main", workspace: "~/openclaw" }],
       },
@@ -410,21 +410,21 @@ describe("resolveAgentConfig", () => {
     expect(result?.workspace).toBe("~/openclaw");
   });
 
-  it("uses OPENCLAW_HOME for default agent workspace", () => {
+  it("uses APMCLAW_HOME for default agent workspace", () => {
     const home = path.join(path.sep, "srv", "openclaw-home");
-    vi.stubEnv("OPENCLAW_HOME", home);
+    vi.stubEnv("APMCLAW_HOME", home);
 
-    const workspace = resolveAgentWorkspaceDir({} as OpenClawConfig, "main");
-    expect(workspace).toBe(path.join(path.resolve(home), ".openclaw", "workspace"));
+    const workspace = resolveAgentWorkspaceDir({} as ApmClawConfig, "main");
+    expect(workspace).toBe(path.join(path.resolve(home), ".apmclaw", "workspace"));
   });
 
-  it("uses OPENCLAW_HOME for default agentDir", () => {
+  it("uses APMCLAW_HOME for default agentDir", () => {
     const home = path.join(path.sep, "srv", "openclaw-home");
-    vi.stubEnv("OPENCLAW_HOME", home);
-    // Clear state dir so it falls back to OPENCLAW_HOME
-    vi.stubEnv("OPENCLAW_STATE_DIR", "");
+    vi.stubEnv("APMCLAW_HOME", home);
+    // Clear state dir so it falls back to APMCLAW_HOME
+    vi.stubEnv("APMCLAW_STATE_DIR", "");
 
-    const agentDir = resolveAgentDir({} as OpenClawConfig, "main");
-    expect(agentDir).toBe(path.join(path.resolve(home), ".openclaw", "agents", "main", "agent"));
+    const agentDir = resolveAgentDir({} as ApmClawConfig, "main");
+    expect(agentDir).toBe(path.join(path.resolve(home), ".apmclaw", "agents", "main", "agent"));
   });
 });

@@ -46,12 +46,12 @@ type PackageManifest = PluginPackageManifest & {
 };
 
 const MISSING_EXTENSIONS_ERROR =
-  'package.json missing openclaw.extensions; update the plugin package to include openclaw.extensions (for example ["./dist/index.js"]). See https://docs.openclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-openclaw-extensions';
+  'package.json missing openclaw.extensions; update the plugin package to include openclaw.extensions (for example ["./dist/index.js"]). See https://docs.apmclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-openclaw-extensions';
 
 export const PLUGIN_INSTALL_ERROR_CODE = {
   INVALID_NPM_SPEC: "invalid_npm_spec",
-  MISSING_OPENCLAW_EXTENSIONS: "missing_openclaw_extensions",
-  EMPTY_OPENCLAW_EXTENSIONS: "empty_openclaw_extensions",
+  MISSING_APMCLAW_EXTENSIONS: "missing_openclaw_extensions",
+  EMPTY_APMCLAW_EXTENSIONS: "empty_openclaw_extensions",
   NPM_PACKAGE_NOT_FOUND: "npm_package_not_found",
   PLUGIN_ID_MISMATCH: "plugin_id_mismatch",
 } as const;
@@ -97,7 +97,7 @@ function validatePluginId(pluginId: string): string | null {
   return null;
 }
 
-function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
+function ensureApmClawExtensions(params: { manifest: PackageManifest }):
   | {
       ok: true;
       entries: string[];
@@ -112,14 +112,14 @@ function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
     return {
       ok: false,
       error: MISSING_EXTENSIONS_ERROR,
-      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_APMCLAW_EXTENSIONS,
     };
   }
   if (resolved.status === "empty") {
     return {
       ok: false,
       error: "package.json openclaw.extensions is empty",
-      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_APMCLAW_EXTENSIONS,
     };
   }
   return {
@@ -221,7 +221,7 @@ async function installPluginFromPackageDir(
     return { ok: false, error: `invalid package.json: ${String(err)}` };
   }
 
-  const extensionsResult = ensureOpenClawExtensions({
+  const extensionsResult = ensureApmClawExtensions({
     manifest,
   });
   if (!extensionsResult.ok) {

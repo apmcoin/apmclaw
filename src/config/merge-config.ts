@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "./config.js";
+import type { ApmClawConfig } from "./config.js";
 // WhatsApp removed (whatsapp deleted)
 
 export type MergeSectionOptions<T> = {

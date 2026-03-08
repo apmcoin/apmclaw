@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 
 export function applyAgentDefaultModelPrimary(
-  cfg: OpenClawConfig,
+  cfg: ApmClawConfig,
   _primary: string,
-): OpenClawConfig {
+): ApmClawConfig {
   return cfg;
 }

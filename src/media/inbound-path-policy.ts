@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 
 const WILDCARD_SEGMENT = "*";
 const WINDOWS_DRIVE_ABS_RE = /^[A-Za-z]:\//;
@@ -115,19 +115,19 @@ export function isInboundPathAllowed(params: {
   return effectiveRoots.some((rootPattern) => matchesRootPattern({ candidatePath, rootPattern }));
 }
 
-function resolveIMessageAccountConfig(_params: { cfg: OpenClawConfig; accountId?: string | null }) {
+function resolveIMessageAccountConfig(_params: { cfg: ApmClawConfig; accountId?: string | null }) {
   return undefined;
 }
 
 export function resolveIMessageAttachmentRoots(_params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   accountId?: string | null;
 }): string[] {
   return [...DEFAULT_IMESSAGE_ATTACHMENT_ROOTS];
 }
 
 export function resolveIMessageRemoteAttachmentRoots(_params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   accountId?: string | null;
 }): string[] {
   return [...DEFAULT_IMESSAGE_ATTACHMENT_ROOTS];

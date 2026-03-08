@@ -48,7 +48,7 @@ export type {
 } from "../channels/plugins/types.js";
 export type { ChannelPlugin } from "../channels/plugins/types.plugin.js";
 export { createReplyPrefixOptions } from "../channels/reply-prefix.js";
-export type { OpenClawConfig } from "../config/config.js";
+export type { ApmClawConfig } from "../config/config.js";
 export type { DmPolicy, GroupPolicy } from "../config/types.js";
 export {
   hasConfiguredSecretInput,
@@ -62,7 +62,7 @@ export const stripMarkdown = (text: string): string =>
   text.replace(/[*_`~\[\]()#]/g, "");
 export { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 export type { PluginRuntime } from "../plugins/runtime/types.js";
-export type { OpenClawPluginApi } from "../plugins/types.js";
+export type { ApmClawPluginApi } from "../plugins/types.js";
 export { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
 export {
   DM_GROUP_ACCESS_REASON,

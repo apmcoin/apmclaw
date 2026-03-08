@@ -1,6 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
 import type { AuthProfileStore } from "../agents/auth-profiles.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import {
   resolveSecretInputRef,
   type SecretProviderConfig,
@@ -18,7 +18,7 @@ export type ConfigureCandidate = {
   path: string;
   pathSegments: string[];
   label: string;
-  configFile: "openclaw.json" | "auth-profiles.json";
+  configFile: "apmclaw.json" | "auth-profiles.json";
   expectedResolvedValue: "string" | "string-or-object";
   existingRef?: SecretRef;
   isDerived?: boolean;
@@ -37,14 +37,14 @@ export type ConfigureProviderChanges = {
   deletes: string[];
 };
 
-function getSecretProviders(config: OpenClawConfig): Record<string, SecretProviderConfig> {
+function getSecretProviders(config: ApmClawConfig): Record<string, SecretProviderConfig> {
   if (!isRecord(config.secrets?.providers)) {
     return {};
   }
   return config.secrets.providers;
 }
 
-export function buildConfigureCandidates(config: OpenClawConfig): ConfigureCandidate[] {
+export function buildConfigureCandidates(config: ApmClawConfig): ConfigureCandidate[] {
   return buildConfigureCandidatesForScope({ config });
 }
 
@@ -73,14 +73,14 @@ function resolveAuthProfileProvider(
 }
 
 export function buildConfigureCandidatesForScope(params: {
-  config: OpenClawConfig;
-  authoredOpenClawConfig?: OpenClawConfig;
+  config: ApmClawConfig;
+  authoredApmClawConfig?: ApmClawConfig;
   authProfiles?: {
     agentId: string;
     store: AuthProfileStore;
   };
 }): ConfigureCandidate[] {
-  const authoredConfig = params.authoredOpenClawConfig ?? params.config;
+  const authoredConfig = params.authoredApmClawConfig ?? params.config;
 
   const hasPathInAuthoredConfig = (pathSegments: string[]): boolean =>
     hasPath(authoredConfig, pathSegments);
@@ -102,7 +102,7 @@ export function buildConfigureCandidatesForScope(params: {
         path: entry.path,
         pathSegments: [...entry.pathSegments],
         label: entry.path,
-        configFile: "openclaw.json" as const,
+        configFile: "apmclaw.json" as const,
         expectedResolvedValue: entry.entry.expectedResolvedValue,
         ...(resolved.ref ? { existingRef: resolved.ref } : {}),
         ...(pathExists || refPathExists ? {} : { isDerived: true }),
@@ -143,7 +143,7 @@ export function buildConfigureCandidatesForScope(params: {
             };
           });
 
-  return [...openclawCandidates, ...authCandidates].toSorted((a, b) =>
+  return [...apmclawCandidates, ...authCandidates].toSorted((a, b) =>
     configureCandidateSortKey(a).localeCompare(configureCandidateSortKey(b)),
   );
 }
@@ -184,8 +184,8 @@ function hasPath(root: unknown, segments: string[]): boolean {
 }
 
 export function collectConfigureProviderChanges(params: {
-  original: OpenClawConfig;
-  next: OpenClawConfig;
+  original: ApmClawConfig;
+  next: ApmClawConfig;
 }): ConfigureProviderChanges {
   const originalProviders = getSecretProviders(params.original);
   const nextProviders = getSecretProviders(params.next);

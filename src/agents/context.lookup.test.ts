@@ -18,10 +18,10 @@ describe("lookupContextTokens", () => {
       }),
     }));
     vi.doMock("./models-config.js", () => ({
-      ensureOpenClawModelsJson: vi.fn(async () => {}),
+      ensureApmClawModelsJson: vi.fn(async () => {}),
     }));
     vi.doMock("./agent-paths.js", () => ({
-      resolveOpenClawAgentDir: () => "/tmp/openclaw-agent",
+      resolveApmClawAgentDir: () => "/tmp/openclaw-agent",
     }));
     vi.doMock("./pi-model-discovery.js", () => ({
       discoverAuthStorage: vi.fn(() => ({})),
@@ -40,10 +40,10 @@ describe("lookupContextTokens", () => {
       loadConfig: loadConfigMock,
     }));
     vi.doMock("./models-config.js", () => ({
-      ensureOpenClawModelsJson: vi.fn(async () => {}),
+      ensureApmClawModelsJson: vi.fn(async () => {}),
     }));
     vi.doMock("./agent-paths.js", () => ({
-      resolveOpenClawAgentDir: () => "/tmp/openclaw-agent",
+      resolveApmClawAgentDir: () => "/tmp/openclaw-agent",
     }));
     vi.doMock("./pi-model-discovery.js", () => ({
       discoverAuthStorage: vi.fn(() => ({})),
@@ -83,10 +83,10 @@ describe("lookupContextTokens", () => {
       loadConfig: loadConfigMock,
     }));
     vi.doMock("./models-config.js", () => ({
-      ensureOpenClawModelsJson: vi.fn(async () => {}),
+      ensureApmClawModelsJson: vi.fn(async () => {}),
     }));
     vi.doMock("./agent-paths.js", () => ({
-      resolveOpenClawAgentDir: () => "/tmp/openclaw-agent",
+      resolveApmClawAgentDir: () => "/tmp/openclaw-agent",
     }));
     vi.doMock("./pi-model-discovery.js", () => ({
       discoverAuthStorage: vi.fn(() => ({})),

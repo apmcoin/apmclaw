@@ -1,9 +1,9 @@
-import type { OpenClawConfig } from "../../config/types.js";
+import type { ApmClawConfig } from "../../config/types.js";
 import { inspectTelegramAccount } from "../../telegram/account-inspect.js";
 import type { ChannelDirectoryEntry } from "./types.js";
 
 export type DirectoryConfigParams = {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   accountId?: string | null;
   query?: string | null;
   limit?: number | null;

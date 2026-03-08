@@ -15,7 +15,7 @@ services:
       TERM: xterm-256color
       NODE_ENV: production
       # Data persistence path (override internal .openclaw default)
-      OPENCLAW_STATE_DIR: /home/node/.apmclaw
+      APMCLAW_STATE_DIR: /home/node/.apmclaw
       # Telegram
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       # AI providers

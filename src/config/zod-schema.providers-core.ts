@@ -76,6 +76,7 @@ export const TelegramGroupSchema = z
     enabled: z.boolean().optional(),
     allowFrom: z.array(z.union([z.string(), z.number()])).optional(),
     systemPrompt: z.string().optional(),
+    autoDeleteSystemMessages: z.boolean().optional(),
     topics: z.record(z.string(), TelegramTopicSchema.optional()).optional(),
   })
   .strict();
@@ -226,6 +227,7 @@ export const TelegramAccountSchemaBase = z
     linkPreview: z.boolean().optional(),
     responsePrefix: z.string().optional(),
     ackReaction: z.string().optional(),
+    autoDeleteSystemMessages: z.boolean().optional(),
   })
   .strict();
 

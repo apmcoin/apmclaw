@@ -837,6 +837,130 @@ export async function deleteMessageTelegram(
   return { ok: true };
 }
 
+/**
+ * Verifies if a user has administrator or creator status in a group.
+ * Used as a physical guardrail for moderation actions.
+ */
+export async function isAdminTelegram(
+  chatId: string | number,
+  userId: string | number,
+  api: TelegramApiOverride,
+): Promise<boolean> {
+  try {
+    const member = await api.getChatMember(chatId, Number(userId));
+    return member.status === "administrator" || member.status === "creator";
+  } catch (err) {
+    logVerbose(`[telegram] Failed to verify admin status for user ${userId} in chat ${chatId}: ${String(err)}`);
+    return false;
+  }
+}
+
+type TelegramModerationOpts = TelegramDeleteOpts & {
+  requesterId?: string | number;
+  untilDate?: number;
+};
+
+export async function banChatMemberTelegram(
+  chatIdInput: string | number,
+  userIdInput: string | number,
+  opts: TelegramModerationOpts = {},
+): Promise<{ ok: true }> {
+  const { cfg, account, api } = resolveTelegramApiContext(opts);
+  const rawTarget = String(chatIdInput);
+  const chatId = await resolveAndPersistChatId({
+    cfg,
+    api,
+    lookupTarget: rawTarget,
+    persistTarget: rawTarget,
+    verbose: opts.verbose,
+  });
+  const userId = Number(userIdInput);
+
+  // Physical Guardrail: Verify requester is an admin before banning
+  if (opts.requesterId && !(await isAdminTelegram(chatId, opts.requesterId, api))) {
+    throw new Error(`Unauthorized: User ${opts.requesterId} is not an admin in chat ${chatId}`);
+  }
+
+  const requestWithDiag = createTelegramRequestWithDiag({
+    cfg,
+    account,
+    retry: opts.retry,
+    verbose: opts.verbose,
+  });
+  await requestWithDiag(
+    () => api.banChatMember(chatId, userId, { until_date: opts.untilDate }),
+    "banChatMember",
+  );
+  logVerbose(`[telegram] Banned user ${userId} from chat ${chatId}`);
+  return { ok: true };
+}
+
+export async function unbanChatMemberTelegram(
+  chatIdInput: string | number,
+  userIdInput: string | number,
+  opts: TelegramModerationOpts = {},
+): Promise<{ ok: true }> {
+  const { cfg, account, api } = resolveTelegramApiContext(opts);
+  const rawTarget = String(chatIdInput);
+  const chatId = await resolveAndPersistChatId({
+    cfg,
+    api,
+    lookupTarget: rawTarget,
+    persistTarget: rawTarget,
+    verbose: opts.verbose,
+  });
+  const userId = Number(userIdInput);
+
+  if (opts.requesterId && !(await isAdminTelegram(chatId, opts.requesterId, api))) {
+    throw new Error(`Unauthorized: User ${opts.requesterId} is not an admin in chat ${chatId}`);
+  }
+
+  const requestWithDiag = createTelegramRequestWithDiag({
+    cfg,
+    account,
+    retry: opts.retry,
+    verbose: opts.verbose,
+  });
+  await requestWithDiag(() => api.unbanChatMember(chatId, userId), "unbanChatMember");
+  logVerbose(`[telegram] Unbanned user ${userId} from chat ${chatId}`);
+  return { ok: true };
+}
+
+export async function restrictChatMemberTelegram(
+  chatIdInput: string | number,
+  userIdInput: string | number,
+  permissions: Parameters<typeof api.restrictChatMember>[2],
+  opts: TelegramModerationOpts = {},
+): Promise<{ ok: true }> {
+  const { cfg, account, api } = resolveTelegramApiContext(opts);
+  const rawTarget = String(chatIdInput);
+  const chatId = await resolveAndPersistChatId({
+    cfg,
+    api,
+    lookupTarget: rawTarget,
+    persistTarget: rawTarget,
+    verbose: opts.verbose,
+  });
+  const userId = Number(userIdInput);
+
+  if (opts.requesterId && !(await isAdminTelegram(chatId, opts.requesterId, api))) {
+    throw new Error(`Unauthorized: User ${opts.requesterId} is not an admin in chat ${chatId}`);
+  }
+
+  const requestWithDiag = createTelegramRequestWithDiag({
+    cfg,
+    account,
+    retry: opts.retry,
+    verbose: opts.verbose,
+  });
+  await requestWithDiag(
+    () => api.restrictChatMember(chatId, userId, permissions),
+    "restrictChatMember",
+  );
+  logVerbose(`[telegram] Restricted user ${userId} in chat ${chatId}`);
+  return { ok: true };
+}
+
 type TelegramEditOpts = {
   token?: string;
   accountId?: string;

@@ -1387,6 +1387,34 @@ export const registerTelegramHandlers = ({
       if (shouldSkipUpdate(event.ctxForDedupe)) {
         return;
       }
+
+      // Skip Telegram service messages (new members, group creation, etc.) to reduce noise for AI
+      const isServiceMessage =
+        event.msg.new_chat_members ||
+        event.msg.left_chat_member ||
+        event.msg.group_chat_created ||
+        event.msg.supergroup_chat_created ||
+        event.msg.migrate_to_chat_id ||
+        event.msg.migrate_from_chat_id ||
+        event.msg.pinned_message;
+
+      if (isServiceMessage) {
+        const currentConfig = loadConfig();
+        const account = currentConfig.channels?.telegram?.accounts?.[accountId] ?? currentConfig.channels?.telegram;
+        const groupCfg = account?.groups?.[String(event.chatId)];
+        
+        const autoDelete = groupCfg?.autoDeleteSystemMessages ?? account?.autoDeleteSystemMessages;
+        
+        if (autoDelete) {
+          withTelegramApiErrorLogging({
+            operation: "deleteMessage (service message)",
+            runtime,
+            fn: () => bot.api.deleteMessage(event.chatId, event.msg.message_id),
+          }).catch(() => {});
+        }
+        return;
+      }
+
       const eventAuthContext = await resolveTelegramEventAuthorizationContext({
         chatId: event.chatId,
         isGroup: event.isGroup,

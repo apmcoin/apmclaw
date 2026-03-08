@@ -20,11 +20,15 @@ import {
   sendMessageTelegram,
   sendPollTelegram,
   sendStickerTelegram,
+  banChatMemberTelegram,
+  unbanChatMemberTelegram,
+  restrictChatMemberTelegram,
 } from "../../telegram/send.js";
 import { getCacheStats, searchStickers } from "../../telegram/sticker-cache.js";
 import { resolveTelegramToken } from "../../telegram/token.js";
 import {
   jsonResult,
+  readBooleanParam,
   readNumberParam,
   readReactionParams,
   readStringArrayParam,
@@ -320,6 +324,7 @@ export async function handleTelegramAction(
       required: true,
       integer: true,
     });
+    const requesterId = readStringOrNumberParam(params, "requesterId");
     const token = resolveTelegramToken(cfg, { accountId }).token;
     if (!token) {
       throw new Error(
@@ -329,8 +334,55 @@ export async function handleTelegramAction(
     await deleteMessageTelegram(chatId ?? "", messageId ?? 0, {
       token,
       accountId: accountId ?? undefined,
+      requesterId: requesterId ?? undefined,
     });
     return jsonResult({ ok: true, deleted: true });
+  }
+
+  if (action === "ban") {
+    const chatId = readStringOrNumberParam(params, "chatId", { required: true });
+    const userId = readStringOrNumberParam(params, "userId", { required: true });
+    const requesterId = readStringOrNumberParam(params, "requesterId");
+    const untilDate = readNumberParam(params, "untilDate", { integer: true });
+    const token = resolveTelegramToken(cfg, { accountId }).token;
+    if (!token) throw new Error("Telegram bot token missing.");
+    await banChatMemberTelegram(chatId ?? "", userId ?? "", {
+      token,
+      accountId: accountId ?? undefined,
+      requesterId: requesterId ?? undefined,
+      untilDate: untilDate ?? undefined,
+    });
+    return jsonResult({ ok: true, banned: true });
+  }
+
+  if (action === "unban") {
+    const chatId = readStringOrNumberParam(params, "chatId", { required: true });
+    const userId = readStringOrNumberParam(params, "userId", { required: true });
+    const requesterId = readStringOrNumberParam(params, "requesterId");
+    const token = resolveTelegramToken(cfg, { accountId }).token;
+    if (!token) throw new Error("Telegram bot token missing.");
+    await unbanChatMemberTelegram(chatId ?? "", userId ?? "", {
+      token,
+      accountId: accountId ?? undefined,
+      requesterId: requesterId ?? undefined,
+    });
+    return jsonResult({ ok: true, unbanned: true });
+  }
+
+  if (action === "mute") {
+    const chatId = readStringOrNumberParam(params, "chatId", { required: true });
+    const userId = readStringOrNumberParam(params, "userId", { required: true });
+    const requesterId = readStringOrNumberParam(params, "requesterId");
+    const untilDate = readNumberParam(params, "untilDate", { integer: true });
+    const token = resolveTelegramToken(cfg, { accountId }).token;
+    if (!token) throw new Error("Telegram bot token missing.");
+    await restrictChatMemberTelegram(
+      chatId ?? "",
+      userId ?? "",
+      { can_send_messages: false, until_date: untilDate ?? undefined },
+      { token, accountId: accountId ?? undefined, requesterId: requesterId ?? undefined },
+    );
+    return jsonResult({ ok: true, muted: true });
   }
 
   if (action === "editMessage") {

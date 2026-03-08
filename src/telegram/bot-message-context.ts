@@ -589,6 +589,18 @@ export const buildTelegramMessageContext = async ({
   const botId = primaryCtx.me?.id;
   const replyFromId = msg.reply_to_message?.from?.id;
   const replyToBotMessage = botId != null && replyFromId === botId;
+
+  // Resolve admin status for group messages to empower moderation logic
+  let senderIsAdmin = false;
+  if (isGroup && senderId) {
+    try {
+      const member = await bot.api.getChatMember(chatId, Number(senderId));
+      senderIsAdmin = member.status === "administrator" || member.status === "creator";
+    } catch (err) {
+      logVerbose(`telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`);
+    }
+  }
+
   const isReplyToServiceMessage =
     replyToBotMessage && isTelegramForumServiceMessage(msg.reply_to_message);
   const implicitMention = replyToBotMessage && !isReplyToServiceMessage;
@@ -764,9 +776,15 @@ export const buildTelegramMessageContext = async ({
     : "";
   const groupLabel = isGroup ? buildGroupLabel(msg, chatId, resolvedThreadId) : undefined;
   const senderName = buildSenderName(msg);
-  const conversationLabel = isGroup
+  let conversationLabel = isGroup
     ? (groupLabel ?? `group:${chatId}`)
     : buildSenderLabel(msg, senderId || chatId);
+
+  // Mark admins in the conversation label for better AI awareness
+  if (senderIsAdmin) {
+    conversationLabel = `[Admin] ${conversationLabel}`;
+  }
+
   const storePath = resolveStorePath(cfg.session?.store, {
     agentId: route.agentId,
   });
@@ -842,6 +860,7 @@ export const buildTelegramMessageContext = async ({
     SenderName: senderName,
     SenderId: senderId || undefined,
     SenderUsername: senderUsername || undefined,
+    SenderIsAdmin: senderIsAdmin || undefined,
     Provider: "telegram",
     Surface: "telegram",
     MessageSid: options?.messageIdOverride ?? String(msg.message_id),

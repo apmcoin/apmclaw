@@ -144,46 +144,6 @@ function collectAgentMemorySearchAssignments(params: {
   });
 }
 
-function collectTalkAssignments(params: {
-  config: ApmClawConfig;
-  defaults: SecretDefaults | undefined;
-  context: ResolverContext;
-}): void {
-  const talk = params.config.talk as Record<string, unknown> | undefined;
-  if (!isRecord(talk)) {
-    return;
-  }
-  collectSecretInputAssignment({
-    value: talk.apiKey,
-    path: "talk.apiKey",
-    expected: "string",
-    defaults: params.defaults,
-    context: params.context,
-    apply: (value) => {
-      talk.apiKey = value;
-    },
-  });
-  const providers = talk.providers;
-  if (!isRecord(providers)) {
-    return;
-  }
-  for (const [providerId, providerConfig] of Object.entries(providers)) {
-    if (!isRecord(providerConfig)) {
-      continue;
-    }
-    collectSecretInputAssignment({
-      value: providerConfig.apiKey,
-      path: `talk.providers.${providerId}.apiKey`,
-      expected: "string",
-      defaults: params.defaults,
-      context: params.context,
-      apply: (value) => {
-        providerConfig.apiKey = value;
-      },
-    });
-  }
-}
-
 function collectGatewayAssignments(params: {
   config: ApmClawConfig;
   defaults: SecretDefaults | undefined;
@@ -360,9 +320,7 @@ export function collectCoreConfigAssignments(params: {
   }
 
   collectAgentMemorySearchAssignments(params);
-  collectTalkAssignments(params);
   collectGatewayAssignments(params);
-  // collectMessagesTtsAssignments removed (TTS removed)
   collectToolsWebSearchAssignments(params);
   collectCronAssignments(params);
 }

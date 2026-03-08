@@ -381,18 +381,13 @@ export const buildTelegramMessageContext = async ({
     }
   };
 
-  if (
-    !(await enforceTelegramDmAccess({
-      isGroup,
-      dmPolicy: effectiveDmPolicy,
-      msg,
-      chatId,
-      effectiveDmAllow,
-      accountId: account.accountId,
-      bot,
-      logger,
-    }))
-  ) {
+  if (!isGroup) {
+    logInboundDrop({
+      log: logVerbose,
+      channel: "telegram",
+      reason: "DM disabled (hardened group-only bot)",
+      target: senderId ?? "unknown",
+    });
     return null;
   }
   const ensureConfiguredBindingReady = async (): Promise<boolean> => {
@@ -596,6 +591,7 @@ export const buildTelegramMessageContext = async ({
     try {
       const member = await bot.api.getChatMember(chatId, Number(senderId));
       senderIsAdmin = member.status === "administrator" || member.status === "creator";
+      logVerbose(`telegram: resolved admin status for ${senderId} in ${chatId}: ${senderIsAdmin} (status: ${member.status})`);
     } catch (err) {
       logVerbose(`telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`);
     }

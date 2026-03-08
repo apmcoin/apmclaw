@@ -1,10 +1,5 @@
 export { createAccountListHelpers } from "../channels/plugins/account-helpers.js";
 export { CHANNEL_MESSAGE_ACTION_NAMES } from "../channels/plugins/message-action-names.js";
-export {
-  BLUEBUBBLES_ACTIONS,
-  BLUEBUBBLES_ACTION_NAMES,
-  BLUEBUBBLES_GROUP_ACTIONS,
-} from "../channels/plugins/bluebubbles-actions.js";
 export type {
   ChannelAccountSnapshot,
   ChannelAccountState,
@@ -116,8 +111,6 @@ export { normalizePluginHttpPath } from "../plugins/http-path.js";
 export { registerPluginHttpRoute } from "../plugins/http-registry.js";
 export { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 export type { ApmClawConfig } from "../config/config.js";
-/** @deprecated Use ApmClawConfig instead */
-export type { ApmClawConfig as ClawdbotConfig } from "../config/config.js";
 export { isDangerousNameMatchingEnabled } from "../config/dangerous-name-matching.js";
 
 export type { FileLockHandle, FileLockOptions } from "./file-lock.js";
@@ -135,11 +128,6 @@ export {
   resolveSingleWebhookTargetAsync,
   resolveWebhookTargets,
 } from "./webhook-targets.js";
-export type {
-  RegisterWebhookPluginRouteOptions,
-  RegisterWebhookTargetOptions,
-  WebhookTargetMatchResult,
-} from "./webhook-targets.js";
 export {
   applyBasicWebhookRequestGuards,
   beginWebhookRequestPipelineOrReject,
@@ -147,10 +135,7 @@ export {
   isJsonContentType,
   readWebhookBodyOrReject,
   readJsonWebhookBodyOrReject,
-  WEBHOOK_BODY_READ_DEFAULTS,
-  WEBHOOK_IN_FLIGHT_DEFAULTS,
 } from "./webhook-request-guards.js";
-export type { WebhookBodyReadProfile, WebhookInFlightLimiter } from "./webhook-request-guards.js";
 export { keepHttpServerTaskAlive, waitUntilAbort } from "./channel-lifecycle.js";
 export type { AgentMediaPayload } from "./agent-media-payload.js";
 export { buildAgentMediaPayload } from "./agent-media-payload.js";
@@ -169,46 +154,24 @@ export { getChatChannelMeta } from "../channels/registry.js";
 export { resolveAllowlistMatchByCandidates } from "../channels/allowlist-match.js";
 export type {
   BlockStreamingCoalesceConfig,
-  DmPolicy,
-  DmConfig,
   GroupPolicy,
   GroupToolPolicyConfig,
   GroupToolPolicyBySenderConfig,
   MarkdownConfig,
   MarkdownTableMode,
-  GoogleChatAccountConfig,
-  GoogleChatConfig,
-  GoogleChatDmConfig,
-  GoogleChatGroupConfig,
-  GoogleChatActionConfig,
-  MSTeamsChannelConfig,
-  MSTeamsConfig,
-  MSTeamsReplyStyle,
-  MSTeamsTeamConfig,
 } from "../config/types.js";
 export {
   GROUP_POLICY_BLOCKED_LABEL,
-  resetMissingProviderGroupPolicyFallbackWarningsForTesting,
   resolveAllowlistProviderRuntimeGroupPolicy,
   resolveDefaultGroupPolicy,
   resolveOpenProviderRuntimeGroupPolicy,
   resolveRuntimeGroupPolicy,
-  type GroupPolicyDefaultsConfig,
-  type RuntimeGroupPolicyResolution,
-  type RuntimeGroupPolicyParams,
-  type ResolveProviderRuntimeGroupPolicyParams,
-  warnMissingProviderGroupPolicyFallbackOnce,
 } from "../config/runtime-group-policy.js";
 export {
-  GoogleChatConfigSchema,
-  MSTeamsConfigSchema,
-  // SignalConfigSchema removed (Telegram-only)
   TelegramConfigSchema,
 } from "../config/zod-schema.providers-core.js";
 export {
   BlockStreamingCoalesceSchema,
-  DmConfigSchema,
-  DmPolicySchema,
   GroupPolicySchema,
   MarkdownConfigSchema,
   MarkdownTableModeSchema,
@@ -227,7 +190,6 @@ export {
 export type { SecretInput, SecretRef } from "../config/types.secrets.js";
 export { ToolPolicySchema } from "../config/zod-schema.agent-runtime.js";
 export type { RuntimeEnv } from "../runtime.js";
-export type { WizardPrompter } from "../commands/types.js";
 export {
   DEFAULT_ACCOUNT_ID,
   normalizeAccountId,
@@ -250,7 +212,6 @@ export {
   resolveSenderCommandAuthorizationWithRuntime,
 } from "./command-auth.js";
 export type { CommandAuthorizationRuntime } from "./command-auth.js";
-// Pairing removed (companion apps deleted)
 export {
   createInboundEnvelopeBuilder,
   resolveInboundRouteEnvelopeBuilder,
@@ -260,7 +221,6 @@ export {
   listConfiguredAccountIds,
   resolveAccountWithDefaultFallback,
 } from "./account-resolution.js";
-// Pairing removed (companion apps deleted)
 export { extractToolSend } from "./tool-send.js";
 export {
   createNormalizedOutboundDeliverer,
@@ -279,23 +239,10 @@ export { createLoggerBackedRuntime } from "./runtime.js";
 export { chunkTextForOutbound } from "./text-chunking.js";
 export { readBooleanParam } from "./boolean-param.js";
 export { readJsonFileWithFallback, writeJsonFileAtomically } from "./json-store.js";
-export { generatePkceVerifierChallenge, toFormUrlEncoded } from "./oauth-utils.js";
 export { buildRandomTempFilePath, withTempDownloadPath } from "./temp-path.js";
 export {
   applyWindowsSpawnProgramPolicy,
-  materializeWindowsSpawnProgram,
-  resolveWindowsExecutablePath,
-  resolveWindowsSpawnProgramCandidate,
   resolveWindowsSpawnProgram,
-} from "./windows-spawn.js";
-export type {
-  ResolveWindowsSpawnProgramCandidateParams,
-  ResolveWindowsSpawnProgramParams,
-  WindowsSpawnCandidateResolution,
-  WindowsSpawnInvocation,
-  WindowsSpawnProgramCandidate,
-  WindowsSpawnProgram,
-  WindowsSpawnResolution,
 } from "./windows-spawn.js";
 export { resolvePreferredApmClawTmpDir } from "../infra/tmp-openclaw-dir.js";
 export {
@@ -303,16 +250,6 @@ export {
   type PluginCommandRunOptions,
   type PluginCommandRunResult,
 } from "./run-command.js";
-export { resolveGatewayBindUrl } from "../shared/gateway-bind-url.js";
-export type { GatewayBindUrlResult } from "../shared/gateway-bind-url.js";
-export { resolveTailnetHostWithRunner } from "../shared/tailscale-status.js";
-export type {
-  TailscaleStatusCommandResult,
-  TailscaleStatusCommandRunner,
-} from "../shared/tailscale-status.js";
-export type { ChatType } from "../channels/chat-type.js";
-/** @deprecated Use ChatType instead */
-export type { RoutePeerKind } from "../routing/resolve-route.js";
 export { resolveAckReaction } from "../agents/identity.js";
 export type { ReplyPayload } from "../auto-reply/types.js";
 export type { ChunkMode } from "../auto-reply/chunk.js";
@@ -321,7 +258,6 @@ export { formatInboundFromLabel } from "../auto-reply/envelope.js";
 export {
   formatTrimmedAllowFromEntries,
 } from "./channel-config-helpers.js";
-// Device pairing removed (companion apps deleted)
 export { createDedupeCache } from "../infra/dedupe.js";
 export type { DedupeCache } from "../infra/dedupe.js";
 export { createPersistentDedupe } from "./persistent-dedupe.js";
@@ -337,19 +273,13 @@ export {
   resolveTimezone,
 } from "../infra/format-time/format-datetime.js";
 export {
-  DEFAULT_WEBHOOK_BODY_TIMEOUT_MS,
-  DEFAULT_WEBHOOK_MAX_BODY_BYTES,
   RequestBodyLimitError,
   installRequestBodyLimitGuard,
   isRequestBodyLimitError,
   readJsonBodyWithLimit,
   readRequestBodyWithLimit,
-  requestBodyErrorToText,
 } from "../infra/http-body.js";
 export {
-  WEBHOOK_ANOMALY_COUNTER_DEFAULTS,
-  WEBHOOK_ANOMALY_STATUS_CODES,
-  WEBHOOK_RATE_LIMIT_DEFAULTS,
   createBoundedCounter,
   createFixedWindowRateLimiter,
   createWebhookAnomalyTracker,
@@ -375,8 +305,6 @@ export {
 } from "./ssrf-policy.js";
 export { fetchWithBearerAuthScopeFallback } from "./fetch-auth.js";
 export type { ScopeTokenProvider } from "./fetch-auth.js";
-export { rawDataToString } from "../infra/ws.js";
-export { isWSLSync, isWSL2Sync, isWSLEnv } from "../infra/wsl.js";
 export { isTruthyEnvValue } from "../infra/env.js";
 export { resolveChannelGroupRequireMention, resolveToolsBySender } from "../config/group-policy.js";
 export {
@@ -397,12 +325,10 @@ export {
 export type {
   AckReactionGateParams,
   AckReactionScope,
-  WhatsAppAckReactionMode,
 } from "../channels/ack-reactions.js";
 export {
   removeAckReactionAfterReply,
   shouldAckReaction,
-  shouldAckReactionForWhatsApp,
 } from "../channels/ack-reactions.js";
 export { createTypingCallbacks } from "../channels/typing.js";
 export { createReplyPrefixContext, createReplyPrefixOptions } from "../channels/reply-prefix.js";
@@ -412,11 +338,7 @@ export type { NormalizedLocation } from "../channels/location.js";
 export { formatLocationText, toLocationContext } from "../channels/location.js";
 export { resolveControlCommandGate } from "../channels/command-gating.js";
 export {
-  resolveBlueBubblesGroupRequireMention,
-  resolveGoogleChatGroupRequireMention,
   resolveTelegramGroupRequireMention,
-  resolveBlueBubblesGroupToolPolicy,
-  resolveGoogleChatGroupToolPolicy,
   resolveTelegramGroupToolPolicy,
 } from "../channels/plugins/group-mentions.js";
 export { recordInboundSession } from "../channels/session.js";
@@ -448,12 +370,6 @@ export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,
 } from "../channels/plugins/setup-helpers.js";
-// Pairing removed (companion apps deleted)
-
-export type {
-  ChannelOnboardingAdapter,
-  ChannelOnboardingDmPolicy,
-} from "../channels/plugins/onboarding-types.js";
 
 export {
   createActionGate,
@@ -462,48 +378,14 @@ export {
   readReactionParams,
   readStringParam,
 } from "../agents/tools/common.js";
-export { formatDocsLink } from "../terminal/links.js";
 export {
-  DM_GROUP_ACCESS_REASON,
-  readStoreAllowFromForDmPolicy,
-  resolveDmAllowState,
-  resolveDmGroupAccessDecision,
-  resolveDmGroupAccessWithCommandGate,
-  resolveDmGroupAccessWithLists,
-  resolveEffectiveAllowFromLists,
-} from "../security/dm-policy-shared.js";
-export type { DmGroupAccessReasonCode } from "../security/dm-policy-shared.js";
-export type { HookEntry } from "../hooks/types.js";
-export { clamp, escapeRegExp, normalizeE164, safeParseJson, sleep } from "../utils.js";
-export { stripAnsi } from "../terminal/ansi.js";
-export { missingTargetError } from "../infra/outbound/target-errors.js";
-export { registerLogTransport } from "../logging/logger.js";
-export type { LogTransport, LogTransportRecord } from "../logging/logger.js";
-export {
-  emitDiagnosticEvent,
-  isDiagnosticsEnabled,
-  onDiagnosticEvent,
-} from "../infra/diagnostic-events.js";
-export type {
-  DiagnosticEventPayload,
-  DiagnosticHeartbeatEvent,
-  DiagnosticLaneDequeueEvent,
-  DiagnosticLaneEnqueueEvent,
-  DiagnosticMessageProcessedEvent,
-  DiagnosticMessageQueuedEvent,
-  DiagnosticRunAttemptEvent,
-  DiagnosticSessionState,
-  DiagnosticSessionStateEvent,
-  DiagnosticSessionStuckEvent,
-  DiagnosticUsageEvent,
-  DiagnosticWebhookErrorEvent,
-  DiagnosticWebhookProcessedEvent,
-  DiagnosticWebhookReceivedEvent,
-} from "../infra/diagnostic-events.js";
-export { detectMime, extensionForMime, getFileExtension } from "../media/mime.js";
-export { extractOriginalFilename } from "../media/store.js";
-export { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
-export type { SkillCommandSpec } from "../agents/skills.js";
+  clamp,
+  escapeRegExp,
+  normalizeE164,
+  safeParseJson,
+  sleep,
+} from "../utils.js";
+export { redactSensitiveText } from "../logging/redact.js";
 
 // Channel: Telegram
 export {
@@ -525,27 +407,14 @@ export {
 } from "../telegram/outbound-params.js";
 export { type TelegramProbe } from "../telegram/probe.js";
 
-// Signal removed (Telegram-only)
-
-// Channel: BlueBubbles
-export { collectBlueBubblesStatusIssues } from "../channels/plugins/status-issues/bluebubbles.js";
-
-// LINE removed (Telegram-only)
-
 // Context engine
 export type {
   ContextEngine,
-  ContextEngineInfo,
   AssembleResult,
   CompactResult,
   IngestResult,
   IngestBatchResult,
   BootstrapResult,
-  SubagentSpawnPreparation,
-  SubagentEndReason,
 } from "../context-engine/types.js";
 export { registerContextEngine } from "../context-engine/registry.js";
 export type { ContextEngineFactory } from "../context-engine/registry.js";
-
-// Security utilities
-export { redactSensitiveText } from "../logging/redact.js";

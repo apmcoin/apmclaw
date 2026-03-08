@@ -71,8 +71,7 @@ export async function handleSubagentsFocusAction(
     accountId,
   });
   if (!capabilities.adapterAvailable || !capabilities.bindSupported) {
-    const label = channel === "discord" ? "Discord thread" : "Telegram conversation";
-    return stopWithText(`⚠️ ${label} bindings are unavailable for this account.`);
+    return stopWithText(`⚠️ Telegram conversation bindings are unavailable for this account.`);
   }
 
   const focusTarget = await resolveFocusTargetSession({ runs, token });
@@ -165,9 +164,6 @@ export async function handleSubagentsFocusAction(
     );
   }
 
-  const actionText =
-    bindingContext.placement === "child"
-      ? `created thread ${binding.conversation.conversationId} and bound it to ${binding.targetSessionKey}`
-      : `bound this ${bindingContext.labelNoun} to ${binding.targetSessionKey}`;
+  const actionText = `bound this ${bindingContext.labelNoun} to ${binding.targetSessionKey}`;
   return stopWithText(`✅ ${actionText} (${focusTarget.targetKind}).`);
 }

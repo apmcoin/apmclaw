@@ -51,7 +51,6 @@ export function createPluginRuntime(_options: CreatePluginRuntimeOptions = {}): 
     subagent: _options.subagent ?? createUnavailableSubagentRuntime(),
     system: createRuntimeSystem(),
     media: createRuntimeMedia(),
-    tts: {},
     stt: { transcribeAudioFile },
     tools: createRuntimeTools(),
     channel: createRuntimeChannel(),

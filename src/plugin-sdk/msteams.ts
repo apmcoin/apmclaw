@@ -85,7 +85,6 @@ export {
 } from "../security/dm-policy-shared.js";
 export { formatDocsLink } from "../terminal/links.js";
 export { sleep } from "../utils.js";
-export { loadWebMedia } from "../web/media.js";
 export type { WizardPrompter } from "../wizard/prompts.js";
 export { keepHttpServerTaskAlive } from "./channel-lifecycle.js";
 export { withFileLock } from "./file-lock.js";

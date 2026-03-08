@@ -230,7 +230,6 @@ async function buildDiscordPermissions(_params: {
   account: { token?: string; accountId?: string };
   target?: string;
 }): Promise<{ target?: DiscordTargetSummary; report?: DiscordPermissionsReport }> {
-  // Stub: Discord removed in apM Claw
   return {};
 }
 

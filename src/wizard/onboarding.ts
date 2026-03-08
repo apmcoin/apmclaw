@@ -529,7 +529,6 @@ export async function runOnboardingWizard(
     nextConfig = await setupSkills(nextConfig, workspaceDir, runtime, prompter);
   }
 
-  // Stub: onboard hooks removed in apM Claw
   nextConfig = onboardHelpers.applyWizardMetadata(nextConfig, { command: "onboard", mode });
   await writeConfigFile(nextConfig);
 

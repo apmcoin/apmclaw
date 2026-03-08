@@ -1,7 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import type { RuntimeEnv } from "../../runtime.js";
 
-// Stub: plugin installation removed in apM Claw
 export async function ensureOnboardingPluginInstalled(_params: {
   pluginName: string;
   prompter?: unknown;
@@ -17,5 +16,4 @@ export function reloadOnboardingPluginRegistry(_params: {
   runtime: RuntimeEnv;
   workspaceDir?: string;
 }): void {
-  // Stub: plugin registry reload removed
 }

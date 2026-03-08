@@ -15,7 +15,6 @@ import { readChannelAllowFromStoreSync } from "../../pairing/pairing-store.js";
 import { buildChannelAccountBindings } from "../../routing/bindings.js";
 import { normalizeAccountId, normalizeAgentId } from "../../routing/session-key.js";
 import { resolveWhatsAppAccount } from "../../web/accounts.js";
-// Stub: WhatsApp removed in apM Claw
 const normalizeWhatsAppTarget = (target: string) => target;
 
 export type DeliveryTargetResolution =

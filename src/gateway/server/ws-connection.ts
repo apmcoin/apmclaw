@@ -126,7 +126,6 @@ export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnecti
     const forwardedFor = headerValue(upgradeReq.headers["x-forwarded-for"]);
     const realIp = headerValue(upgradeReq.headers["x-real-ip"]);
 
-    // Stub: Canvas removed in apM Claw
     const canvasHostUrl = undefined;
 
     logWs("in", "open", { connId, remoteAddr });

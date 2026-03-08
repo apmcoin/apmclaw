@@ -2,7 +2,6 @@ import type { Server as HttpServer } from "node:http";
 import { WebSocketServer } from "ws";
 import type { CliDeps } from "../cli/deps.js";
 
-// Stub: Canvas removed in apM Claw
 const CANVAS_HOST_PATH = "/canvas";
 type CanvasHostHandler = null;
 import type { createSubsystemLogger } from "../logging/subsystem.js";
@@ -86,7 +85,6 @@ export async function createGatewayRuntimeState(params: {
   chatAbortControllers: Map<string, ChatAbortControllerEntry>;
   toolEventRecipients: ReturnType<typeof createToolEventRecipientRegistry>;
 }> {
-  // Stub: Canvas removed in apM Claw
   const canvasHost: CanvasHostHandler = null;
 
   const clients = new Set<GatewayWsClient>();

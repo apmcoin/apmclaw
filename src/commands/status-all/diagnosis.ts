@@ -1,6 +1,7 @@
 import type { ProgressReporter } from "../../cli/progress.js";
 import { formatConfigIssueLine } from "../../config/issue-format.js";
-import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
+// Daemon removed (Docker-only deployment) - inline stub
+const resolveGatewayLogPaths = () => ({ stdout: null, stderr: null });
 import { formatPortDiagnostics } from "../../infra/ports.js";
 import {
   type RestartSentinelPayload,

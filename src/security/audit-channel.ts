@@ -14,7 +14,8 @@ import { formatCliCommand } from "../cli/command-format.js";
 import { resolveNativeCommandsEnabled, resolveNativeSkillsEnabled } from "../config/commands.js";
 import type { OpenClawConfig } from "../config/config.js";
 import { isDangerousNameMatchingEnabled } from "../config/dangerous-name-matching.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+// Pairing removed (Docker-only deployment) - inline stub
+const readChannelAllowFromStore = async () => [] as string[];
 import { normalizeStringEntries } from "../shared/string-normalization.js";
 import type { SecurityAuditFinding, SecurityAuditSeverity } from "./audit.js";
 import { resolveDmAllowState } from "./dm-policy-shared.js";

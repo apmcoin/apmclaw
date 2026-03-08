@@ -255,7 +255,10 @@ const CORE_TOOL_PROFILES: Record<ToolProfileId, ToolProfilePolicy> = {
   messaging: {
     allow: listCoreToolIdsForProfile("messaging"),
   },
-  full: {},
+  full: {
+    // apM Claw: Disable device control tools for crypto community security
+    deny: ["canvas", "nodes", "tts"],
+  },
 };
 
 function buildCoreToolGroupMap() {

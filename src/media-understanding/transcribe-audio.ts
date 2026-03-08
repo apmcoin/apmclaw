@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { runAudioTranscription } from "./audio-transcription-runner.js";
 
 /**
@@ -12,7 +12,7 @@ import { runAudioTranscription } from "./audio-transcription-runner.js";
  */
 export async function transcribeAudioFile(params: {
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   agentDir?: string;
   mime?: string;
 }): Promise<{ text: string | undefined }> {

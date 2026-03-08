@@ -394,7 +394,7 @@ beforeEach(() => {
 });
 
 describe("installPluginFromArchive", () => {
-  it("installs into ~/.openclaw/extensions and uses unscoped id", async () => {
+  it("installs into ~/.apmclaw/extensions and uses unscoped id", async () => {
     const { stateDir, archivePath, extensionsDir } = await setupVoiceCallArchiveInstall({
       outName: "plugin.tgz",
       version: "0.0.1",
@@ -505,7 +505,7 @@ describe("installPluginFromArchive", () => {
       return;
     }
     expect(result.error).toContain("openclaw.extensions");
-    expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS);
+    expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_APMCLAW_EXTENSIONS);
   });
 
   it("rejects legacy plugin package shape when openclaw.extensions is missing", async () => {
@@ -537,7 +537,7 @@ describe("installPluginFromArchive", () => {
     if (!result.ok) {
       expect(result.error).toContain("package.json missing openclaw.extensions");
       expect(result.error).toContain("update the plugin package");
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_APMCLAW_EXTENSIONS);
       return;
     }
     expect.unreachable("expected install to fail without openclaw.extensions");
@@ -673,7 +673,7 @@ describe("installPluginFromDir", () => {
     ) as {
       devDependencies?: Record<string, string>;
     };
-    expect(manifest.devDependencies?.openclaw).toBeUndefined();
+    expect(manifest.devDependencies?.apmclaw).toBeUndefined();
     expect(manifest.devDependencies?.vitest).toBe("^3.0.0");
   });
 

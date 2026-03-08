@@ -14,7 +14,7 @@ import {
   type SessionNotification,
 } from "@agentclientprotocol/sdk";
 import { isKnownCoreToolId } from "../agents/tool-catalog.js";
-import { ensureOpenClawCliOnPath } from "../infra/path-env.js";
+import { ensureApmClawCliOnPath } from "../infra/path-env.js";
 import {
   materializeWindowsSpawnProgram,
   resolveWindowsSpawnProgram,
@@ -349,7 +349,7 @@ function buildServerArgs(opts: AcpClientOptions): string[] {
 export function resolveAcpClientSpawnEnv(
   baseEnv: NodeJS.ProcessEnv = process.env,
 ): NodeJS.ProcessEnv {
-  return { ...baseEnv, OPENCLAW_SHELL: "acp-client" };
+  return { ...baseEnv, APMCLAW_SHELL: "acp-client" };
 }
 
 type AcpSpawnRuntime = {
@@ -444,7 +444,7 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
   const verbose = Boolean(opts.verbose);
   const log = verbose ? (msg: string) => console.error(`[acp-client] ${msg}`) : () => {};
 
-  ensureOpenClawCliOnPath();
+  ensureApmClawCliOnPath();
   const serverArgs = buildServerArgs(opts);
 
   const entryPath = resolveSelfEntryPath();
@@ -521,7 +521,7 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
     output: process.stdout,
   });
 
-  console.log("OpenClaw ACP client");
+  console.log("ApmClaw ACP client");
   console.log(`Session: ${sessionId}`);
   console.log('Type a prompt, or "exit" to quit.\n');
 

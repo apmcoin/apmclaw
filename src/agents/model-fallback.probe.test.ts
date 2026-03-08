@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import type { AuthProfileStore } from "./auth-profiles.js";
 import { makeModelFallbackCfg } from "./test-helpers/model-fallback-config-fixture.js";
 
@@ -62,7 +62,7 @@ describe("runWithModelFallback – probe logic", () => {
   const NOW = 1_700_000_000_000;
 
   const runPrimaryCandidate = (
-    cfg: OpenClawConfig,
+    cfg: ApmClawConfig,
     run: (provider: string, model: string) => Promise<unknown>,
   ) =>
     runWithModelFallback({
@@ -175,7 +175,7 @@ describe("runWithModelFallback – probe logic", () => {
           },
         },
       },
-    } as Partial<OpenClawConfig>);
+    } as Partial<ApmClawConfig>);
 
     // Override: ALL providers in cooldown for this test
     mockedIsProfileInCooldown.mockReturnValue(true);
@@ -282,7 +282,7 @@ describe("runWithModelFallback – probe logic", () => {
           },
         },
       },
-    } as Partial<OpenClawConfig>);
+    } as Partial<ApmClawConfig>);
 
     const almostExpired = NOW + 30 * 1000;
     mockedGetSoonestCooldownExpiry.mockReturnValue(almostExpired);

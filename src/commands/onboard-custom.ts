@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import type { WizardPrompter } from "./types.js";
 
 export async function promptCustomApiConfig(_params: {
   prompter: WizardPrompter;
   runtime: unknown;
-  config: OpenClawConfig;
-}): Promise<{ config: OpenClawConfig }> {
+  config: ApmClawConfig;
+}): Promise<{ config: ApmClawConfig }> {
   return { config: _params.config };
 }

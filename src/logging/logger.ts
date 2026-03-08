@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { Logger as TsLogger } from "tslog";
 import { getCommandPathWithRootOptions } from "../cli/argv.js";
-import type { OpenClawConfig } from "../config/types.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import type { ApmClawConfig } from "../config/types.js";
+import { resolvePreferredApmClawTmpDir } from "../infra/tmp-openclaw-dir.js";
 import { readLoggingConfig } from "./config.js";
 import type { ConsoleStyle } from "./console.js";
 import { resolveEnvLogLevelOverride } from "./env-log-level.js";
@@ -12,7 +12,7 @@ import { resolveNodeRequireFromMeta } from "./node-require.js";
 import { loggingState } from "./state.js";
 import { formatLocalIsoWithOffset } from "./timestamps.js";
 
-export const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
+export const DEFAULT_LOG_DIR = resolvePreferredApmClawTmpDir();
 export const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log"); // legacy single-file path
 
 const LOG_PREFIX = "openclaw";
@@ -64,7 +64,7 @@ function attachExternalTransport(logger: TsLogger<LogObj>, transport: LogTranspo
 function canUseSilentVitestFileLogFastPath(envLevel: LogLevel | undefined): boolean {
   return (
     process.env.VITEST === "true" &&
-    process.env.OPENCLAW_TEST_FILE_LOG !== "1" &&
+    process.env.APMCLAW_TEST_FILE_LOG !== "1" &&
     !envLevel &&
     !loggingState.overrideSettings
   );
@@ -82,13 +82,13 @@ function resolveSettings(): ResolvedSettings {
     };
   }
 
-  let cfg: OpenClawConfig["logging"] | undefined =
+  let cfg: ApmClawConfig["logging"] | undefined =
     (loggingState.overrideSettings as LoggerSettings | null) ?? readLoggingConfig();
   if (!cfg && !shouldSkipLoadConfigFallback()) {
     try {
       const loaded = requireConfig?.("../config/config.js") as
         | {
-            loadConfig?: () => OpenClawConfig;
+            loadConfig?: () => ApmClawConfig;
           }
         | undefined;
       cfg = loaded?.loadConfig?.().logging;
@@ -97,7 +97,7 @@ function resolveSettings(): ResolvedSettings {
     }
   }
   const defaultLevel =
-    process.env.VITEST === "true" && process.env.OPENCLAW_TEST_FILE_LOG !== "1" ? "silent" : "info";
+    process.env.VITEST === "true" && process.env.APMCLAW_TEST_FILE_LOG !== "1" ? "silent" : "info";
   const fromConfig = normalizeLogLevel(cfg?.level, defaultLevel);
   const level = envLevel ?? fromConfig;
   const file = cfg?.file ?? defaultRollingPathForToday();

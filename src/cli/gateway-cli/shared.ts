@@ -1,10 +1,10 @@
 // Daemon removed (Docker-only deployment) - inline constants
 const resolveGatewayLaunchAgentLabel = (profile?: string) =>
-  profile ? `ai.openclaw.gateway.${profile}` : "ai.openclaw.gateway";
+  profile ? `ai.apmclaw.gateway.${profile}` : "ai.apmclaw.gateway";
 const resolveGatewaySystemdServiceName = (profile?: string) =>
   profile ? `openclaw-gateway-${profile}` : "openclaw-gateway";
 const resolveGatewayWindowsTaskName = (profile?: string) =>
-  profile ? `OpenClaw Gateway (${profile})` : "OpenClaw Gateway";
+  profile ? `ApmClaw Gateway (${profile})` : "ApmClaw Gateway";
 const resolveGatewayService = () => null;
 import { defaultRuntime } from "../../runtime.js";
 import { formatCliCommand } from "../command-format.js";
@@ -67,7 +67,7 @@ export function extractGatewayMiskeys(parsed: unknown): {
 }
 
 export function renderGatewayServiceStopHints(env: NodeJS.ProcessEnv = process.env): string[] {
-  const profile = env.OPENCLAW_PROFILE;
+  const profile = env.APMCLAW_PROFILE;
   switch (process.platform) {
     case "darwin":
       return [

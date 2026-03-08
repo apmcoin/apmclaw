@@ -2,7 +2,7 @@ import "./reply.directive.directive-behavior.e2e-mocks.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { loadSessionStore } from "../config/sessions.js";
 import type { ModelDefinitionConfig } from "../config/types.models.js";
 import { drainSystemEvents } from "../infra/system-events.js";
@@ -64,7 +64,7 @@ function makeMoonshotConfig(home: string, storePath: string) {
       },
     },
     session: { store: storePath },
-  } as unknown as OpenClawConfig;
+  } as unknown as ApmClawConfig;
 }
 
 describe("directive behavior", () => {
@@ -184,7 +184,7 @@ describe("directive behavior", () => {
           {
             ...testCase.config,
             session: { store: testCase.storePath },
-          } as unknown as OpenClawConfig,
+          } as unknown as ApmClawConfig,
         );
         assertModelSelection(testCase.storePath);
       }
@@ -243,7 +243,7 @@ describe("directive behavior", () => {
   it("stores auth profile overrides on /model directive", async () => {
     await withTempHome(async (home) => {
       const storePath = sessionStorePath(home);
-      const authDir = path.join(home, ".openclaw", "agents", "main", "agent");
+      const authDir = path.join(home, ".apmclaw", "agents", "main", "agent");
       await fs.mkdir(authDir, { recursive: true, mode: 0o700 });
       await fs.writeFile(
         path.join(authDir, "auth-profiles.json"),

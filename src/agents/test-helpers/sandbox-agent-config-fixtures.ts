@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../../config/config.js";
+import type { ApmClawConfig } from "../../config/config.js";
 
-type AgentToolsConfig = NonNullable<NonNullable<OpenClawConfig["agents"]>["list"]>[number]["tools"];
+type AgentToolsConfig = NonNullable<NonNullable<ApmClawConfig["agents"]>["list"]>[number]["tools"];
 type SandboxToolsConfig = {
   allow?: string[];
   deny?: string[];
@@ -10,7 +10,7 @@ export function createRestrictedAgentSandboxConfig(params: {
   agentTools?: AgentToolsConfig;
   globalSandboxTools?: SandboxToolsConfig;
   workspace?: string;
-}): OpenClawConfig {
+}): ApmClawConfig {
   return {
     agents: {
       defaults: {
@@ -40,5 +40,5 @@ export function createRestrictedAgentSandboxConfig(params: {
           },
         }
       : {}),
-  } as OpenClawConfig;
+  } as ApmClawConfig;
 }

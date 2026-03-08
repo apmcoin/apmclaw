@@ -1,9 +1,9 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import type { WizardPrompter } from "./types.js";
 
 export async function promptRemoteGatewayConfig(
-  config: OpenClawConfig,
+  config: ApmClawConfig,
   _prompter: WizardPrompter,
-): Promise<OpenClawConfig> {
+): Promise<ApmClawConfig> {
   return config;
 }

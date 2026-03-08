@@ -108,7 +108,7 @@ function formatCompletionSourceLine(
 }
 
 function isCompletionProfileHeader(line: string): boolean {
-  return line.trim() === "# OpenClaw Completion";
+  return line.trim() === "# ApmClaw Completion";
 }
 
 function isCompletionProfileLine(line: string, binName: string, cachePath: string | null): boolean {
@@ -155,7 +155,7 @@ function updateCompletionProfile(
   }
 
   const trimmed = filtered.join("\n").trimEnd();
-  const block = `# OpenClaw Completion\n${sourceLine}`;
+  const block = `# ApmClaw Completion\n${sourceLine}`;
   const next = trimmed ? `${trimmed}\n\n${block}\n` : `${block}\n`;
   return { next, changed: next !== content, hadExisting };
 }
@@ -235,7 +235,7 @@ export function registerCompletionCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/completion", "docs.openclaw.ai/cli/completion")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/completion", "docs.apmclaw.ai/cli/completion")}\n`,
     )
     .addOption(
       new Option("-s, --shell <shell>", "Shell to generate completion for (default: zsh)").choices(
@@ -245,7 +245,7 @@ export function registerCompletionCli(program: Command) {
     .option("-i, --install", "Install completion script to shell profile")
     .option(
       "--write-state",
-      "Write completion scripts to $OPENCLAW_STATE_DIR/completions (no stdout)",
+      "Write completion scripts to $APMCLAW_STATE_DIR/completions (no stdout)",
     )
     .option("-y, --yes", "Skip confirmation (non-interactive)", false)
     .action(async (options) => {

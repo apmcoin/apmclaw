@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { createConfigIO } from "../config/config.js";
 import { collectIncludePathsRecursive } from "../config/includes-scan.js";
 import { resolveConfigPath, resolveOAuthDir, resolveStateDir } from "../config/paths.js";
@@ -185,7 +185,7 @@ async function safeAclReset(params: {
 }
 
 function setGroupPolicyAllowlist(params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   channel: string;
   changes: string[];
   policyFlips: Set<string>;
@@ -193,7 +193,7 @@ function setGroupPolicyAllowlist(params: {
   if (!params.cfg.channels) {
     return;
   }
-  const section = params.cfg.channels[params.channel as keyof OpenClawConfig["channels"]] as
+  const section = params.cfg.channels[params.channel as keyof ApmClawConfig["channels"]] as
     | Record<string, unknown>
     | undefined;
   if (!section || typeof section !== "object") {
@@ -230,7 +230,7 @@ function setGroupPolicyAllowlist(params: {
 }
 
 function setWhatsAppGroupAllowFromFromStore(params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   storeAllowFrom: string[];
   changes: string[];
   policyFlips: Set<string>;
@@ -274,8 +274,8 @@ function setWhatsAppGroupAllowFromFromStore(params: {
   }
 }
 
-function applyConfigFixes(params: { cfg: OpenClawConfig; env: NodeJS.ProcessEnv }): {
-  cfg: OpenClawConfig;
+function applyConfigFixes(params: { cfg: ApmClawConfig; env: NodeJS.ProcessEnv }): {
+  cfg: ApmClawConfig;
   changes: string[];
   policyFlips: Set<string>;
 } {
@@ -306,7 +306,7 @@ function applyConfigFixes(params: { cfg: OpenClawConfig; env: NodeJS.ProcessEnv 
 async function chmodCredentialsAndAgentState(params: {
   env: NodeJS.ProcessEnv;
   stateDir: string;
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   actions: SecurityFixAction[];
   applyPerms: (params: {
     path: string;

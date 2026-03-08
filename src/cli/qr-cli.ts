@@ -43,7 +43,7 @@ function readDevicePairPublicUrlFromConfig(cfg: ReturnType<typeof loadConfig>): 
 }
 
 function readGatewayTokenEnv(env: NodeJS.ProcessEnv): string | undefined {
-  const primary = typeof env.OPENCLAW_GATEWAY_TOKEN === "string" ? env.OPENCLAW_GATEWAY_TOKEN : "";
+  const primary = typeof env.APMCLAW_GATEWAY_TOKEN === "string" ? env.APMCLAW_GATEWAY_TOKEN : "";
   if (primary.trim().length > 0) {
     return primary.trim();
   }
@@ -56,7 +56,7 @@ function readGatewayTokenEnv(env: NodeJS.ProcessEnv): string | undefined {
 
 function readGatewayPasswordEnv(env: NodeJS.ProcessEnv): string | undefined {
   const primary =
-    typeof env.OPENCLAW_GATEWAY_PASSWORD === "string" ? env.OPENCLAW_GATEWAY_PASSWORD : "";
+    typeof env.APMCLAW_GATEWAY_PASSWORD === "string" ? env.APMCLAW_GATEWAY_PASSWORD : "";
   if (primary.trim().length > 0) {
     return primary.trim();
   }
@@ -136,7 +136,7 @@ export function registerQrCli(program: Command) {
     .description("Generate an iOS pairing QR code and setup code")
     .addHelpText(
       "after",
-      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/qr", "docs.openclaw.ai/cli/qr")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/qr", "docs.apmclaw.ai/cli/qr")}\n`,
     )
     .option(
       "--remote",
@@ -277,7 +277,7 @@ export function registerQrCli(program: Command) {
 
         const lines: string[] = [
           theme.heading("Pairing QR"),
-          "Scan this with the OpenClaw iOS app (Onboarding -> Scan QR).",
+          "Scan this with the ApmClaw iOS app (Onboarding -> Scan QR).",
           "",
         ];
 

@@ -1,14 +1,14 @@
 import { shouldMoveSingleAccountChannelKey } from "../channels/plugins/setup-helpers.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 // Discord/Slack streaming functions removed (discord-preview-streaming.js deleted)
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
 
-export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
-  config: OpenClawConfig;
+export function normalizeCompatibilityConfigValues(cfg: ApmClawConfig): {
+  config: ApmClawConfig;
   changes: string[];
 } {
   const changes: string[] = [];
-  let next: OpenClawConfig = cfg;
+  let next: ApmClawConfig = cfg;
 
   const isRecord = (value: unknown): value is Record<string, unknown> =>
     Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -291,7 +291,7 @@ export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
     }
     next = {
       ...next,
-      channels: nextChannels as OpenClawConfig["channels"],
+      channels: nextChannels as ApmClawConfig["channels"],
     };
   };
 
@@ -336,7 +336,7 @@ export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
 
     next = {
       ...next,
-      browser: migratedBrowser as OpenClawConfig["browser"],
+      browser: migratedBrowser as ApmClawConfig["browser"],
     };
     changes.push(
       `Moved browser.ssrfPolicy.allowPrivateNetwork → browser.ssrfPolicy.dangerouslyAllowPrivateNetwork (${String(resolvedDangerousAllowPrivateNetwork)}).`,

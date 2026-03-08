@@ -33,13 +33,13 @@ vi.mock("node:fs", async (importOriginal) => {
   return { ...wrapped, default: wrapped };
 });
 
-let ensureOpenClawCliOnPath: typeof import("./path-env.js").ensureOpenClawCliOnPath;
+let ensureApmClawCliOnPath: typeof import("./path-env.js").ensureApmClawCliOnPath;
 
-describe("ensureOpenClawCliOnPath", () => {
+describe("ensureApmClawCliOnPath", () => {
   const envKeys = [
     "PATH",
-    "OPENCLAW_PATH_BOOTSTRAPPED",
-    "OPENCLAW_ALLOW_PROJECT_LOCAL_BIN",
+    "APMCLAW_PATH_BOOTSTRAPPED",
+    "APMCLAW_ALLOW_PROJECT_LOCAL_BIN",
     "MISE_DATA_DIR",
     "HOMEBREW_PREFIX",
     "HOMEBREW_BREW_FILE",
@@ -48,7 +48,7 @@ describe("ensureOpenClawCliOnPath", () => {
   let envSnapshot: Record<(typeof envKeys)[number], string | undefined>;
 
   beforeAll(async () => {
-    ({ ensureOpenClawCliOnPath } = await import("./path-env.js"));
+    ({ ensureApmClawCliOnPath } = await import("./path-env.js"));
   });
 
   beforeEach(() => {
@@ -81,9 +81,9 @@ describe("ensureOpenClawCliOnPath", () => {
     setExe(cliPath);
 
     process.env.PATH = "/usr/bin";
-    delete process.env.OPENCLAW_PATH_BOOTSTRAPPED;
+    delete process.env.APMCLAW_PATH_BOOTSTRAPPED;
 
-    ensureOpenClawCliOnPath({
+    ensureApmClawCliOnPath({
       execPath: cliPath,
       cwd: tmp,
       homeDir: tmp,
@@ -96,8 +96,8 @@ describe("ensureOpenClawCliOnPath", () => {
 
   it("is idempotent", () => {
     process.env.PATH = "/bin";
-    process.env.OPENCLAW_PATH_BOOTSTRAPPED = "1";
-    ensureOpenClawCliOnPath({
+    process.env.APMCLAW_PATH_BOOTSTRAPPED = "1";
+    ensureApmClawCliOnPath({
       execPath: "/tmp/does-not-matter",
       cwd: "/tmp",
       homeDir: "/tmp",
@@ -121,9 +121,9 @@ describe("ensureOpenClawCliOnPath", () => {
 
     process.env.MISE_DATA_DIR = miseDataDir;
     process.env.PATH = "/usr/bin";
-    delete process.env.OPENCLAW_PATH_BOOTSTRAPPED;
+    delete process.env.APMCLAW_PATH_BOOTSTRAPPED;
 
-    ensureOpenClawCliOnPath({
+    ensureApmClawCliOnPath({
       execPath: appCli,
       cwd: tmp,
       homeDir: tmp,
@@ -153,9 +153,9 @@ describe("ensureOpenClawCliOnPath", () => {
     setExe(localCli);
 
     process.env.PATH = "/usr/bin";
-    delete process.env.OPENCLAW_PATH_BOOTSTRAPPED;
+    delete process.env.APMCLAW_PATH_BOOTSTRAPPED;
 
-    ensureOpenClawCliOnPath({
+    ensureApmClawCliOnPath({
       execPath: appCli,
       cwd: tmp,
       homeDir: tmp,
@@ -165,9 +165,9 @@ describe("ensureOpenClawCliOnPath", () => {
     expect(withoutOptIn.includes(localBinDir)).toBe(false);
 
     process.env.PATH = "/usr/bin";
-    delete process.env.OPENCLAW_PATH_BOOTSTRAPPED;
+    delete process.env.APMCLAW_PATH_BOOTSTRAPPED;
 
-    ensureOpenClawCliOnPath({
+    ensureApmClawCliOnPath({
       execPath: appCli,
       cwd: tmp,
       homeDir: tmp,
@@ -195,12 +195,12 @@ describe("ensureOpenClawCliOnPath", () => {
     setDir(linuxbrewSbin);
 
     process.env.PATH = "/usr/bin";
-    delete process.env.OPENCLAW_PATH_BOOTSTRAPPED;
+    delete process.env.APMCLAW_PATH_BOOTSTRAPPED;
     delete process.env.HOMEBREW_PREFIX;
     delete process.env.HOMEBREW_BREW_FILE;
     delete process.env.XDG_BIN_HOME;
 
-    ensureOpenClawCliOnPath({
+    ensureApmClawCliOnPath({
       execPath: path.join(execDir, "node"),
       cwd: tmp,
       homeDir: tmp,

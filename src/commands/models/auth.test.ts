@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { ApmClawConfig } from "../../config/config.js";
 import type { RuntimeEnv } from "../../runtime.js";
 
 const mocks = vi.hoisted(() => ({
@@ -94,8 +94,8 @@ function withInteractiveStdin() {
 
 describe("modelsAuthLoginCommand", () => {
   let restoreStdin: (() => void) | null = null;
-  let currentConfig: OpenClawConfig;
-  let lastUpdatedConfig: OpenClawConfig | null;
+  let currentConfig: ApmClawConfig;
+  let lastUpdatedConfig: ApmClawConfig | null;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -109,7 +109,7 @@ describe("modelsAuthLoginCommand", () => {
     mocks.resolveDefaultAgentWorkspaceDir.mockReturnValue("/tmp/openclaw/workspace");
     mocks.loadValidConfigOrThrow.mockImplementation(async () => currentConfig);
     mocks.updateConfig.mockImplementation(
-      async (mutator: (cfg: OpenClawConfig) => OpenClawConfig) => {
+      async (mutator: (cfg: ApmClawConfig) => ApmClawConfig) => {
         lastUpdatedConfig = mutator(currentConfig);
         currentConfig = lastUpdatedConfig;
         return lastUpdatedConfig;

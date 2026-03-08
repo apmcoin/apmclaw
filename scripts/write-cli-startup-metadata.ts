@@ -55,12 +55,12 @@ function readBundledChannelCatalogIds(): string[] {
           };
         };
       };
-      const id = parsed.openclaw?.channel?.id;
+      const id = parsed.apmclaw?.channel?.id;
       if (typeof id !== "string" || !id.trim()) {
         continue;
       }
-      const orderRaw = parsed.openclaw?.channel?.order;
-      const labelRaw = parsed.openclaw?.channel?.label;
+      const orderRaw = parsed.apmclaw?.channel?.order;
+      const labelRaw = parsed.apmclaw?.channel?.label;
       entries.push({
         id: id.trim(),
         order: typeof orderRaw === "number" ? orderRaw : 999,

@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "../../config/config.js";
+import type { ApmClawConfig } from "../../config/config.js";
 import type { RuntimeEnv } from "../../runtime.js";
 
 export async function ensureOnboardingPluginInstalled(_params: {
   pluginName: string;
   prompter?: unknown;
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   runtime: RuntimeEnv;
   quiet?: boolean;
 }): Promise<{ installed: boolean; updated: boolean }> {
@@ -12,7 +12,7 @@ export async function ensureOnboardingPluginInstalled(_params: {
 }
 
 export function reloadOnboardingPluginRegistry(_params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   runtime: RuntimeEnv;
   workspaceDir?: string;
 }): void {

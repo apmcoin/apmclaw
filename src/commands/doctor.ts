@@ -9,7 +9,7 @@ import {
   resolveHooksGmailModel,
 } from "../agents/model-selection.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import { CONFIG_PATH, readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
@@ -21,7 +21,7 @@ const resolveGatewayService = () => ({
 import { hasAmbiguousGatewayAuthModeConfig } from "../gateway/auth-mode-policy.js";
 import { resolveGatewayAuth } from "../gateway/auth.js";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
-import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
+import { resolveApmClawPackageRoot } from "../infra/openclaw-root.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { note } from "../terminal/note.js";
@@ -70,7 +70,7 @@ import { ensureSystemdUserLingerInteractive } from "./systemd-linger.js";
 const intro = (message: string) => clackIntro(stylePromptTitle(message) ?? message);
 const outro = (message: string) => clackOutro(stylePromptTitle(message) ?? message);
 
-function resolveMode(cfg: OpenClawConfig): "local" | "remote" {
+function resolveMode(cfg: ApmClawConfig): "local" | "remote" {
   return cfg.gateway?.mode === "remote" ? "remote" : "local";
 }
 
@@ -80,9 +80,9 @@ export async function doctorCommand(
 ) {
   const prompter = createDoctorPrompter({ runtime, options });
   printWizardHeader(runtime);
-  intro("OpenClaw doctor");
+  intro("ApmClaw doctor");
 
-  const root = await resolveOpenClawPackageRoot({
+  const root = await resolveApmClawPackageRoot({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),
@@ -108,7 +108,7 @@ export async function doctorCommand(
     options,
     confirm: (p) => prompter.confirm(p),
   });
-  let cfg: OpenClawConfig = configResult.cfg;
+  let cfg: ApmClawConfig = configResult.cfg;
   const cfgForPersistence = structuredClone(cfg);
   const sourceConfigValid = configResult.sourceConfigValid ?? true;
 

@@ -51,8 +51,8 @@ describe("run-node script", () => {
           args: ["--version"],
           env: {
             ...process.env,
-            OPENCLAW_FORCE_BUILD: "1",
-            OPENCLAW_RUNNER_LOG: "0",
+            APMCLAW_FORCE_BUILD: "1",
+            APMCLAW_RUNNER_LOG: "0",
           },
           spawn,
           execPath: process.execPath,

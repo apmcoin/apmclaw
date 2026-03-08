@@ -50,11 +50,11 @@ function createOpenAiProviderConfig(apiKey: unknown = "sk-openai-plaintext") {
 }
 
 function buildFixturePaths(rootDir: string) {
-  const stateDir = path.join(rootDir, ".openclaw");
+  const stateDir = path.join(rootDir, ".apmclaw");
   return {
     rootDir,
     stateDir,
-    configPath: path.join(stateDir, "openclaw.json"),
+    configPath: path.join(stateDir, "apmclaw.json"),
     authStorePath: path.join(stateDir, "agents", "main", "agent", "auth-profiles.json"),
     authJsonPath: path.join(stateDir, "agents", "main", "agent", "auth.json"),
     envPath: path.join(stateDir, ".env"),
@@ -70,8 +70,8 @@ async function createApplyFixture(): Promise<ApplyFixture> {
   return {
     ...paths,
     env: {
-      OPENCLAW_STATE_DIR: paths.stateDir,
-      OPENCLAW_CONFIG_PATH: paths.configPath,
+      APMCLAW_STATE_DIR: paths.stateDir,
+      APMCLAW_CONFIG_PATH: paths.configPath,
       OPENAI_API_KEY: "sk-live-env",
     },
   };

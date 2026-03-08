@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/config.js";
+import type { ApmClawConfig } from "../../config/config.js";
 import {
   resolveChannelGroupRequireMention,
   resolveChannelGroupToolsPolicy,
@@ -33,7 +33,7 @@ function parseTelegramGroupId(value?: string | null) {
 }
 
 function resolveTelegramRequireMention(params: {
-  cfg: OpenClawConfig;
+  cfg: ApmClawConfig;
   chatId?: string;
   topicId?: string;
 }): boolean | undefined {

@@ -1,15 +1,15 @@
 import { normalizeChatChannelId } from "../channels/registry.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 
 export function setPluginEnabledInConfig(
-  config: OpenClawConfig,
+  config: ApmClawConfig,
   pluginId: string,
   enabled: boolean,
-): OpenClawConfig {
+): ApmClawConfig {
   const builtInChannelId = normalizeChatChannelId(pluginId);
   const resolvedId = builtInChannelId ?? pluginId;
 
-  const next: OpenClawConfig = {
+  const next: ApmClawConfig = {
     ...config,
     plugins: {
       ...config.plugins,

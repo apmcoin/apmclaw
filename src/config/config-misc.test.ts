@@ -6,12 +6,12 @@ import {
   unsetConfigValueAtPath,
 } from "./config-paths.js";
 import { readConfigFileSnapshot, validateConfigObject } from "./config.js";
-import { buildWebSearchProviderConfig, withTempHome, writeOpenClawConfig } from "./test-helpers.js";
-import { OpenClawSchema } from "./zod-schema.js";
+import { buildWebSearchProviderConfig, withTempHome, writeApmClawConfig } from "./test-helpers.js";
+import { ApmClawSchema } from "./zod-schema.js";
 
 describe("$schema key in config (#14998)", () => {
   it("accepts config with $schema string", () => {
-    const result = OpenClawSchema.safeParse({
+    const result = ApmClawSchema.safeParse({
       $schema: "https://openclaw.ai/config.json",
     });
     expect(result.success).toBe(true);
@@ -21,19 +21,19 @@ describe("$schema key in config (#14998)", () => {
   });
 
   it("accepts config without $schema", () => {
-    const result = OpenClawSchema.safeParse({});
+    const result = ApmClawSchema.safeParse({});
     expect(result.success).toBe(true);
   });
 
   it("rejects non-string $schema", () => {
-    const result = OpenClawSchema.safeParse({ $schema: 123 });
+    const result = ApmClawSchema.safeParse({ $schema: 123 });
     expect(result.success).toBe(false);
   });
 });
 
 describe("plugins.slots.contextEngine", () => {
   it("accepts a contextEngine slot id", () => {
-    const result = OpenClawSchema.safeParse({
+    const result = ApmClawSchema.safeParse({
       plugins: {
         slots: {
           contextEngine: "my-context-engine",
@@ -63,7 +63,7 @@ describe("ui.seamColor", () => {
 
 describe("plugins.entries.*.hooks.allowPromptInjection", () => {
   it("accepts boolean values", () => {
-    const result = OpenClawSchema.safeParse({
+    const result = ApmClawSchema.safeParse({
       plugins: {
         entries: {
           "voice-call": {
@@ -78,7 +78,7 @@ describe("plugins.entries.*.hooks.allowPromptInjection", () => {
   });
 
   it("rejects non-boolean values", () => {
-    const result = OpenClawSchema.safeParse({
+    const result = ApmClawSchema.safeParse({
       plugins: {
         entries: {
           "voice-call": {
@@ -216,7 +216,7 @@ describe("gateway.channelHealthCheckMinutes", () => {
 
 describe("cron webhook schema", () => {
   it("accepts cron.webhookToken and legacy cron.webhook", () => {
-    const res = OpenClawSchema.safeParse({
+    const res = ApmClawSchema.safeParse({
       cron: {
         enabled: true,
         webhook: "https://example.invalid/legacy-cron-webhook",
@@ -228,7 +228,7 @@ describe("cron webhook schema", () => {
   });
 
   it("accepts cron.webhookToken SecretRef values", () => {
-    const res = OpenClawSchema.safeParse({
+    const res = ApmClawSchema.safeParse({
       cron: {
         webhook: "https://example.invalid/legacy-cron-webhook",
         webhookToken: {
@@ -243,7 +243,7 @@ describe("cron webhook schema", () => {
   });
 
   it("rejects non-http cron.webhook URLs", () => {
-    const res = OpenClawSchema.safeParse({
+    const res = ApmClawSchema.safeParse({
       cron: {
         webhook: "ftp://example.invalid/legacy-cron-webhook",
       },
@@ -253,7 +253,7 @@ describe("cron webhook schema", () => {
   });
 
   it("accepts cron.retry config", () => {
-    const res = OpenClawSchema.safeParse({
+    const res = ApmClawSchema.safeParse({
       cron: {
         retry: {
           maxAttempts: 5,
@@ -362,7 +362,7 @@ describe("config strict validation", () => {
 
   it("flags legacy config entries without auto-migrating", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
+      await writeApmClawConfig(home, {
         agents: { list: [{ id: "pi" }] },
         routing: { allowFrom: ["+15555550123"] },
       });
@@ -376,12 +376,12 @@ describe("config strict validation", () => {
 
   it("does not mark resolved-only gateway.bind aliases as auto-migratable legacy", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
-        gateway: { bind: "${OPENCLAW_BIND}" },
+      await writeApmClawConfig(home, {
+        gateway: { bind: "${APMCLAW_BIND}" },
       });
 
-      const prev = process.env.OPENCLAW_BIND;
-      process.env.OPENCLAW_BIND = "0.0.0.0";
+      const prev = process.env.APMCLAW_BIND;
+      process.env.APMCLAW_BIND = "0.0.0.0";
       try {
         const snap = await readConfigFileSnapshot();
         expect(snap.valid).toBe(false);
@@ -389,9 +389,9 @@ describe("config strict validation", () => {
         expect(snap.issues.some((issue) => issue.path === "gateway.bind")).toBe(true);
       } finally {
         if (prev === undefined) {
-          delete process.env.OPENCLAW_BIND;
+          delete process.env.APMCLAW_BIND;
         } else {
-          process.env.OPENCLAW_BIND = prev;
+          process.env.APMCLAW_BIND = prev;
         }
       }
     });
@@ -399,7 +399,7 @@ describe("config strict validation", () => {
 
   it("still marks literal gateway.bind host aliases as legacy", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
+      await writeApmClawConfig(home, {
         gateway: { bind: "0.0.0.0" },
       });
 

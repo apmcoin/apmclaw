@@ -93,7 +93,7 @@ function createSandboxConfig(
     mode: "all",
     scope: "shared",
     workspaceAccess,
-    workspaceRoot: "~/.openclaw/sandboxes",
+    workspaceRoot: "~/.apmclaw/sandboxes",
     docker: {
       image: "openclaw-sandbox:test",
       containerPrefix: "oc-test-",

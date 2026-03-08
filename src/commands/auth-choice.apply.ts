@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { ApmClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "./types.js";
 import { applyAuthChoiceAnthropic } from "./auth-choice.apply.anthropic.js";
@@ -18,7 +18,7 @@ import type { AuthChoice, OnboardOptions } from "./onboard-types.js";
 
 export type ApplyAuthChoiceParams = {
   authChoice: AuthChoice;
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
   agentDir?: string;
@@ -28,7 +28,7 @@ export type ApplyAuthChoiceParams = {
 };
 
 export type ApplyAuthChoiceResult = {
-  config: OpenClawConfig;
+  config: ApmClawConfig;
   agentModelOverride?: string;
 };
 

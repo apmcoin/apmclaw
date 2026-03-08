@@ -1,6 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { defaultRuntime } from "../../runtime.js";
-import { WizardSession } from "../../wizard/session.js";
+// Wizard removed (Docker-only deployment) - inline stub
+class WizardSession {
+  constructor(_runner: any) {}
+  getStatus() { return "cancelled" as const; }
+  getError() { return "Wizard not available in Docker-only deployment"; }
+  async next() { return { done: true }; }
+  async answer(_stepId: string, _value: unknown) {}
+  cancel() {}
+}
 import {
   ErrorCodes,
   errorShape,

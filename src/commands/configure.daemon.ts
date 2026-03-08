@@ -8,10 +8,16 @@ const resolveGatewayService = () => ({
   uninstall: async () => {},
   install: async () => {},
 });
+// Daemon removed (Docker-only deployment) - inline stubs
+const buildGatewayInstallPlan = async () => ({
+  programArguments: [] as string[],
+  workingDirectory: "",
+  environment: {} as Record<string, string>,
+});
+const gatewayInstallErrorHint = () => "Gateway install not available in Docker-only deployment";
 import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { confirm, select } from "./configure.shared.js";
-import { buildGatewayInstallPlan, gatewayInstallErrorHint } from "./daemon-install-helpers.js";
 import {
   DEFAULT_GATEWAY_DAEMON_RUNTIME,
   GATEWAY_DAEMON_RUNTIME_OPTIONS,

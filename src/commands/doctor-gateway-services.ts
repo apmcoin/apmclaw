@@ -24,9 +24,14 @@ const resolveGatewayService = () => ({
   install: async () => {},
 });
 const uninstallLegacySystemdUnits = async () => [] as any[];
+// Daemon removed (Docker-only deployment) - inline stub
+const buildGatewayInstallPlan = async () => ({
+  programArguments: [] as string[],
+  workingDirectory: "",
+  environment: {} as Record<string, string>,
+});
 import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
-import { buildGatewayInstallPlan } from "./daemon-install-helpers.js";
 import { DEFAULT_GATEWAY_DAEMON_RUNTIME, type GatewayDaemonRuntime } from "./daemon-runtime.js";
 import { resolveGatewayAuthTokenForService } from "./doctor-gateway-auth-token.js";
 import type { DoctorOptions, DoctorPrompter } from "./doctor-prompter.js";

@@ -2,7 +2,7 @@ import {
   buildTelegramTopicConversationId,
   parseTelegramChatIdFromTarget,
 } from "../../../acp/conversation-id.js";
-import { DISCORD_THREAD_BINDING_CHANNEL } from "../../../channels/thread-bindings-policy.js";
+// Discord removed (channel deleted)
 import { resolveConversationIdFromTargets } from "../../../infra/outbound/conversation-id.js";
 import { parseAgentSessionKey } from "../../../routing/session-key.js";
 import type { HandleCommandsParams } from "../commands-types.js";
@@ -103,31 +103,13 @@ export function resolveAcpCommandParentConversationId(
       parseTelegramChatIdFromTarget(params.ctx.To)
     );
   }
-  if (channel === DISCORD_THREAD_BINDING_CHANNEL) {
-    const threadId = resolveAcpCommandThreadId(params);
-    if (!threadId) {
-      return undefined;
-    }
-    const fromContext = parseDiscordParentChannelFromContext(params.ctx.ThreadParentId);
-    if (fromContext && fromContext !== threadId) {
-      return fromContext;
-    }
-    const fromParentSession = parseDiscordParentChannelFromSessionKey(params.ctx.ParentSessionKey);
-    if (fromParentSession && fromParentSession !== threadId) {
-      return fromParentSession;
-    }
-    const fromTargets = resolveConversationIdFromTargets({
-      targets: [params.ctx.OriginatingTo, params.command.to, params.ctx.To],
-    });
-    if (fromTargets && fromTargets !== threadId) {
-      return fromTargets;
-    }
-  }
+  // Discord removed (channel deleted)
   return undefined;
 }
 
 export function isAcpCommandDiscordChannel(params: HandleCommandsParams): boolean {
-  return resolveAcpCommandChannel(params) === DISCORD_THREAD_BINDING_CHANNEL;
+  // Discord removed (channel deleted) - always return false
+  return false;
 }
 
 export function resolveAcpCommandBindingContext(params: HandleCommandsParams): {

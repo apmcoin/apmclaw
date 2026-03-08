@@ -11,9 +11,7 @@ export type SetupChannelsOptions = {
   accountIds?: Partial<Record<ChannelId, string>>;
   onAccountId?: (channel: ChannelId, accountId: string) => void;
   promptAccountIds?: boolean;
-  whatsappAccountId?: string;
-  promptWhatsAppAccountId?: boolean;
-  onWhatsAppAccountId?: (accountId: string) => void;
+  // WhatsApp removed (channel deleted)
   forceAllowFromChannels?: ChannelId[];
   skipStatusNote?: boolean;
   skipDmPolicyPrompt?: boolean;

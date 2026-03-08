@@ -15,7 +15,11 @@ import { resolvePluginProviders } from "../../plugins/providers.js";
 import type { ProviderAuthResult, ProviderPlugin } from "../../plugins/types.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import { stylePromptHint, stylePromptMessage } from "../../terminal/prompt-style.js";
-import { createClackPrompter } from "../../wizard/clack-prompter.js";
+// Wizard removed (Docker-only deployment) - inline stub
+import type { WizardPrompter } from "../../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
 import { validateAnthropicSetupToken } from "../auth-token.js";
 import { isRemoteEnvironment } from "../oauth-env.js";
 import { createVpsAwareOAuthHandlers } from "../oauth-flow.js";

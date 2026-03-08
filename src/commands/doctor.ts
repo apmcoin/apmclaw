@@ -13,7 +13,11 @@ import type { OpenClawConfig } from "../config/config.js";
 import { CONFIG_PATH, readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
-import { resolveGatewayService } from "../daemon/service.js";
+// Daemon removed (Docker-only deployment) - inline stub
+const resolveGatewayService = () => ({
+  name: "gateway",
+  isLoaded: async () => false,
+});
 import { hasAmbiguousGatewayAuthModeConfig } from "../gateway/auth-mode-policy.js";
 import { resolveGatewayAuth } from "../gateway/auth.js";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
@@ -31,7 +35,8 @@ import {
 import { noteBootstrapFileSize } from "./doctor-bootstrap-size.js";
 import { doctorShellCompletion } from "./doctor-completion.js";
 import { loadAndMaybeMigrateDoctorConfig } from "./doctor-config-flow.js";
-import { maybeRepairGatewayDaemon } from "./doctor-gateway-daemon-flow.js";
+// Daemon removed (Docker-only deployment) - inline stub
+const maybeRepairGatewayDaemon = async () => {};
 import { checkGatewayHealth, probeGatewayMemoryStatus } from "./doctor-gateway-health.js";
 import {
   maybeRepairGatewayServiceConfig,

@@ -2,6 +2,16 @@ node_modules
 **/node_modules/
 .env
 docker-compose.extra.yml
+
+# Config with real data (DO NOT COMMIT)
+config/apmclaw.json
+config/gateway.yml
+config/AGENTS.md
+config/SOUL.md
+config/memory/
+config/cron/
+config/logs/
+config/workspace/
 dist
 pnpm-lock.yaml
 bun.lock

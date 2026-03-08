@@ -137,7 +137,7 @@ export const TelegramAccountSchemaBase = z
     commands: ProviderCommandsSchema,
     customCommands: z.array(TelegramCustomCommandSchema).optional(),
     configWrites: z.boolean().optional(),
-    dmPolicy: DmPolicySchema.optional().default("allowlist"),
+    dmPolicy: DmPolicySchema.optional().default("disabled"),
     botToken: SecretInputSchema.optional().register(sensitive),
     tokenFile: z.string().optional(),
     replyToMode: ReplyToModeSchema.optional(),

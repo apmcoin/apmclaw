@@ -1,4 +1,4 @@
-import type { ExecToolDefaults } from "../../../agents/bash-tools.js";
+type ExecToolDefaults = Record<string, unknown>;
 import type { SkillSnapshot } from "../../../agents/skills.js";
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { SessionEntry } from "../../../config/sessions.js";

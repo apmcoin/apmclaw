@@ -1,4 +1,4 @@
-import type { ExecToolDefaults } from "../../agents/bash-tools.js";
+type ExecToolDefaults = Record<string, unknown>;
 import type { ModelAliasIndex } from "../../agents/model-selection.js";
 import { resolveSandboxRuntimeStatus } from "../../agents/sandbox.js";
 import type { SkillCommandSpec } from "../../agents/skills.js";

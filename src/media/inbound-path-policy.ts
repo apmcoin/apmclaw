@@ -115,36 +115,20 @@ export function isInboundPathAllowed(params: {
   return effectiveRoots.some((rootPattern) => matchesRootPattern({ candidatePath, rootPattern }));
 }
 
-function resolveIMessageAccountConfig(params: { cfg: OpenClawConfig; accountId?: string | null }) {
-  const accountId = params.accountId?.trim();
-  if (!accountId) {
-    return undefined;
-  }
-  return params.cfg.channels?.imessage?.accounts?.[accountId];
+function resolveIMessageAccountConfig(_params: { cfg: OpenClawConfig; accountId?: string | null }) {
+  return undefined;
 }
 
-export function resolveIMessageAttachmentRoots(params: {
+export function resolveIMessageAttachmentRoots(_params: {
   cfg: OpenClawConfig;
   accountId?: string | null;
 }): string[] {
-  const accountConfig = resolveIMessageAccountConfig(params);
-  return mergeInboundPathRoots(
-    accountConfig?.attachmentRoots,
-    params.cfg.channels?.imessage?.attachmentRoots,
-    DEFAULT_IMESSAGE_ATTACHMENT_ROOTS,
-  );
+  return [...DEFAULT_IMESSAGE_ATTACHMENT_ROOTS];
 }
 
-export function resolveIMessageRemoteAttachmentRoots(params: {
+export function resolveIMessageRemoteAttachmentRoots(_params: {
   cfg: OpenClawConfig;
   accountId?: string | null;
 }): string[] {
-  const accountConfig = resolveIMessageAccountConfig(params);
-  return mergeInboundPathRoots(
-    accountConfig?.remoteAttachmentRoots,
-    params.cfg.channels?.imessage?.remoteAttachmentRoots,
-    accountConfig?.attachmentRoots,
-    params.cfg.channels?.imessage?.attachmentRoots,
-    DEFAULT_IMESSAGE_ATTACHMENT_ROOTS,
-  );
+  return [...DEFAULT_IMESSAGE_ATTACHMENT_ROOTS];
 }

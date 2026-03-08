@@ -1,13 +1,13 @@
 import type { GroupPolicy } from "./types.base.js";
-import type { DiscordConfig } from "./types.discord.js";
+type DiscordConfig = Record<string, unknown>;
 import type { GoogleChatConfig } from "./types.googlechat.js";
-import type { IMessageConfig } from "./types.imessage.js";
+type IMessageConfig = Record<string, unknown>;
 import type { IrcConfig } from "./types.irc.js";
 import type { MSTeamsConfig } from "./types.msteams.js";
 import type { SignalConfig } from "./types.signal.js";
-import type { SlackConfig } from "./types.slack.js";
+type SlackConfig = Record<string, unknown>;
 import type { TelegramConfig } from "./types.telegram.js";
-import type { WhatsAppConfig } from "./types.whatsapp.js";
+type WhatsAppConfig = Record<string, unknown>;
 
 export type ChannelHeartbeatVisibilityConfig = {
   /** Show HEARTBEAT_OK acknowledgments in chat (default: false). */

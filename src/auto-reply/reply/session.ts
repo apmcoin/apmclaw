@@ -26,7 +26,7 @@ import {
   type SessionScope,
   updateSessionStore,
 } from "../../config/sessions.js";
-import type { TtsAutoMode } from "../../config/types.tts.js";
+type TtsAutoMode = "off";
 import { archiveSessionTranscripts } from "../../gateway/session-utils.fs.js";
 import { resolveConversationIdFromTargets } from "../../infra/outbound/conversation-id.js";
 import { deliverSessionMaintenanceWarning } from "../../infra/session-maintenance-warning.js";

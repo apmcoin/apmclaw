@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { isSafeScpRemoteHost } from "../infra/scp-host.js";
 import { isValidInboundPathRootPattern } from "../media/inbound-path-policy.js";
-import {
-  resolveTelegramPreviewStreamMode,
-} from "./discord-preview-streaming.js";
+// Discord streaming function removed (discord-preview-streaming.js deleted)
 import {
   normalizeTelegramCommandDescription,
   normalizeTelegramCommandName,
@@ -125,7 +123,8 @@ const validateTelegramCustomCommands = (
 };
 
 function normalizeTelegramStreamingConfig(value: { streaming?: unknown; streamMode?: unknown }) {
-  value.streaming = resolveTelegramPreviewStreamMode(value);
+  // Inline telegram streaming resolution (discord-preview-streaming.js deleted)
+  value.streaming = value.streamMode === "preview" ? "preview" : "off";
   delete value.streamMode;
 }
 

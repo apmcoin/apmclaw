@@ -171,21 +171,33 @@ apM Claw uses Docker for consistent, secure deployments.
 git clone https://github.com/apmcoin/apmclaw.git
 cd apmclaw
 
-# 2. Create .env file
+# 2. Setup environment
 cp .env.example .env
-# Edit .env and fill in:
-# - OPENCLAW_GATEWAY_TOKEN (generate with: openssl rand -hex 32)
+# Edit .env:
 # - TELEGRAM_BOT_TOKEN (from @BotFather)
 # - ANTHROPIC_API_KEY or OPENAI_API_KEY
 
-# 3. Start with Docker Compose
+# 3. Setup config
+cp config/apmclaw.sample.json config/apmclaw.json
+# Edit config/apmclaw.json:
+# - project.name: Your project name
+# - project.links: Your official docs/whitepaper/website
+# - channels.telegram.groups: Add your group chat_id (see below)
+
+# 4. Start with Docker Compose
 docker compose up -d
 
-# 4. Check logs
-docker compose logs -f
+# 5. Get your Telegram group chat_id
+# Add bot to group, send message, then check logs:
+docker compose logs -f apmclaw
+# Look for: "chat":{"id":-100XXXXXXXXX}
+# Add this chat_id to config/apmclaw.json
 
-# 5. Check health
-curl http://localhost:18789/healthz
+# 6. Restart to apply config
+docker compose restart apmclaw
+
+# 7. Test in Telegram
+# Mention bot in your group: @yourbotname hello
 ```
 
 📚 **Why Docker only?**: Consistent environments, better isolation, easier deployment. No npm global installs or daemon configuration needed.
@@ -244,26 +256,44 @@ If you're unsure about security configuration, **contact the apM team** for assi
 
 ## Configuration
 
-All configuration via `.env` file and optional `config/openclaw.json`.
+Two configuration files:
 
-**Required (.env):**
-- `OPENCLAW_GATEWAY_TOKEN` - Random token for gateway auth
-- `TELEGRAM_BOT_TOKEN` - From @BotFather
-- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` - AI provider
+### 1. `.env` - Secrets & API Keys
+```bash
+TELEGRAM_BOT_TOKEN=your-token-here
+ANTHROPIC_API_KEY=sk-ant-...  # or OPENAI_API_KEY
+```
 
-**Optional (config/openclaw.json):**
-```json5
+### 2. `config/apmclaw.json` - Project & Groups
+```json
 {
-  channels: {
-    telegram: {
-      enabled: true,
-      dmPolicy: "blocked"  // DMs disabled by default
+  "project": {
+    "name": "Your Project",
+    "links": {
+      "website": "https://...",
+      "whitepaper": "https://...",
+      "docs": "https://..."
+    }
+  },
+  "channels": {
+    "telegram": {
+      "groups": {
+        "-100XXXXXXXXX": {
+          "enabled": true,
+          "requireMention": true
+        }
+      }
     }
   }
 }
 ```
 
-See `.env.example` for all options.
+**What project.links does:**
+- AI browses these links as official sources
+- Learns periodically to reduce spam false positives
+- Uses for answering community questions
+
+See `config/apmclaw.sample.json` for full example.
 
 ---
 
@@ -356,7 +386,7 @@ Inherits OpenClaw's **Gateway + Agent** architecture, simplified for crypto secu
 
 - **Gateway** - CLI-only, chat room focused (no remote nodes)
 - **Agent** - Single agent manages all chat rooms with separate context
-- **Channels** - Telegram + Discord only
+- **Channels** - Telegram only
 - **Extensions** - Vetted plugins only
 
 ```

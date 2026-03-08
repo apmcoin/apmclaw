@@ -132,9 +132,9 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 ---
 
-## The Diet: -377,000 Lines of Code
+## The Diet: -380,000 Lines of Code
 
-apM Claw removed **377,174 lines across 2,178 files** from OpenClaw:
+apM Claw removed **380,242 lines across 2,196 files** from OpenClaw:
 
 | Removed | Files | Lines | What |
 |---------|-------|-------|------|
@@ -142,7 +142,8 @@ apM Claw removed **377,174 lines across 2,178 files** from OpenClaw:
 | **Apps & Extensions** | 1,799 | 299,325 | iOS/Android apps, channel plugins, Python skills |
 | **Device Control** | 34 | 3,134 | TTS, Canvas, camera control, voice features |
 | **Config Files** | 26 | 6,449 | Cloud deployment, test configs, unused docs |
-| **Total** | **2,178** | **377,174** | ~38% of original codebase |
+| **Test & Config Cleanup** | 18 | 3,068 | Deleted channel tests, config merge helpers |
+| **Total** | **2,196** | **380,242** | ~38% of original codebase |
 
 **Result:**
 - ✅ Telegram-only, Docker-only

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { toAcpRuntimeErrorText } from "../../../acp/runtime/error-text.js";
 import type { AcpRuntimeError } from "../../../acp/runtime/errors.js";
 import type { AcpRuntimeSessionMode } from "../../../acp/runtime/types.js";
-import { DISCORD_THREAD_BINDING_CHANNEL } from "../../../channels/thread-bindings-policy.js";
+// Discord removed (channel deleted)
 import type { AcpSessionRuntimeOptions } from "../../../config/sessions/types.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";
 import type { CommandHandlerResult, HandleCommandsParams } from "../commands-types.js";
@@ -168,11 +168,8 @@ function normalizeAcpOptionToken(raw: string): string {
 }
 
 function resolveDefaultSpawnThreadMode(params: HandleCommandsParams): AcpSpawnThreadMode {
-  if (resolveAcpCommandChannel(params) !== DISCORD_THREAD_BINDING_CHANNEL) {
-    return "off";
-  }
-  const currentThreadId = resolveAcpCommandThreadId(params);
-  return currentThreadId ? "here" : "auto";
+  // Discord removed (channel deleted) - always return "off"
+  return "off";
 }
 
 export function parseSpawnInput(

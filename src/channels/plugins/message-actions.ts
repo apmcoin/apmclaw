@@ -6,7 +6,7 @@ import type { ChannelMessageActionContext, ChannelMessageActionName } from "./ty
 const trustedRequesterRequiredByChannel: Readonly<
   Partial<Record<string, ReadonlySet<ChannelMessageActionName>>>
 > = {
-  discord: new Set<ChannelMessageActionName>(["timeout", "kick", "ban"]),
+  // Discord removed (channel deleted)
 };
 
 type ChannelActions = NonNullable<NonNullable<ReturnType<typeof getChannelPlugin>>["actions"]>;

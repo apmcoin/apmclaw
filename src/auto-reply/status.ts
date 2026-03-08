@@ -26,14 +26,6 @@ import type { MediaUnderstandingDecision } from "../media-understanding/types.js
 import { listPluginCommands } from "../plugins/commands.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import {
-  getTtsMaxLength,
-  getTtsProvider,
-  isSummarizationEnabled,
-  resolveTtsAutoMode,
-  resolveTtsConfig,
-  resolveTtsPrefsPath,
-} from "../tts/tts.js";
-import {
   estimateUsageCost,
   formatTokenCount as formatTokenCountShared,
   formatUsd,
@@ -389,23 +381,8 @@ const formatVoiceModeLine = (
   config?: OpenClawConfig,
   sessionEntry?: SessionEntry,
 ): string | null => {
-  if (!config) {
-    return null;
-  }
-  const ttsConfig = resolveTtsConfig(config);
-  const prefsPath = resolveTtsPrefsPath(ttsConfig);
-  const autoMode = resolveTtsAutoMode({
-    config: ttsConfig,
-    prefsPath,
-    sessionAuto: sessionEntry?.ttsAuto,
-  });
-  if (autoMode === "off") {
-    return null;
-  }
-  const provider = getTtsProvider(ttsConfig, prefsPath);
-  const maxLength = getTtsMaxLength(prefsPath);
-  const summarize = isSummarizationEnabled(prefsPath) ? "on" : "off";
-  return `🔊 Voice: ${autoMode} · provider=${provider} · limit=${maxLength} · summary=${summarize}`;
+  // TTS removed
+  return null;
 };
 
 export function buildStatusMessage(args: StatusArgs): string {

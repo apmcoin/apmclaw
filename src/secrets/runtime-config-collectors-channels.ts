@@ -1,6 +1,5 @@
 import type { OpenClawConfig } from "../config/config.js";
 import { coerceSecretRef, resolveSecretInputRef } from "../config/types.secrets.js";
-import { collectTtsApiKeyAssignments } from "./runtime-config-collectors-tts.js";
 import {
   collectSecretInputAssignment,
   hasOwnProperty,
@@ -403,17 +402,7 @@ function collectDiscordAssignments(params: {
       },
     });
   }
-  if (isRecord(discord.voice) && isRecord(discord.voice.tts)) {
-    collectTtsApiKeyAssignments({
-      tts: discord.voice.tts,
-      pathPrefix: "channels.discord.voice.tts",
-      defaults: params.defaults,
-      context: params.context,
-      active: isBaseFieldActiveForChannelSurface(surface, "voice") && isEnabledFlag(discord.voice),
-      inactiveReason:
-        "no enabled Discord surface inherits this top-level voice config or voice is disabled.",
-    });
-  }
+  // TTS removed from Discord voice
   if (!surface.hasExplicitAccounts) {
     return;
   }
@@ -433,20 +422,7 @@ function collectDiscordAssignments(params: {
         },
       });
     }
-    if (
-      hasOwnProperty(account, "voice") &&
-      isRecord(account.voice) &&
-      isRecord(account.voice.tts)
-    ) {
-      collectTtsApiKeyAssignments({
-        tts: account.voice.tts,
-        pathPrefix: `channels.discord.accounts.${accountId}.voice.tts`,
-        defaults: params.defaults,
-        context: params.context,
-        active: enabled && isEnabledFlag(account.voice),
-        inactiveReason: "Discord account is disabled or voice is disabled for this account.",
-      });
-    }
+    // TTS removed from Discord voice
   }
 }
 

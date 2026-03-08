@@ -1,20 +1,7 @@
 import crypto from "node:crypto";
 import type { AgentToolResult } from "@mariozechner/pi-agent-core";
 import { Type } from "@sinclair/typebox";
-import {
-  type CameraFacing,
-  cameraTempPath,
-  parseCameraClipPayload,
-  parseCameraSnapPayload,
-  writeCameraClipPayloadToFile,
-  writeCameraPayloadToFile,
-} from "../../cli/nodes-camera.js";
 import { parseEnvPairs, parseTimeoutMs } from "../../cli/nodes-run.js";
-import {
-  parseScreenRecordPayload,
-  screenRecordTempPath,
-  writeScreenRecordToFile,
-} from "../../cli/nodes-screen.js";
 import { parseDurationMs } from "../../cli/parse-duration.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import { parsePreparedSystemRunPayload } from "../../infra/system-run-approval-context.js";
@@ -237,99 +224,8 @@ export function createNodesTool(options?: {
             });
             return jsonResult({ ok: true });
           }
-          case "camera_snap": {
-            const node = readStringParam(params, "node", { required: true });
-            const resolvedNode = await resolveNode(gatewayOpts, node);
-            const nodeId = resolvedNode.nodeId;
-            const facingRaw =
-              typeof params.facing === "string" ? params.facing.toLowerCase() : "front";
-            const facings: CameraFacing[] =
-              facingRaw === "both"
-                ? ["front", "back"]
-                : facingRaw === "front" || facingRaw === "back"
-                  ? [facingRaw]
-                  : (() => {
-                      throw new Error("invalid facing (front|back|both)");
-                    })();
-            const maxWidth =
-              typeof params.maxWidth === "number" && Number.isFinite(params.maxWidth)
-                ? params.maxWidth
-                : 1600;
-            const quality =
-              typeof params.quality === "number" && Number.isFinite(params.quality)
-                ? params.quality
-                : 0.95;
-            const delayMs =
-              typeof params.delayMs === "number" && Number.isFinite(params.delayMs)
-                ? params.delayMs
-                : undefined;
-            const deviceId =
-              typeof params.deviceId === "string" && params.deviceId.trim()
-                ? params.deviceId.trim()
-                : undefined;
-            if (deviceId && facings.length > 1) {
-              throw new Error("facing=both is not allowed when deviceId is set");
-            }
-
-            const content: AgentToolResult<unknown>["content"] = [];
-            const details: Array<Record<string, unknown>> = [];
-
-            for (const facing of facings) {
-              const raw = await callGatewayTool<{ payload: unknown }>("node.invoke", gatewayOpts, {
-                nodeId,
-                command: "camera.snap",
-                params: {
-                  facing,
-                  maxWidth,
-                  quality,
-                  format: "jpg",
-                  delayMs,
-                  deviceId,
-                },
-                idempotencyKey: crypto.randomUUID(),
-              });
-              const payload = parseCameraSnapPayload(raw?.payload);
-              const normalizedFormat = payload.format.toLowerCase();
-              if (
-                normalizedFormat !== "jpg" &&
-                normalizedFormat !== "jpeg" &&
-                normalizedFormat !== "png"
-              ) {
-                throw new Error(`unsupported camera.snap format: ${payload.format}`);
-              }
-
-              const isJpeg = normalizedFormat === "jpg" || normalizedFormat === "jpeg";
-              const filePath = cameraTempPath({
-                kind: "snap",
-                facing,
-                ext: isJpeg ? "jpg" : "png",
-              });
-              await writeCameraPayloadToFile({
-                filePath,
-                payload,
-                expectedHost: resolvedNode.remoteIp,
-                invalidPayloadMessage: "invalid camera.snap payload",
-              });
-              content.push({ type: "text", text: `MEDIA:${filePath}` });
-              if (options?.modelHasVision && payload.base64) {
-                content.push({
-                  type: "image",
-                  data: payload.base64,
-                  mimeType:
-                    imageMimeFromFormat(payload.format) ?? (isJpeg ? "image/jpeg" : "image/png"),
-                });
-              }
-              details.push({
-                facing,
-                path: filePath,
-                width: payload.width,
-                height: payload.height,
-              });
-            }
-
-            const result: AgentToolResult<unknown> = { content, details };
-            return await sanitizeToolResultImages(result, "nodes:camera_snap", imageSanitization);
-          }
+          case "camera_snap":
+            throw new Error("camera_snap: device control removed in apM Claw");
           case "photos_latest": {
             const node = readStringParam(params, "node", { required: true });
             const resolvedNode = await resolveNode(gatewayOpts, node);

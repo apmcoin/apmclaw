@@ -15,43 +15,25 @@ import { getSessionBindingService } from "../../../infra/outbound/session-bindin
 import type { CommandHandlerResult } from "../commands-types.js";
 import {
   type SubagentsCommandContext,
-  isDiscordSurface,
   isTelegramSurface,
   resolveChannelAccountId,
   resolveCommandSurfaceChannel,
-  resolveDiscordChannelIdForFocus,
   resolveFocusTargetSession,
   resolveTelegramConversationId,
   stopWithText,
 } from "./shared.js";
 
 type FocusBindingContext = {
-  channel: "discord" | "telegram";
+  channel: "telegram";
   accountId: string;
   conversationId: string;
-  placement: "current" | "child";
-  labelNoun: "thread" | "conversation";
+  placement: "current";
+  labelNoun: "conversation";
 };
 
 function resolveFocusBindingContext(
   params: SubagentsCommandContext["params"],
 ): FocusBindingContext | null {
-  if (isDiscordSurface(params)) {
-    const currentThreadId =
-      params.ctx.MessageThreadId != null ? String(params.ctx.MessageThreadId).trim() : "";
-    const parentChannelId = currentThreadId ? undefined : resolveDiscordChannelIdForFocus(params);
-    const conversationId = currentThreadId || parentChannelId;
-    if (!conversationId) {
-      return null;
-    }
-    return {
-      channel: "discord",
-      accountId: resolveChannelAccountId(params),
-      conversationId,
-      placement: currentThreadId ? "current" : "child",
-      labelNoun: "thread",
-    };
-  }
   if (isTelegramSurface(params)) {
     const conversationId = resolveTelegramConversationId(params);
     if (!conversationId) {
@@ -73,8 +55,8 @@ export async function handleSubagentsFocusAction(
 ): Promise<CommandHandlerResult> {
   const { params, runs, restTokens } = ctx;
   const channel = resolveCommandSurfaceChannel(params);
-  if (channel !== "discord" && channel !== "telegram") {
-    return stopWithText("⚠️ /focus is only available on Discord and Telegram.");
+  if (channel !== "telegram") {
+    return stopWithText("⚠️ /focus is only available on Telegram.");
   }
 
   const token = restTokens.join(" ").trim();

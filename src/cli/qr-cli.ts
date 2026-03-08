@@ -2,7 +2,9 @@ import type { Command } from "commander";
 import qrcode from "qrcode-terminal";
 import { loadConfig } from "../config/config.js";
 import { hasConfiguredSecretInput, resolveSecretInputRef } from "../config/types.secrets.js";
-import { resolvePairingSetupFromConfig, encodePairingSetupCode } from "../pairing/setup-code.js";
+// Pairing removed (companion apps deleted) - inline stubs
+const resolvePairingSetupFromConfig = () => null;
+const encodePairingSetupCode = () => "";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { defaultRuntime } from "../runtime.js";
 import { secretRefKey } from "../secrets/ref-contract.js";

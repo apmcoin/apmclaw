@@ -4,10 +4,11 @@ import { resolveCommandSecretRefsViaGateway } from "../cli/command-secret-gatewa
 import { getStatusCommandSecretTargetIds } from "../cli/command-secret-targets.js";
 import { withProgress } from "../cli/progress.js";
 import { loadConfig, readConfigFileSnapshot, resolveGatewayPort } from "../config/config.js";
-import { readLastGatewayErrorLine } from "../daemon/diagnostics.js";
-import { resolveNodeService } from "../daemon/node-service.js";
-import type { GatewayService } from "../daemon/service.js";
-import { resolveGatewayService } from "../daemon/service.js";
+// Daemon removed (Docker-only deployment) - inline stubs
+const readLastGatewayErrorLine = async (_env: unknown) => null;
+type GatewayService = { name: string };
+const resolveGatewayService = (): GatewayService => ({ name: "gateway" });
+const resolveNodeService = (): GatewayService => ({ name: "node" });
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
 import { resolveGatewayProbeAuthSafe } from "../gateway/probe-auth.js";

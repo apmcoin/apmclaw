@@ -8,7 +8,11 @@ import { type OpenClawConfig, writeConfigFile } from "../../config/config.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { deleteTelegramUpdateOffset } from "../../telegram/update-offset-store.js";
-import { createClackPrompter } from "../../wizard/clack-prompter.js";
+// Wizard removed (Docker-only deployment) - inline stub prompter
+import type { WizardPrompter } from "../../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
 import { type ChatChannel, channelLabel, requireValidConfig, shouldUseWizard } from "./shared.js";
 
 export type ChannelsRemoveOptions = {

@@ -813,7 +813,7 @@ type TelegramDeleteOpts = {
 export async function deleteMessageTelegram(
   chatIdInput: string | number,
   messageIdInput: string | number,
-  opts: TelegramDeleteOpts = {},
+  opts: TelegramModerationOpts = {},
 ): Promise<{ ok: true }> {
   const { cfg, account, api } = resolveTelegramApiContext(opts);
   const rawTarget = String(chatIdInput);
@@ -825,6 +825,12 @@ export async function deleteMessageTelegram(
     verbose: opts.verbose,
   });
   const messageId = normalizeMessageId(messageIdInput);
+
+  // Physical Guardrail: Verify requester is an admin before deleting
+  if (opts.requesterId && !(await isAdminTelegram(chatId, opts.requesterId, api))) {
+    throw new Error(`Unauthorized: User ${opts.requesterId} is not an admin in chat ${chatId}`);
+  }
+
   const requestWithDiag = createTelegramRequestWithDiag({
     cfg,
     account,
@@ -847,6 +853,9 @@ export async function isAdminTelegram(
   api: TelegramApiOverride,
 ): Promise<boolean> {
   try {
+    if (typeof api.getChatMember !== "function") {
+      return false;
+    }
     const member = await api.getChatMember(chatId, Number(userId));
     return member.status === "administrator" || member.status === "creator";
   } catch (err) {
@@ -929,7 +938,17 @@ export async function unbanChatMemberTelegram(
 export async function restrictChatMemberTelegram(
   chatIdInput: string | number,
   userIdInput: string | number,
-  permissions: Parameters<typeof api.restrictChatMember>[2],
+  permissions: {
+    can_send_messages?: boolean;
+    can_send_media_messages?: boolean;
+    can_send_polls?: boolean;
+    can_send_other_messages?: boolean;
+    can_add_web_page_previews?: boolean;
+    can_change_info?: boolean;
+    can_invite_users?: boolean;
+    can_pin_messages?: boolean;
+    until_date?: number;
+  },
   opts: TelegramModerationOpts = {},
 ): Promise<{ ok: true }> {
   const { cfg, account, api } = resolveTelegramApiContext(opts);

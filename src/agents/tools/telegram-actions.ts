@@ -28,7 +28,6 @@ import { getCacheStats, searchStickers } from "../../telegram/sticker-cache.js";
 import { resolveTelegramToken } from "../../telegram/token.js";
 import {
   jsonResult,
-  readBooleanParam,
   readNumberParam,
   readReactionParams,
   readStringArrayParam,

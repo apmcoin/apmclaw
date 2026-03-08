@@ -7,7 +7,7 @@ import {
   stripSilentToken,
 } from "../tokens.js";
 import type { ReplyPayload } from "../types.js";
-import { hasLineDirectives, parseLineDirectives } from "./line-directives.js";
+// LINE removed (Telegram-only)
 import {
   resolveResponsePrefixTemplate,
   type ResponsePrefixContext,
@@ -84,12 +84,8 @@ export function normalizeReplyPayload(
     return null;
   }
 
-  // Parse LINE-specific directives from text (quick_replies, location, confirm, buttons)
+  // LINE directives removed (Telegram-only)
   let enrichedPayload: ReplyPayload = { ...payload, text };
-  if (text && hasLineDirectives(text)) {
-    enrichedPayload = parseLineDirectives(enrichedPayload);
-    text = enrichedPayload.text;
-  }
 
   // Resolve template variables in responsePrefix if context is provided
   const effectivePrefix = opts.responsePrefixContext

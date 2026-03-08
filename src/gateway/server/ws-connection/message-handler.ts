@@ -18,7 +18,7 @@ import {
 import { updatePairedNodeMetadata } from "../../../infra/node-pairing.js";
 import { recordRemoteNodeInfo, refreshRemoteNodeBins } from "../../../infra/skills-remote.js";
 import { upsertPresence } from "../../../infra/system-presence.js";
-import { loadVoiceWakeConfig } from "../../../infra/voicewake.js";
+const loadVoiceWakeConfig = async () => ({ triggers: [] });
 import { rawDataToString } from "../../../infra/ws.js";
 import type { createSubsystemLogger } from "../../../logging/subsystem.js";
 import { roleScopesAllow } from "../../../shared/operator-scope-compat.js";

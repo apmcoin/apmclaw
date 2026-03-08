@@ -8,12 +8,8 @@ import { isSubagentSessionKey } from "../routing/session-key.js";
 import { resolveGatewayMessageChannel } from "../utils/message-channel.js";
 import { resolveAgentConfig } from "./agent-scope.js";
 import { createApplyPatchTool } from "./apply-patch.js";
-import {
-  createExecTool,
-  createProcessTool,
-  type ExecToolDefaults,
-  type ProcessToolDefaults,
-} from "./bash-tools.js";
+type ExecToolDefaults = Record<string, unknown>;
+type ProcessToolDefaults = Record<string, unknown>;
 import { listChannelAgentTools } from "./channel-tools.js";
 import { resolveImageSanitizationLimits } from "./image-sanitization.js";
 import type { ModelAuthMode } from "./model-auth.js";
@@ -390,46 +386,6 @@ export function createOpenClawCodingTools(options?: {
     }
     return [tool];
   });
-  const { cleanupMs: cleanupMsOverride, ...execDefaults } = options?.exec ?? {};
-  const execTool = createExecTool({
-    ...execDefaults,
-    host: options?.exec?.host ?? execConfig.host,
-    security: options?.exec?.security ?? execConfig.security,
-    ask: options?.exec?.ask ?? execConfig.ask,
-    node: options?.exec?.node ?? execConfig.node,
-    pathPrepend: options?.exec?.pathPrepend ?? execConfig.pathPrepend,
-    safeBins: options?.exec?.safeBins ?? execConfig.safeBins,
-    safeBinTrustedDirs: options?.exec?.safeBinTrustedDirs ?? execConfig.safeBinTrustedDirs,
-    safeBinProfiles: options?.exec?.safeBinProfiles ?? execConfig.safeBinProfiles,
-    agentId,
-    cwd: workspaceRoot,
-    allowBackground,
-    scopeKey,
-    sessionKey: options?.sessionKey,
-    messageProvider: options?.messageProvider,
-    currentChannelId: options?.currentChannelId,
-    currentThreadTs: options?.currentThreadTs,
-    accountId: options?.agentAccountId,
-    backgroundMs: options?.exec?.backgroundMs ?? execConfig.backgroundMs,
-    timeoutSec: options?.exec?.timeoutSec ?? execConfig.timeoutSec,
-    approvalRunningNoticeMs:
-      options?.exec?.approvalRunningNoticeMs ?? execConfig.approvalRunningNoticeMs,
-    notifyOnExit: options?.exec?.notifyOnExit ?? execConfig.notifyOnExit,
-    notifyOnExitEmptySuccess:
-      options?.exec?.notifyOnExitEmptySuccess ?? execConfig.notifyOnExitEmptySuccess,
-    sandbox: sandbox
-      ? {
-          containerName: sandbox.containerName,
-          workspaceDir: sandbox.workspaceDir,
-          containerWorkdir: sandbox.containerWorkdir,
-          env: sandbox.docker.env,
-        }
-      : undefined,
-  });
-  const processTool = createProcessTool({
-    cleanupMs: cleanupMsOverride ?? execConfig.cleanupMs,
-    scopeKey,
-  });
   const applyPatchTool =
     !applyPatchEnabled || (sandboxRoot && !allowWorkspaceWrites)
       ? null
@@ -468,8 +424,6 @@ export function createOpenClawCodingTools(options?: {
         : []
       : []),
     ...(applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
-    execTool as unknown as AnyAgentTool,
-    processTool as unknown as AnyAgentTool,
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...listChannelAgentTools({ cfg: options?.config }),
     ...createOpenClawTools({

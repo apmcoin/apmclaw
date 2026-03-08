@@ -101,15 +101,6 @@ const entries: SubCliEntry[] = [
     },
   },
   {
-    name: "nodes",
-    description: "Manage gateway-owned node pairing and node commands",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../nodes-cli.js");
-      mod.registerNodesCli(program);
-    },
-  },
-  {
     name: "devices",
     description: "Device pairing + token management",
     hasSubcommands: true,

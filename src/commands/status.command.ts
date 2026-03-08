@@ -23,7 +23,9 @@ import { resolveControlUiLinks } from "./onboard-helpers.js";
 import { statusAllCommand } from "./status-all.js";
 import { groupChannelIssuesByChannel } from "./status-all/channel-issues.js";
 import { formatGatewayAuthUsed } from "./status-all/format.js";
-import { getDaemonStatusSummary, getNodeDaemonStatusSummary } from "./status.daemon.js";
+// Daemon removed (Docker-only deployment) - status always returns undefined
+const getDaemonStatusSummary = async () => undefined;
+const getNodeDaemonStatusSummary = async () => undefined;
 import {
   formatDuration,
   formatKTokens,

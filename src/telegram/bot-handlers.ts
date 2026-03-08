@@ -26,7 +26,7 @@ import type {
 import { danger, logVerbose, warn } from "../globals.js";
 import { enqueueSystemEvent } from "../infra/system-events.js";
 import { MediaFetchError } from "../media/fetch.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+// Pairing removed (companion apps deleted)
 import { resolveAgentRoute } from "../routing/resolve-route.js";
 import { resolveThreadSessionKeys } from "../routing/session-key.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
@@ -429,8 +429,8 @@ export const registerTelegramHandlers = ({
     }, TELEGRAM_TEXT_FRAGMENT_MAX_GAP_MS);
   };
 
-  const loadStoreAllowFrom = async () =>
-    readChannelAllowFromStore("telegram", process.env, accountId).catch(() => []);
+  // Pairing removed (companion apps deleted) - pairing store always empty
+  const loadStoreAllowFrom = async () => [] as string[];
 
   const resolveReplyMediaForMessage = async (
     ctx: TelegramContext,

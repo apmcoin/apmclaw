@@ -1,6 +1,13 @@
 import { withProgress } from "../cli/progress.js";
 import { loadConfig } from "../config/config.js";
-import { resolveGatewayService } from "../daemon/service.js";
+// Daemon removed (Docker-only deployment) - inline stub
+const resolveGatewayService = () => ({
+  name: "gateway",
+  isLoaded: async () => false,
+  restart: async () => {},
+  uninstall: async () => {},
+  install: async () => {},
+});
 import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { confirm, select } from "./configure.shared.js";

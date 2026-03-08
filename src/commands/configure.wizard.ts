@@ -9,13 +9,18 @@ import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { resolveUserPath } from "../utils.js";
-// Wizard removed (Docker-only deployment) - inline stub
+// Wizard removed (Docker-only deployment) - inline stubs
 import type { WizardPrompter } from "../wizard/prompts.js";
 const createClackPrompter = (): WizardPrompter => {
   throw new Error("Interactive wizard not available in Docker-only deployment");
 };
-import { resolveOnboardingSecretInputString } from "../wizard/onboarding.secret-input.js";
-import { WizardCancelledError } from "../wizard/prompts.js";
+const resolveOnboardingSecretInputString = (input: any) => input;
+class WizardCancelledError extends Error {
+  constructor(message = "Wizard cancelled") {
+    super(message);
+    this.name = "WizardCancelledError";
+  }
+}
 import { removeChannelConfigWizard } from "./configure.channels.js";
 import { maybeInstallDaemon } from "./configure.daemon.js";
 import { promptAuthConfig } from "./configure.gateway-auth.js";

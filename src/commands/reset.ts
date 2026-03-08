@@ -1,7 +1,8 @@
 import { cancel, confirm, isCancel } from "@clack/prompts";
 import { formatCliCommand } from "../cli/command-format.js";
 import { isNixMode } from "../config/config.js";
-import { resolveGatewayService } from "../daemon/service.js";
+// Daemon removed (Docker-only deployment) - inline stub
+const resolveGatewayService = () => ({ name: "gateway" });
 import type { RuntimeEnv } from "../runtime.js";
 import { selectStyled } from "../terminal/prompt-select-styled.js";
 import { stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";

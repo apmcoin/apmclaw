@@ -1,8 +1,7 @@
-import {
-  enableSystemdUserLinger,
-  isSystemdUserServiceAvailable,
-  readSystemdUserLingerStatus,
-} from "../daemon/systemd.js";
+// Daemon removed (Docker-only deployment) - inline stubs
+const enableSystemdUserLinger = async () => ({ ok: false, stdout: "", stderr: "Daemon removed" });
+const isSystemdUserServiceAvailable = async () => false;
+const readSystemdUserLingerStatus = async () => null;
 import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 

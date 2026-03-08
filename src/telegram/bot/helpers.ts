@@ -6,7 +6,6 @@ import type {
   TelegramGroupConfig,
   TelegramTopicConfig,
 } from "../../config/types.js";
-import { readChannelAllowFromStore } from "../../pairing/pairing-store.js";
 import { normalizeAccountId } from "../../routing/session-key.js";
 import { firstDefined, normalizeAllowFrom, type NormalizedAllowFrom } from "../bot-access.js";
 import type { TelegramStreamMode } from "./types.js";
@@ -52,10 +51,9 @@ export async function resolveTelegramGroupAllowFromContext(params: {
   const resolvedThreadId = threadSpec.scope === "forum" ? threadSpec.id : undefined;
   const dmThreadId = threadSpec.scope === "dm" ? threadSpec.id : undefined;
   const threadIdForConfig = resolvedThreadId ?? dmThreadId;
-  const storeAllowFrom = await readChannelAllowFromStore("telegram", process.env, accountId).catch(
-    () => [],
-  );
-  const { groupConfig, topicConfig } = params.resolveTelegramGroupConfig(
+  // Pairing removed (companion apps deleted) - pairing store always empty
+  const storeAllowFrom: string[] = [];
+  const { groupConfig, topicConfig} = params.resolveTelegramGroupConfig(
     params.chatId,
     threadIdForConfig,
   );

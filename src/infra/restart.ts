@@ -1,10 +1,11 @@
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
-import {
-  resolveGatewayLaunchAgentLabel,
-  resolveGatewaySystemdServiceName,
-} from "../daemon/constants.js";
+// Daemon removed (Docker-only deployment) - inline constants
+const resolveGatewayLaunchAgentLabel = (profile?: string) =>
+  profile ? `ai.openclaw.gateway.${profile}` : "ai.openclaw.gateway";
+const resolveGatewaySystemdServiceName = (profile?: string) =>
+  profile ? `openclaw-gateway-${profile}` : "openclaw-gateway";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { cleanStaleGatewayProcessesSync, findGatewayPidsOnPortSync } from "./restart-stale-pids.js";
 

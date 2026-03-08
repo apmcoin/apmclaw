@@ -14,7 +14,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
 export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,
@@ -59,7 +58,6 @@ export { resolveChannelAccountConfigBasePath } from "./config-paths.js";
 export { evaluateSenderGroupAccess } from "./group-access.js";
 export type { SenderGroupAccessDecision } from "./group-access.js";
 export { resolveInboundRouteEnvelopeBuilderWithRuntime } from "./inbound-envelope.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export type { OutboundReplyPayload } from "./reply-payload.js";
 export { resolveOutboundMediaUrls, sendMediaWithLeadingCaption } from "./reply-payload.js";
 export { buildTokenChannelStatusSummary } from "./status-helpers.js";

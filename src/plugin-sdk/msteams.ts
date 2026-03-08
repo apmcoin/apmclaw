@@ -33,7 +33,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
 export type {
   BaseProbeResult,
   ChannelDirectoryEntry,
@@ -90,7 +89,6 @@ export { keepHttpServerTaskAlive } from "./channel-lifecycle.js";
 export { withFileLock } from "./file-lock.js";
 export { readJsonFileWithFallback, writeJsonFileAtomically } from "./json-store.js";
 export { loadOutboundMediaFromUrl } from "./outbound-media.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export {
   buildHostnameAllowlistPolicyFromSuffixAllowlist,
   isHttpsUrlAllowedByHostnameSuffixAllowlist,

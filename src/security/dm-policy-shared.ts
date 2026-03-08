@@ -1,7 +1,7 @@
 import { mergeDmAllowFromSources, resolveGroupAllowFromSources } from "../channels/allow-from.js";
 import { resolveControlCommandGate } from "../channels/command-gating.js";
 import type { ChannelId } from "../channels/plugins/types.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+// Pairing removed (companion apps deleted)
 import { normalizeStringEntries } from "../shared/string-normalization.js";
 
 export function resolvePinnedMainDmOwnerFromAllowlist(params: {
@@ -93,10 +93,11 @@ export async function readStoreAllowFromForDmPolicy(params: {
   if (params.shouldRead === false || params.dmPolicy === "allowlist") {
     return [];
   }
+  // Pairing removed (companion apps deleted) - pairing store always empty
   const readStore =
     params.readStore ??
     ((provider: ChannelId, accountId: string) =>
-      readChannelAllowFromStore(provider, process.env, accountId));
+      Promise.resolve([] as string[]));
   return await readStore(params.provider, params.accountId).catch(() => []);
 }
 

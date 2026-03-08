@@ -72,13 +72,9 @@ import { buildTemplateMessageFromPayload } from "../../line/template-messages.js
 import { convertMarkdownTables } from "../../markdown/tables.js";
 import { fetchRemoteMedia } from "../../media/fetch.js";
 import { saveMediaBuffer } from "../../media/store.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
-import { monitorSignalProvider } from "../../signal/index.js";
 import { probeSignal } from "../../signal/probe.js";
 import { sendMessageSignal } from "../../signal/send.js";
 import {
@@ -121,20 +117,7 @@ export function createRuntimeChannel(): PluginRuntime["channel"] {
     routing: {
       resolveAgentRoute,
     },
-    pairing: {
-      buildPairingReply,
-      readAllowFromStore: ({ channel, accountId, env }) =>
-        readChannelAllowFromStore(channel, env, accountId),
-      upsertPairingRequest: ({ channel, id, accountId, meta, env, pairingAdapter }) =>
-        upsertChannelPairingRequest({
-          channel,
-          id,
-          accountId,
-          meta,
-          env,
-          pairingAdapter,
-        }),
-    },
+    // Pairing removed (companion apps deleted)
     media: {
       fetchRemoteMedia,
       saveMediaBuffer,

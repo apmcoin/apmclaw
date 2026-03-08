@@ -1,6 +1,5 @@
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { getFinishedSession, getSession, markExited } from "../../agents/bash-process-registry.js";
-import { createExecTool } from "../../agents/bash-tools.js";
 import { resolveSandboxRuntimeStatus } from "../../agents/sandbox.js";
 import { killProcessTree } from "../../agents/shell-utils.js";
 import { isCommandFlagEnabled } from "../../config/commands.js";
@@ -331,31 +330,11 @@ export async function handleBashChatCommand(params: {
   };
 
   try {
-    const foregroundMs = resolveForegroundMs(params.cfg);
-    const shouldBackgroundImmediately = foregroundMs <= 0;
-    const timeoutSec = params.cfg.tools?.exec?.timeoutSec;
-    const notifyOnExit = params.cfg.tools?.exec?.notifyOnExit;
-    const notifyOnExitEmptySuccess = params.cfg.tools?.exec?.notifyOnExitEmptySuccess;
-    const execTool = createExecTool({
-      scopeKey: CHAT_BASH_SCOPE_KEY,
-      allowBackground: true,
-      timeoutSec,
-      sessionKey: params.sessionKey,
-      notifyOnExit,
-      notifyOnExitEmptySuccess,
-      elevated: {
-        enabled: params.elevated.enabled,
-        allowed: params.elevated.allowed,
-        defaultLevel: "on",
-      },
-    });
-    const result = await execTool.execute("chat-bash", {
-      command: commandText,
-      background: shouldBackgroundImmediately,
-      yieldMs: shouldBackgroundImmediately ? undefined : foregroundMs,
-      timeout: timeoutSec,
-      elevated: true,
-    });
+    activeJob = null;
+    return {
+      text: "⚠️ bash execution has been disabled in apM Claw (security policy).",
+    };
+    const result = { details: { status: "completed" as const, exitCode: 1, aggregated: "" }, content: [] as Array<{ type: "text"; text: string }> };
 
     if (result.details?.status === "running") {
       const sessionId = result.details.sessionId;

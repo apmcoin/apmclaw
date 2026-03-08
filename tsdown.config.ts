@@ -40,7 +40,6 @@ const pluginSdkEntrypoints = [
   "thread-ownership",
   "tlon",
   "twitch",
-  "voice-call",
   "zalo",
   "zalouser",
   "account-id",

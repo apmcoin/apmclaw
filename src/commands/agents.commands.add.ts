@@ -13,8 +13,17 @@ import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../utils.js";
-import { createClackPrompter } from "../wizard/clack-prompter.js";
-import { WizardCancelledError } from "../wizard/prompts.js";
+// Wizard removed (Docker-only deployment) - inline stubs
+import type { WizardPrompter } from "../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
+class WizardCancelledError extends Error {
+  constructor(message = "Wizard cancelled") {
+    super(message);
+    this.name = "WizardCancelledError";
+  }
+}
 import {
   applyAgentBindings,
   buildChannelBindings,

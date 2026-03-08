@@ -57,26 +57,12 @@ import {
   resolveLineAccount,
 } from "../../line/accounts.js";
 import { monitorLineProvider } from "../../line/monitor.js";
-import { probeLineBot } from "../../line/probe.js";
-import {
-  createQuickReplyItems,
-  pushFlexMessage,
-  pushLocationMessage,
-  pushMessageLine,
-  pushMessagesLine,
-  pushTemplateMessage,
-  pushTextMessageWithQuickReplies,
-  sendMessageLine,
-} from "../../line/send.js";
-import { buildTemplateMessageFromPayload } from "../../line/template-messages.js";
+// LINE removed (Telegram-only)
+// Signal removed (Telegram-only)
 import { convertMarkdownTables } from "../../markdown/tables.js";
 import { fetchRemoteMedia } from "../../media/fetch.js";
 import { saveMediaBuffer } from "../../media/store.js";
-import {
-  readChannelAllowFromStore,
-  upsertChannelPairingRequest,
-import { probeSignal } from "../../signal/probe.js";
-import { sendMessageSignal } from "../../signal/send.js";
+// Pairing removed (companion apps deleted)
 import {
   auditTelegramGroupMembership,
   collectTelegramUnmentionedGroupIds,

@@ -4,7 +4,7 @@ import {
 } from "../config/group-policy.js";
 import { requireActivePluginRegistry } from "../plugins/runtime.js";
 import { normalizeAccountId } from "../routing/session-key.js";
-import { resolveSignalAccount } from "../signal/accounts.js";
+// Signal removed (Telegram-only)
 import { inspectTelegramAccount } from "../telegram/account-inspect.js";
 import { normalizeE164 } from "../utils.js";
 import {
@@ -13,7 +13,7 @@ import {
   resolveTelegramGroupRequireMention,
   resolveTelegramGroupToolPolicy,
 } from "./plugins/group-mentions.js";
-import { normalizeSignalMessagingTarget } from "./plugins/normalize/signal.js";
+// Signal removed (Telegram-only)
 import type {
   ChannelCapabilities,
   ChannelCommandAdapter,
@@ -92,20 +92,7 @@ function resolveDirectOrGroupChannelId(context: ChannelThreadingContext): string
   return (isDirect ? (context.From ?? context.To) : context.To)?.trim() || undefined;
 }
 
-function buildSignalThreadToolContext(params: {
-  context: ChannelThreadingContext;
-  hasRepliedRef: ChannelThreadingToolContext["hasRepliedRef"];
-}): ChannelThreadingToolContext {
-  const currentChannelIdRaw = resolveDirectOrGroupChannelId(params.context);
-  const currentChannelId = currentChannelIdRaw
-    ? (normalizeSignalMessagingTarget(currentChannelIdRaw) ?? currentChannelIdRaw.trim())
-    : undefined;
-  return {
-    currentChannelId,
-    currentThreadTs: params.context.ReplyToId,
-    hasRepliedRef: params.hasRepliedRef,
-  };
-}
+// Signal removed (Telegram-only)
 
 function buildThreadToolContextFromMessageThreadOrReply(params: {
   context: ChannelThreadingContext;
@@ -335,30 +322,7 @@ const DOCKS: Record<ChatChannelId, ChannelDock> = {
         buildThreadToolContextFromMessageThreadOrReply({ context, hasRepliedRef }),
     },
   },
-  signal: {
-    id: "signal",
-    capabilities: {
-      chatTypes: ["direct", "group"],
-      reactions: true,
-      media: true,
-    },
-    outbound: DEFAULT_OUTBOUND_TEXT_CHUNK_LIMIT_4000,
-    streaming: DEFAULT_BLOCK_STREAMING_COALESCE,
-    config: {
-      resolveAllowFrom: ({ cfg, accountId }) =>
-        stringifyAllowFrom(resolveSignalAccount({ cfg, accountId }).config.allowFrom ?? []),
-      formatAllowFrom: ({ allowFrom }) =>
-        trimAllowFromEntries(allowFrom)
-          .map((entry) => (entry === "*" ? "*" : normalizeE164(entry.replace(/^signal:/i, ""))))
-          .filter(Boolean),
-      resolveDefaultTo: ({ cfg, accountId }) =>
-        resolveSignalAccount({ cfg, accountId }).config.defaultTo?.trim() || undefined,
-    },
-    threading: {
-      buildToolContext: ({ context, hasRepliedRef }) =>
-        buildSignalThreadToolContext({ context, hasRepliedRef }),
-    },
-  },
+  // Signal removed (Telegram-only)
 };
 
 function buildDockFromPlugin(plugin: ChannelPlugin): ChannelDock {

@@ -8,7 +8,11 @@ import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-ke
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { resolveTelegramAccount } from "../../telegram/accounts.js";
 import { deleteTelegramUpdateOffset } from "../../telegram/update-offset-store.js";
-import { createClackPrompter } from "../../wizard/clack-prompter.js";
+// Wizard removed (Docker-only deployment) - inline stub prompter
+import type { WizardPrompter } from "../../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
 import { applyAgentBindings, describeBinding } from "../agents.bindings.js";
 import { buildAgentSummaries } from "../agents.config.js";
 import { setupChannels } from "../onboard-channels.js";

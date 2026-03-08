@@ -5,7 +5,11 @@ import { resolveSessionTranscriptsDirForAgent } from "../config/sessions.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
-import { createClackPrompter } from "../wizard/clack-prompter.js";
+// Wizard removed (Docker-only deployment) - inline stub
+import type { WizardPrompter } from "../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
 import { createQuietRuntime, requireValidConfig } from "./agents.command-shared.js";
 import { findAgentEntryIndex, listAgentEntries, pruneAgentConfig } from "./agents.config.js";
 import { moveToTrash } from "./onboard-helpers.js";

@@ -9,7 +9,11 @@ import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { resolveUserPath } from "../utils.js";
-import { createClackPrompter } from "../wizard/clack-prompter.js";
+// Wizard removed (Docker-only deployment) - inline stub
+import type { WizardPrompter } from "../wizard/prompts.js";
+const createClackPrompter = (): WizardPrompter => {
+  throw new Error("Interactive wizard not available in Docker-only deployment");
+};
 import { resolveOnboardingSecretInputString } from "../wizard/onboarding.secret-input.js";
 import { WizardCancelledError } from "../wizard/prompts.js";
 import { removeChannelConfigWizard } from "./configure.channels.js";

@@ -28,7 +28,8 @@ import {
   isTrustedSafeBinPath,
   normalizeTrustedSafeBinDirs,
 } from "../infra/exec-safe-bin-trust.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+// Pairing removed (companion apps deleted) - inline stub
+const readChannelAllowFromStore = async () => [] as string[];
 import {
   formatChannelAccountsDefaultPath,
   formatSetExplicitDefaultInstruction,

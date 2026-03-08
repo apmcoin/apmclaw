@@ -3,7 +3,7 @@ import type { Skill } from "@mariozechner/pi-coding-agent";
 import type { ChatType } from "../../channels/chat-type.js";
 import type { ChannelId } from "../../channels/plugins/types.js";
 import type { DeliveryContext } from "../../utils/delivery-context.js";
-import type { TtsAutoMode } from "../types.tts.js";
+type TtsAutoMode = "off";
 
 export type SessionScope = "per-sender" | "global";
 

@@ -129,21 +129,6 @@ function normalizeTelegramStreamingConfig(value: { streaming?: unknown; streamMo
   delete value.streamMode;
 }
 
-function normalizeDiscordStreamingConfig(value: { streaming?: unknown; streamMode?: unknown }) {
-  value.streaming = resolveDiscordPreviewStreamMode(value);
-  delete value.streamMode;
-}
-
-function normalizeSlackStreamingConfig(value: {
-  streaming?: unknown;
-  nativeStreaming?: unknown;
-  streamMode?: unknown;
-}) {
-  value.nativeStreaming = resolveSlackNativeStreaming(value);
-  value.streaming = resolveSlackStreamingMode(value);
-  delete value.streamMode;
-}
-
 export const TelegramAccountSchemaBase = z
   .object({
     name: z.string().optional(),
@@ -404,7 +389,6 @@ const DiscordVoiceSchema = z
     autoJoin: z.array(DiscordVoiceAutoJoinSchema).optional(),
     daveEncryption: z.boolean().optional(),
     decryptionFailureTolerance: z.number().int().min(0).optional(),
-    tts: TtsConfigSchema.optional(),
   })
   .strict()
   .optional();
@@ -551,8 +535,6 @@ export const DiscordAccountSchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
-    normalizeDiscordStreamingConfig(value);
-
     const activityText = typeof value.activity === "string" ? value.activity.trim() : "";
     const hasActivity = Boolean(activityText);
     const hasActivityType = value.activityType !== undefined;
@@ -856,8 +838,6 @@ export const SlackAccountSchema = z
   })
   .strict()
   .superRefine((value) => {
-    normalizeSlackStreamingConfig(value);
-
     // DM allowlist validation is enforced at SlackConfigSchema so account entries
     // can inherit top-level allowFrom via runtime shallow merge.
   });
@@ -893,7 +873,6 @@ export const SlackConfigSchema = SlackAccountSchema.safeExtend({
 
   const baseMode = value.mode ?? "socket";
   if (!value.accounts) {
-    validateSlackSigningSecretRequirements(value, ctx);
     return;
   }
   for (const [accountId, account] of Object.entries(value.accounts)) {
@@ -928,7 +907,6 @@ export const SlackConfigSchema = SlackAccountSchema.safeExtend({
       continue;
     }
   }
-  validateSlackSigningSecretRequirements(value, ctx);
 });
 
 export const SignalAccountSchemaBase = z

@@ -168,9 +168,7 @@ function isStructuredChannelConfigured(
   return recordHasKeys(entry);
 }
 
-function isWhatsAppConfigured(_cfg: OpenClawConfig): boolean {
-  return false;
-}
+// WhatsApp removed (whatsapp deleted)
 
 function isGenericChannelConfigured(cfg: OpenClawConfig, channelId: string): boolean {
   const entry = resolveChannelConfig(cfg, channelId);
@@ -182,9 +180,6 @@ export function isChannelConfigured(
   channelId: string,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  if (channelId === "whatsapp") {
-    return isWhatsAppConfigured(cfg);
-  }
   const spec = STRUCTURED_CHANNEL_CONFIG_SPECS[channelId];
   if (spec) {
     return isStructuredChannelConfigured(cfg, channelId, env, spec);

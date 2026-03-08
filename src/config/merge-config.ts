@@ -1,5 +1,5 @@
 import type { OpenClawConfig } from "./config.js";
-import type { WhatsAppConfig } from "./types.js";
+// WhatsApp removed (whatsapp deleted)
 
 export type MergeSectionOptions<T> = {
   unsetOnUndefined?: Array<keyof T>;
@@ -23,16 +23,4 @@ export function mergeConfigSection<T extends Record<string, unknown>>(
   return next as T;
 }
 
-export function mergeWhatsAppConfig(
-  cfg: OpenClawConfig,
-  patch: Partial<WhatsAppConfig>,
-  options?: MergeSectionOptions<WhatsAppConfig>,
-): OpenClawConfig {
-  return {
-    ...cfg,
-    channels: {
-      ...cfg.channels,
-      whatsapp: mergeConfigSection(cfg.channels?.whatsapp, patch, options),
-    },
-  };
-}
+// WhatsApp config merge removed (whatsapp deleted)

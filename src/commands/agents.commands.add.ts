@@ -14,7 +14,7 @@ import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../utils.js";
 // Wizard removed (Docker-only deployment) - inline stubs
-import type { WizardPrompter } from "../wizard/prompts.js";
+import type { WizardPrompter } from "./types.js";
 const createClackPrompter = (): WizardPrompter => {
   throw new Error("Interactive wizard not available in Docker-only deployment");
 };

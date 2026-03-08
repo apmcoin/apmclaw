@@ -95,7 +95,7 @@ vi.mock("./onboard-channels.js", () => ({
   setupChannels: vi.fn(),
 }));
 
-import { WizardCancelledError } from "../wizard/prompts.js";
+import { WizardCancelledError } from "./types.js";
 import { runConfigureWizard } from "./configure.wizard.js";
 
 describe("runConfigureWizard", () => {

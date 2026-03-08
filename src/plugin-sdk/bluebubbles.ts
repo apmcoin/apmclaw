@@ -70,7 +70,7 @@ export {
   resolveDmGroupAccessWithLists,
 } from "../security/dm-policy-shared.js";
 export { formatDocsLink } from "../terminal/links.js";
-export type { WizardPrompter } from "../wizard/prompts.js";
+export type { WizardPrompter } from "../commands/types.js";
 export { isAllowedParsedChatSender } from "./allow-from.js";
 export { readBooleanParam } from "./boolean-param.js";
 export { buildProbeChannelStatusSummary } from "./status-helpers.js";

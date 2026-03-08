@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { WizardPrompter } from "../wizard/prompts.js";
+import type { WizardPrompter } from "./types.js";
 import {
   ensureApiKeyFromOptionEnvOrPrompt,
   ensureApiKeyFromEnvOrPrompt,

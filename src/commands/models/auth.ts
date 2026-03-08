@@ -16,7 +16,7 @@ import type { ProviderAuthResult, ProviderPlugin } from "../../plugins/types.js"
 import type { RuntimeEnv } from "../../runtime.js";
 import { stylePromptHint, stylePromptMessage } from "../../terminal/prompt-style.js";
 // Wizard removed (Docker-only deployment) - inline stub
-import type { WizardPrompter } from "../../wizard/prompts.js";
+import type { WizardPrompter } from "../types.js";
 const createClackPrompter = (): WizardPrompter => {
   throw new Error("Interactive wizard not available in Docker-only deployment");
 };

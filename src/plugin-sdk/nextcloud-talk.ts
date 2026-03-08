@@ -70,7 +70,7 @@ export {
   resolveDmGroupAccessWithCommandGate,
 } from "../security/dm-policy-shared.js";
 export { formatDocsLink } from "../terminal/links.js";
-export type { WizardPrompter } from "../wizard/prompts.js";
+export type { WizardPrompter } from "../commands/types.js";
 export {
   listConfiguredAccountIds,
   resolveAccountWithDefaultFallback,

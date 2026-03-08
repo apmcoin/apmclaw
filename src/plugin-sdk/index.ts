@@ -202,7 +202,7 @@ export {
 export {
   GoogleChatConfigSchema,
   MSTeamsConfigSchema,
-  SignalConfigSchema,
+  // SignalConfigSchema removed (Telegram-only)
   TelegramConfigSchema,
 } from "../config/zod-schema.providers-core.js";
 export {
@@ -525,50 +525,12 @@ export {
 } from "../telegram/outbound-params.js";
 export { type TelegramProbe } from "../telegram/probe.js";
 
-// Channel: Signal
-export {
-  listSignalAccountIds,
-  resolveDefaultSignalAccountId,
-  resolveSignalAccount,
-  type ResolvedSignalAccount,
-} from "../signal/accounts.js";
-export {
-  looksLikeSignalTargetId,
-  normalizeSignalMessagingTarget,
-} from "../channels/plugins/normalize/signal.js";
+// Signal removed (Telegram-only)
 
 // Channel: BlueBubbles
 export { collectBlueBubblesStatusIssues } from "../channels/plugins/status-issues/bluebubbles.js";
 
-// Channel: LINE
-export {
-  listLineAccountIds,
-  normalizeAccountId as normalizeLineAccountId,
-  resolveDefaultLineAccountId,
-  resolveLineAccount,
-} from "../line/accounts.js";
-export { LineConfigSchema } from "../line/config-schema.js";
-export type {
-  LineConfig,
-  LineAccountConfig,
-  ResolvedLineAccount,
-  LineChannelData,
-} from "../line/types.js";
-export {
-  createInfoCard,
-  createListCard,
-  createImageCard,
-  createActionCard,
-  createReceiptCard,
-  type CardAction,
-  type ListItem,
-} from "../line/flex-templates.js";
-export {
-  processLineMessage,
-  hasMarkdownToConvert,
-  stripMarkdown,
-} from "../line/markdown-to-line.js";
-export type { ProcessedLineMessage } from "../line/markdown-to-line.js";
+// LINE removed (Telegram-only)
 
 // Context engine
 export type {

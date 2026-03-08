@@ -9,8 +9,7 @@ const pluginSdkEntrypoints = [
   "core",
   "compat",
   "telegram",
-  "signal",
-  "line",
+  // Signal/LINE removed (Telegram-only)
   "msteams",
   "acpx",
   "bluebubbles",
@@ -69,13 +68,10 @@ export default defineConfig([
   {
     // Keep sync lazy-runtime channel modules as concrete dist files.
     entry: {
-      "channels/plugins/actions/signal": "src/channels/plugins/actions/signal.ts",
       "channels/plugins/actions/telegram": "src/channels/plugins/actions/telegram.ts",
       "telegram/audit": "src/telegram/audit.ts",
       "telegram/token": "src/telegram/token.ts",
-      "line/accounts": "src/line/accounts.ts",
-      "line/send": "src/line/send.ts",
-      "line/template-messages": "src/line/template-messages.ts",
+      // Signal/LINE removed (Telegram-only)
     },
     env,
     fixedExtension: false,

@@ -176,6 +176,8 @@ export type TelegramAccountConfig = {
    * Telegram expects unicode emoji (e.g., "👀") rather than shortcodes.
    */
   ackReaction?: string;
+  /** Automatically delete service messages (new members, left members, etc.) to keep chat clean. */
+  autoDeleteSystemMessages?: boolean;
 };
 
 export type TelegramTopicConfig = {
@@ -215,6 +217,8 @@ export type TelegramGroupConfig = {
   systemPrompt?: string;
   /** If true, skip automatic voice-note transcription for mention detection in this group. */
   disableAudioPreflight?: boolean;
+  /** Automatically delete service messages (new members, left members, etc.) in this group. */
+  autoDeleteSystemMessages?: boolean;
 };
 
 export type TelegramDirectConfig = {

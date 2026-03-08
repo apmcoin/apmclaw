@@ -17,6 +17,8 @@ services:
       NODE_OPTIONS: "--no-warnings"
       # Data persistence path (override internal .openclaw default)
       APMCLAW_STATE_DIR: /home/node/.apmclaw
+      # Verbose logging for debugging
+      APMCLAW_LOG_LEVEL: debug
       # Telegram
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       # AI providers

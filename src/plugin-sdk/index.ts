@@ -162,10 +162,6 @@ export {
   collectStatusIssuesFromLastError,
   createDefaultChannelRuntimeState,
 } from "./status-helpers.js";
-export {
-  promptSingleChannelSecretInput,
-  type SingleChannelSecretInputPromptResult,
-} from "../channels/plugins/onboarding/helpers.js";
 export { buildOauthProviderAuthResult } from "./provider-auth-result.js";
 export { formatResolvedUnresolvedNote } from "./resolution-notes.js";
 export type { ChannelDock } from "../channels/dock.js";
@@ -463,12 +459,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export {
-  addWildcardAllowFrom,
-  mergeAllowFromEntries,
-  promptAccountId,
-} from "../channels/plugins/onboarding/helpers.js";
-export { promptChannelAccessConfig } from "../channels/plugins/onboarding/channel-access.js";
 
 export {
   createActionGate,
@@ -529,7 +519,6 @@ export {
 } from "../telegram/accounts.js";
 export { inspectTelegramAccount } from "../telegram/account-inspect.js";
 export type { InspectedTelegramAccount } from "../telegram/account-inspect.js";
-export { telegramOnboardingAdapter } from "../channels/plugins/onboarding/telegram.js";
 export {
   looksLikeTelegramTargetId,
   normalizeTelegramMessagingTarget,
@@ -548,7 +537,6 @@ export {
   resolveSignalAccount,
   type ResolvedSignalAccount,
 } from "../signal/accounts.js";
-export { signalOnboardingAdapter } from "../channels/plugins/onboarding/signal.js";
 export {
   looksLikeSignalTargetId,
   normalizeSignalMessagingTarget,

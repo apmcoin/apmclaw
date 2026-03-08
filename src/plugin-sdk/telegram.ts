@@ -61,7 +61,6 @@ export {
   resolveTelegramGroupRequireMention,
   resolveTelegramGroupToolPolicy,
 } from "../channels/plugins/group-mentions.js";
-export { telegramOnboardingAdapter } from "../channels/plugins/onboarding/telegram.js";
 export { TelegramConfigSchema } from "../config/zod-schema.providers-core.js";
 
 export { buildTokenChannelStatusSummary } from "./status-helpers.js";

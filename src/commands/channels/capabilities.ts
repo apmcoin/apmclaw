@@ -226,61 +226,12 @@ function formatProbeLines(channelId: string, probe: unknown): string[] {
   return lines;
 }
 
-async function buildDiscordPermissions(params: {
+async function buildDiscordPermissions(_params: {
   account: { token?: string; accountId?: string };
   target?: string;
 }): Promise<{ target?: DiscordTargetSummary; report?: DiscordPermissionsReport }> {
-  const target = summarizeDiscordTarget(params.target?.trim());
-  if (!target) {
-    return {};
-  }
-  if (target.kind !== "channel" || !target.channelId) {
-    return {
-      target,
-      report: {
-        error: "Target looks like a DM user; pass channel:<id> to audit channel permissions.",
-      },
-    };
-  }
-  const token = params.account.token?.trim();
-  if (!token) {
-    return {
-      target,
-      report: {
-        channelId: target.channelId,
-        error: "Discord bot token missing for permission audit.",
-      },
-    };
-  }
-  try {
-    const perms = // await fetchChannelPermissionsDiscord(target.channelId, {
-      token,
-      accountId: params.account.accountId ?? undefined,
-    });
-    const missing = REQUIRED_DISCORD_PERMISSIONS.filter(
-      (permission) => !perms.permissions.includes(permission),
-    );
-    return {
-      target,
-      report: {
-        channelId: perms.channelId,
-        guildId: perms.guildId,
-        isDm: perms.isDm,
-        channelType: perms.channelType,
-        permissions: perms.permissions,
-        missingRequired: missing.length ? missing : [],
-        raw: perms.raw,
-      },
-    };
-  } catch (err) {
-    return {
-      target,
-      report: {
-        channelId: target.channelId,
-        error: err instanceof Error ? err.message : String(err),
-      },
-    };
-  }
+  // Stub: Discord removed in apM Claw
+  return {};
 }
 
 async function resolveChannelReports(params: {
@@ -334,7 +285,7 @@ async function resolveChannelReports(params: {
       if (botToken) {
         scopeReports.push({
           tokenType: "bot",
-          result: // await fetchSlackScopes(botToken, timeoutMs),
+          result: { ok: false, error: "Slack removed in apM Claw" },
         });
       } else {
         scopeReports.push({
@@ -345,7 +296,7 @@ async function resolveChannelReports(params: {
       if (userToken) {
         scopeReports.push({
           tokenType: "user",
-          result: // await fetchSlackScopes(userToken, timeoutMs),
+          result: { ok: false, error: "Slack removed in apM Claw" },
         });
       }
       slackScopes = scopeReports;

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RuntimeEnv } from "../runtime.js";
-import type { WizardPrompter } from "../wizard/prompts.js";
+import type { WizardPrompter } from "./types.js";
 
 const mocks = vi.hoisted(() => ({
   loginOpenAICodex: vi.fn(),

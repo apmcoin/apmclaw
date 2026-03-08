@@ -8,7 +8,6 @@ export const CHAT_CHANNEL_ORDER = [
   "telegram",
   "irc",
   "googlechat",
-  "signal",
 ] as const;
 
 export type ChatChannelId = (typeof CHAT_CHANNEL_ORDER)[number];
@@ -52,16 +51,6 @@ const CHAT_CHANNEL_META: Record<ChatChannelId, ChannelMeta> = {
     docsLabel: "googlechat",
     blurb: "Google Workspace Chat app with HTTP webhook.",
     systemImage: "message.badge",
-  },
-  signal: {
-    id: "signal",
-    label: "Signal",
-    selectionLabel: "Signal (signal-cli)",
-    detailLabel: "Signal REST",
-    docsPath: "/channels/signal",
-    docsLabel: "signal",
-    blurb: 'signal-cli linked device; more setup (David Reagans: "Hop on Discord.").',
-    systemImage: "antenna.radiowaves.left.and.right",
   },
 };
 

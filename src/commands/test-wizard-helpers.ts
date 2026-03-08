@@ -4,7 +4,7 @@ import { vi } from "vitest";
 import type { RuntimeEnv } from "../runtime.js";
 import { makeTempWorkspace } from "../test-helpers/workspace.js";
 import { captureEnv } from "../test-utils/env.js";
-import type { WizardPrompter } from "../wizard/prompts.js";
+import type { WizardPrompter } from "./types.js";
 
 export const noopAsync = async () => {};
 export const noop = () => {};

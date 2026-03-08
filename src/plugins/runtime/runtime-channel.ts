@@ -65,6 +65,7 @@ import { probeTelegram } from "../../telegram/probe.js";
 import { sendMessageTelegram, sendPollTelegram } from "../../telegram/send.js";
 import { resolveTelegramToken } from "../../telegram/token.js";
 import type { PluginRuntime } from "./types.js";
+import { resolveAgentRoute } from "../../routing/resolve-route.js";
 
 export function createRuntimeChannel(): PluginRuntime["channel"] {
   return {

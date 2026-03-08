@@ -27,11 +27,11 @@ import { resolveRuntimeServiceVersion } from "../../../version.js";
 import type { AuthRateLimiter } from "../../auth-rate-limit.js";
 import type { GatewayAuthResult, ResolvedGatewayAuth } from "../../auth.js";
 import { isLocalDirectRequest } from "../../auth.js";
-import {
-  buildCanvasScopedHostUrl,
-  CANVAS_CAPABILITY_TTL_MS,
-  mintCanvasCapabilityToken,
-} from "../../canvas-capability.js";
+
+const buildCanvasScopedHostUrl = (_baseUrl: string, _capability: string) => null;
+const CANVAS_CAPABILITY_TTL_MS = 3600000;
+const mintCanvasCapabilityToken = () => "";
+
 import {
   buildDeviceAuthPayload,
   buildDeviceAuthPayloadV3,

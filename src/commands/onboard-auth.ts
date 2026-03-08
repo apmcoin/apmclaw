@@ -1,6 +1,5 @@
 import type { OpenClawConfig } from "../config/config.js";
 
-// Stub: onboard auth removed in apM Claw
 export function applyAuthProfileConfig(
   cfg: OpenClawConfig,
   _profile?: unknown,

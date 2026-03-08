@@ -1,6 +1,6 @@
 import type { Chat, Message, MessageOrigin, User } from "@grammyjs/types";
 import { formatLocationText, type NormalizedLocation } from "../../channels/location.js";
-import { resolveTelegramPreviewStreamMode } from "../../config/discord-preview-streaming.js";
+// Discord streaming removed (discord-preview-streaming.js deleted)
 import type {
   TelegramDirectConfig,
   TelegramGroupConfig,
@@ -168,7 +168,15 @@ export function resolveTelegramStreamMode(telegramCfg?: {
   streaming?: unknown;
   streamMode?: unknown;
 }): TelegramStreamMode {
-  return resolveTelegramPreviewStreamMode(telegramCfg);
+  // Inline telegram streaming resolution (discord-preview-streaming.js deleted)
+  // Valid values: "off" | "partial" | "block"
+  if (telegramCfg?.streamMode === "preview" || telegramCfg?.streaming === "preview") {
+    return "partial";
+  }
+  if (telegramCfg?.streamMode === "block" || telegramCfg?.streaming === "block") {
+    return "block";
+  }
+  return "off";
 }
 
 export function buildTelegramGroupPeerId(chatId: number | string, messageThreadId?: number) {

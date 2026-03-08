@@ -1,13 +1,6 @@
 import { shouldMoveSingleAccountChannelKey } from "../channels/plugins/setup-helpers.js";
 import type { OpenClawConfig } from "../config/config.js";
-import {
-  formatSlackStreamingBooleanMigrationMessage,
-  formatSlackStreamModeMigrationMessage,
-  resolveDiscordPreviewStreamMode,
-  resolveSlackNativeStreaming,
-  resolveSlackStreamingMode,
-  resolveTelegramPreviewStreamMode,
-} from "../config/discord-preview-streaming.js";
+// Discord/Slack streaming functions removed (discord-preview-streaming.js deleted)
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
 
 export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
@@ -142,78 +135,19 @@ export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
     return { entry: updated, changed };
   };
 
-  const normalizeSlackStreamingAliases = (params: {
-    entry: Record<string, unknown>;
-    pathPrefix: string;
-  }): { entry: Record<string, unknown>; changed: boolean } => {
-    let updated = params.entry;
-    const hadLegacyStreamMode = updated.streamMode !== undefined;
-    const legacyStreaming = updated.streaming;
-    const beforeStreaming = updated.streaming;
-    const beforeNativeStreaming = updated.nativeStreaming;
-    const resolvedStreaming = resolveSlackStreamingMode(updated);
-    const resolvedNativeStreaming = resolveSlackNativeStreaming(updated);
-    const shouldNormalize =
-      hadLegacyStreamMode ||
-      typeof legacyStreaming === "boolean" ||
-      (typeof legacyStreaming === "string" && legacyStreaming !== resolvedStreaming);
-    if (!shouldNormalize) {
-      return { entry: updated, changed: false };
-    }
-
-    let changed = false;
-    if (beforeStreaming !== resolvedStreaming) {
-      updated = { ...updated, streaming: resolvedStreaming };
-      changed = true;
-    }
-    if (
-      typeof beforeNativeStreaming !== "boolean" ||
-      beforeNativeStreaming !== resolvedNativeStreaming
-    ) {
-      updated = { ...updated, nativeStreaming: resolvedNativeStreaming };
-      changed = true;
-    }
-    if (hadLegacyStreamMode) {
-      const { streamMode: _ignored, ...rest } = updated;
-      updated = rest;
-      changed = true;
-      changes.push(formatSlackStreamModeMigrationMessage(params.pathPrefix, resolvedStreaming));
-    }
-    if (typeof legacyStreaming === "boolean") {
-      changes.push(
-        formatSlackStreamingBooleanMigrationMessage(params.pathPrefix, resolvedNativeStreaming),
-      );
-    } else if (typeof legacyStreaming === "string" && legacyStreaming !== resolvedStreaming) {
-      changes.push(
-        `Normalized ${params.pathPrefix}.streaming (${legacyStreaming}) → (${resolvedStreaming}).`,
-      );
-    }
-
-    return { entry: updated, changed };
-  };
+  // Slack streaming normalization removed (Slack deleted)
 
   const normalizeStreamingAliasesForProvider = (params: {
-    provider: "telegram" | "slack" | "discord";
+    provider: "telegram";
     entry: Record<string, unknown>;
     pathPrefix: string;
   }): { entry: Record<string, unknown>; changed: boolean } => {
-    if (params.provider === "telegram") {
-      return normalizePreviewStreamingAliases({
-        entry: params.entry,
-        pathPrefix: params.pathPrefix,
-        resolveStreaming: resolveTelegramPreviewStreamMode,
-      });
-    }
-    if (params.provider === "discord") {
-      return normalizePreviewStreamingAliases({
-        entry: params.entry,
-        pathPrefix: params.pathPrefix,
-        resolveStreaming: resolveDiscordPreviewStreamMode,
-      });
-    }
-    return normalizeSlackStreamingAliases({
+    // Telegram streaming resolution (discord-preview-streaming.js deleted)
+    const resolvedStreaming = params.entry.streamMode === "preview" ? "preview" : "off";
+    return normalizePreviewStreamingAliases({
       entry: params.entry,
       pathPrefix: params.pathPrefix,
+      resolveStreaming: () => resolvedStreaming,
     });
   };
 

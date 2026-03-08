@@ -2,11 +2,8 @@ import { resolveChannelDefaultAccountId } from "../../channels/plugins/helpers.j
 import { getChannelPlugin, listChannelPlugins } from "../../channels/plugins/index.js";
 import type { ChannelCapabilities, ChannelPlugin } from "../../channels/plugins/types.js";
 import type { OpenClawConfig } from "../../config/config.js";
-import { fetchChannelPermissionsDiscord } from "../../discord/send.js";
-import { parseDiscordTarget } from "../../discord/targets.js";
 import { danger } from "../../globals.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
-import { fetchSlackScopes, type SlackScopesResult } from "../../slack/scopes.js";
 import { theme } from "../../terminal/theme.js";
 import { formatChannelAccountLabel, requireValidConfig } from "./shared.js";
 
@@ -18,24 +15,6 @@ export type ChannelsCapabilitiesOptions = {
   json?: boolean;
 };
 
-type DiscordTargetSummary = {
-  raw?: string;
-  normalized?: string;
-  kind?: "channel" | "user";
-  channelId?: string;
-};
-
-type DiscordPermissionsReport = {
-  channelId?: string;
-  guildId?: string;
-  isDm?: boolean;
-  channelType?: number;
-  permissions?: string[];
-  missingRequired?: string[];
-  raw?: string;
-  error?: string;
-};
-
 type ChannelCapabilitiesReport = {
   channel: string;
   accountId: string;
@@ -45,12 +24,6 @@ type ChannelCapabilitiesReport = {
   support?: ChannelCapabilities;
   actions?: string[];
   probe?: unknown;
-  slackScopes?: Array<{
-    tokenType: "bot" | "user";
-    result: SlackScopesResult;
-  }>;
-  target?: DiscordTargetSummary;
-  channelPermissions?: DiscordPermissionsReport;
 };
 
 const REQUIRED_DISCORD_PERMISSIONS = ["ViewChannel", "SendMessages"] as const;
@@ -117,31 +90,6 @@ function formatSupport(capabilities?: ChannelCapabilities) {
   return bits.length ? bits.join(" ") : "none";
 }
 
-function summarizeDiscordTarget(raw?: string): DiscordTargetSummary | undefined {
-  if (!raw) {
-    return undefined;
-  }
-  const target = parseDiscordTarget(raw, { defaultKind: "channel" });
-  if (!target) {
-    return { raw };
-  }
-  if (target.kind === "channel") {
-    return {
-      raw,
-      normalized: target.normalized,
-      kind: "channel",
-      channelId: target.id,
-    };
-  }
-  if (target.kind === "user") {
-    return {
-      raw,
-      normalized: target.normalized,
-      kind: "user",
-    };
-  }
-  return { raw, normalized: target.normalized };
-}
 
 function formatDiscordIntents(intents?: {
   messageContent?: string;
@@ -305,7 +253,7 @@ async function buildDiscordPermissions(params: {
     };
   }
   try {
-    const perms = await fetchChannelPermissionsDiscord(target.channelId, {
+    const perms = // await fetchChannelPermissionsDiscord(target.channelId, {
       token,
       accountId: params.account.accountId ?? undefined,
     });
@@ -386,7 +334,7 @@ async function resolveChannelReports(params: {
       if (botToken) {
         scopeReports.push({
           tokenType: "bot",
-          result: await fetchSlackScopes(botToken, timeoutMs),
+          result: // await fetchSlackScopes(botToken, timeoutMs),
         });
       } else {
         scopeReports.push({
@@ -397,7 +345,7 @@ async function resolveChannelReports(params: {
       if (userToken) {
         scopeReports.push({
           tokenType: "user",
-          result: await fetchSlackScopes(userToken, timeoutMs),
+          result: // await fetchSlackScopes(userToken, timeoutMs),
         });
       }
       slackScopes = scopeReports;

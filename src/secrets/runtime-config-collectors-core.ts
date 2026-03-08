@@ -1,5 +1,4 @@
 import type { OpenClawConfig } from "../config/config.js";
-import { collectTtsApiKeyAssignments } from "./runtime-config-collectors-tts.js";
 import { evaluateGatewayAuthSurfaceStates } from "./runtime-gateway-auth-surfaces.js";
 import {
   collectSecretInputAssignment,
@@ -255,23 +254,6 @@ function collectGatewayAssignments(params: {
   }
 }
 
-function collectMessagesTtsAssignments(params: {
-  config: OpenClawConfig;
-  defaults: SecretDefaults | undefined;
-  context: ResolverContext;
-}): void {
-  const messages = params.config.messages as Record<string, unknown> | undefined;
-  if (!isRecord(messages) || !isRecord(messages.tts)) {
-    return;
-  }
-  collectTtsApiKeyAssignments({
-    tts: messages.tts,
-    pathPrefix: "messages.tts",
-    defaults: params.defaults,
-    context: params.context,
-  });
-}
-
 function collectToolsWebSearchAssignments(params: {
   config: OpenClawConfig;
   defaults: SecretDefaults | undefined;
@@ -380,7 +362,7 @@ export function collectCoreConfigAssignments(params: {
   collectAgentMemorySearchAssignments(params);
   collectTalkAssignments(params);
   collectGatewayAssignments(params);
-  collectMessagesTtsAssignments(params);
+  // collectMessagesTtsAssignments removed (TTS removed)
   collectToolsWebSearchAssignments(params);
   collectCronAssignments(params);
 }

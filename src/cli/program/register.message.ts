@@ -5,7 +5,7 @@ import { formatHelpExamples } from "../help-format.js";
 import type { ProgramContext } from "./context.js";
 import { createMessageCliHelpers } from "./message/helpers.js";
 import { registerMessageBroadcastCommand } from "./message/register.broadcast.js";
-import { registerMessageDiscordAdminCommands } from "./message/register.discord-admin.js";
+// Discord admin removed (discord-admin.js deleted)
 import {
   registerMessageEmojiCommands,
   registerMessageStickerCommands,
@@ -64,5 +64,5 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/message", "docs.openclaw.ai/cli/m
   registerMessageThreadCommands(message, helpers);
   registerMessageEmojiCommands(message, helpers);
   registerMessageStickerCommands(message, helpers);
-  registerMessageDiscordAdminCommands(message, helpers);
+  // Discord admin removed
 }

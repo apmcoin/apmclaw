@@ -27,9 +27,6 @@ export type PluginRuntimeCore = {
     getImageMetadata: typeof import("../../media/image-ops.js").getImageMetadata;
     resizeToJpeg: typeof import("../../media/image-ops.js").resizeToJpeg;
   };
-  tts: {
-    textToSpeechTelephony: typeof import("../../tts/tts.js").textToSpeechTelephony;
-  };
   stt: {
     transcribeAudioFile: typeof import("../../media-understanding/transcribe-audio.js").transcribeAudioFile;
   };

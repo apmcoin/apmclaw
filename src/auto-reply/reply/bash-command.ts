@@ -329,51 +329,10 @@ export async function handleBashChatCommand(params: {
     command: commandText,
   };
 
-  try {
-    activeJob = null;
-    return {
-      text: "⚠️ bash execution has been disabled in apM Claw (security policy).",
-    };
-    const result = { details: { status: "completed" as const, exitCode: 1, aggregated: "" }, content: [] as Array<{ type: "text"; text: string }> };
-
-    if (result.details?.status === "running") {
-      const sessionId = result.details.sessionId;
-      activeJob = {
-        state: "running",
-        sessionId,
-        startedAt: result.details.startedAt,
-        command: commandText,
-        watcherAttached: false,
-      };
-      attachActiveWatcher(sessionId);
-      const snippet = formatSessionSnippet(sessionId);
-      logVerbose(`Started bash session ${snippet}: ${commandText}`);
-      return {
-        text: `⚙️ bash started (session ${sessionId}). Still running; use !poll / !stop (or /bash poll / /bash stop).`,
-      };
-    }
-
-    // Completed in foreground.
-    activeJob = null;
-    const exitCode = result.details?.status === "completed" ? result.details.exitCode : 0;
-    const output =
-      result.details?.status === "completed"
-        ? result.details.aggregated
-        : result.content.map((chunk) => (chunk.type === "text" ? chunk.text : "")).join("\n");
-    return {
-      text: [
-        `⚙️ bash: ${commandText}`,
-        `Exit: ${exitCode}`,
-        formatOutputBlock(output || "(no output)"),
-      ].join("\n"),
-    };
-  } catch (err) {
-    activeJob = null;
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      text: [`⚠️ bash failed: ${commandText}`, formatOutputBlock(message)].join("\n"),
-    };
-  }
+  activeJob = null;
+  return {
+    text: "⚠️ bash execution has been disabled in apM Claw (security policy).",
+  };
 }
 
 export function resetBashChatCommandForTests() {

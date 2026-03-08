@@ -85,28 +85,6 @@ export type PluginRuntimeChannel = {
     shouldComputeCommandAuthorized: typeof import("../../auto-reply/command-detection.js").shouldComputeCommandAuthorized;
     shouldHandleTextCommands: typeof import("../../auto-reply/commands-registry.js").shouldHandleTextCommands;
   };
-  discord: {
-    messageActions: typeof import("../../channels/plugins/actions/discord.js").discordMessageActions;
-    auditChannelPermissions: typeof import("../../discord/audit.js").auditDiscordChannelPermissions;
-    listDirectoryGroupsLive: typeof import("../../discord/directory-live.js").listDiscordDirectoryGroupsLive;
-    listDirectoryPeersLive: typeof import("../../discord/directory-live.js").listDiscordDirectoryPeersLive;
-    probeDiscord: typeof import("../../discord/probe.js").probeDiscord;
-    resolveChannelAllowlist: typeof import("../../discord/resolve-channels.js").resolveDiscordChannelAllowlist;
-    resolveUserAllowlist: typeof import("../../discord/resolve-users.js").resolveDiscordUserAllowlist;
-    sendMessageDiscord: typeof import("../../discord/send.js").sendMessageDiscord;
-    sendPollDiscord: typeof import("../../discord/send.js").sendPollDiscord;
-    monitorDiscordProvider: typeof import("../../discord/monitor.js").monitorDiscordProvider;
-  };
-  slack: {
-    listDirectoryGroupsLive: typeof import("../../slack/directory-live.js").listSlackDirectoryGroupsLive;
-    listDirectoryPeersLive: typeof import("../../slack/directory-live.js").listSlackDirectoryPeersLive;
-    probeSlack: typeof import("../../slack/probe.js").probeSlack;
-    resolveChannelAllowlist: typeof import("../../slack/resolve-channels.js").resolveSlackChannelAllowlist;
-    resolveUserAllowlist: typeof import("../../slack/resolve-users.js").resolveSlackUserAllowlist;
-    sendMessageSlack: typeof import("../../slack/send.js").sendMessageSlack;
-    monitorSlackProvider: typeof import("../../slack/index.js").monitorSlackProvider;
-    handleSlackAction: typeof import("../../agents/tools/slack-actions.js").handleSlackAction;
-  };
   telegram: {
     auditGroupMembership: typeof import("../../telegram/audit.js").auditTelegramGroupMembership;
     collectUnmentionedGroupIds: typeof import("../../telegram/audit.js").collectTelegramUnmentionedGroupIds;
@@ -122,27 +100,6 @@ export type PluginRuntimeChannel = {
     sendMessageSignal: typeof import("../../signal/send.js").sendMessageSignal;
     monitorSignalProvider: typeof import("../../signal/index.js").monitorSignalProvider;
     messageActions: typeof import("../../channels/plugins/actions/signal.js").signalMessageActions;
-  };
-  imessage: {
-    monitorIMessageProvider: typeof import("../../imessage/monitor.js").monitorIMessageProvider;
-    probeIMessage: typeof import("../../imessage/probe.js").probeIMessage;
-    sendMessageIMessage: typeof import("../../imessage/send.js").sendMessageIMessage;
-  };
-  whatsapp: {
-    getActiveWebListener: typeof import("../../web/active-listener.js").getActiveWebListener;
-    getWebAuthAgeMs: typeof import("../../web/auth-store.js").getWebAuthAgeMs;
-    logoutWeb: typeof import("../../web/auth-store.js").logoutWeb;
-    logWebSelfId: typeof import("../../web/auth-store.js").logWebSelfId;
-    readWebSelfId: typeof import("../../web/auth-store.js").readWebSelfId;
-    webAuthExists: typeof import("../../web/auth-store.js").webAuthExists;
-    sendMessageWhatsApp: typeof import("../../web/outbound.js").sendMessageWhatsApp;
-    sendPollWhatsApp: typeof import("../../web/outbound.js").sendPollWhatsApp;
-    loginWeb: typeof import("../../web/login.js").loginWeb;
-    startWebLoginWithQr: typeof import("../../web/login-qr.js").startWebLoginWithQr;
-    waitForWebLogin: typeof import("../../web/login-qr.js").waitForWebLogin;
-    monitorWebChannel: typeof import("../../channels/web/index.js").monitorWebChannel;
-    handleWhatsAppAction: typeof import("../../agents/tools/whatsapp-actions.js").handleWhatsAppAction;
-    createLoginTool: typeof import("../../channels/plugins/agent-tools/whatsapp-login.js").createWhatsAppLoginTool;
   };
   line: {
     listLineAccountIds: typeof import("../../line/accounts.js").listLineAccountIds;

@@ -80,4 +80,3 @@ export {
 export type { WizardPrompter } from "../wizard/prompts.js";
 export { buildAgentMediaPayload } from "./agent-media-payload.js";
 export { loadOutboundMediaFromUrl } from "./outbound-media.js";
-export { createScopedPairingAccess } from "./pairing-access.js";

@@ -35,7 +35,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
 export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,
@@ -72,7 +71,6 @@ export { formatDocsLink } from "../terminal/links.js";
 export type { WizardPrompter } from "../wizard/prompts.js";
 export { isAllowedParsedChatSender } from "./allow-from.js";
 export { readBooleanParam } from "./boolean-param.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export { buildProbeChannelStatusSummary } from "./status-helpers.js";
 export { extractToolSend } from "./tool-send.js";
 export { normalizeWebhookPath } from "./webhook-path.js";

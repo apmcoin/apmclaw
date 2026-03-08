@@ -250,7 +250,7 @@ export {
   resolveSenderCommandAuthorizationWithRuntime,
 } from "./command-auth.js";
 export type { CommandAuthorizationRuntime } from "./command-auth.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
+// Pairing removed (companion apps deleted)
 export {
   createInboundEnvelopeBuilder,
   resolveInboundRouteEnvelopeBuilder,
@@ -260,7 +260,7 @@ export {
   listConfiguredAccountIds,
   resolveAccountWithDefaultFallback,
 } from "./account-resolution.js";
-export { issuePairingChallenge } from "../pairing/pairing-challenge.js";
+// Pairing removed (companion apps deleted)
 export { extractToolSend } from "./tool-send.js";
 export {
   createNormalizedOutboundDeliverer,
@@ -321,11 +321,7 @@ export { formatInboundFromLabel } from "../auto-reply/envelope.js";
 export {
   formatTrimmedAllowFromEntries,
 } from "./channel-config-helpers.js";
-export {
-  approveDevicePairing,
-  listDevicePairing,
-  rejectDevicePairing,
-} from "../infra/device-pairing.js";
+// Device pairing removed (companion apps deleted)
 export { createDedupeCache } from "../infra/dedupe.js";
 export type { DedupeCache } from "../infra/dedupe.js";
 export { createPersistentDedupe } from "./persistent-dedupe.js";
@@ -452,8 +448,7 @@ export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,
 } from "../channels/plugins/setup-helpers.js";
-export { formatPairingApproveHint } from "../channels/plugins/helpers.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
+// Pairing removed (companion apps deleted)
 
 export type {
   ChannelOnboardingAdapter,

@@ -1,4 +1,6 @@
-import { isBunRuntime, isNodeRuntime } from "../daemon/runtime-binary.js";
+// Daemon removed (Docker-only deployment) - inline runtime checks
+const isNodeRuntime = (bin: string) => bin.includes("node");
+const isBunRuntime = (bin: string) => bin.includes("bun");
 import {
   consumeRootOptionToken,
   FLAG_TERMINATOR,

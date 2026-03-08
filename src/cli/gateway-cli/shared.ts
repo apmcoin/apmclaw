@@ -1,9 +1,11 @@
-import {
-  resolveGatewayLaunchAgentLabel,
-  resolveGatewaySystemdServiceName,
-  resolveGatewayWindowsTaskName,
-} from "../../daemon/constants.js";
-import { resolveGatewayService } from "../../daemon/service.js";
+// Daemon removed (Docker-only deployment) - inline constants
+const resolveGatewayLaunchAgentLabel = (profile?: string) =>
+  profile ? `ai.openclaw.gateway.${profile}` : "ai.openclaw.gateway";
+const resolveGatewaySystemdServiceName = (profile?: string) =>
+  profile ? `openclaw-gateway-${profile}` : "openclaw-gateway";
+const resolveGatewayWindowsTaskName = (profile?: string) =>
+  profile ? `OpenClaw Gateway (${profile})` : "OpenClaw Gateway";
+const resolveGatewayService = () => null;
 import { defaultRuntime } from "../../runtime.js";
 import { formatCliCommand } from "../command-format.js";
 import { parsePort } from "../shared/parse-port.js";

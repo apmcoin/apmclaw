@@ -22,7 +22,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
 export {
   applyAccountNameToChannelSection,
   migrateBaseNameToDefaultAccount,
@@ -57,7 +56,6 @@ export { resolveDmGroupAccessWithLists } from "../security/dm-policy-shared.js";
 export { formatDocsLink } from "../terminal/links.js";
 export type { WizardPrompter } from "../wizard/prompts.js";
 export { resolveInboundRouteEnvelopeBuilderWithRuntime } from "./inbound-envelope.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export { extractToolSend } from "./tool-send.js";
 export { resolveWebhookPath } from "./webhook-path.js";
 export type { WebhookInFlightLimiter } from "./webhook-request-guards.js";

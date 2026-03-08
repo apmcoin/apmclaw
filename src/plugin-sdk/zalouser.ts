@@ -50,7 +50,6 @@ export { formatAllowFromLowercase } from "./allow-from.js";
 export { resolveSenderCommandAuthorization } from "./command-auth.js";
 export { resolveChannelAccountConfigBasePath } from "./config-paths.js";
 export { loadOutboundMediaFromUrl } from "./outbound-media.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export type { OutboundReplyPayload } from "./reply-payload.js";
 export { resolveOutboundMediaUrls, sendMediaWithLeadingCaption } from "./reply-payload.js";
 export { formatResolvedUnresolvedNote } from "./resolution-notes.js";

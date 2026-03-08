@@ -15,7 +15,6 @@ export type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
 } from "../channels/plugins/onboarding-types.js";
-export { PAIRING_APPROVED_MESSAGE } from "../channels/plugins/pairing-message.js";
 export type {
   BaseProbeResult,
   ChannelGroupContext,
@@ -51,7 +50,6 @@ export { formatDocsLink } from "../terminal/links.js";
 export type { WizardPrompter } from "../wizard/prompts.js";
 export { buildAgentMediaPayload } from "./agent-media-payload.js";
 export { readJsonFileWithFallback } from "./json-store.js";
-export { createScopedPairingAccess } from "./pairing-access.js";
 export { createPersistentDedupe } from "./persistent-dedupe.js";
 export {
   buildBaseChannelStatusSummary,

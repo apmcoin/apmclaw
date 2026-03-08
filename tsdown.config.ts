@@ -59,13 +59,7 @@ export default defineConfig([
     fixedExtension: false,
     platform: "node",
   },
-  {
-    // Ensure this module is bundled as an entry so legacy CLI shims can resolve its exports.
-    entry: "src/cli/daemon-cli.ts",
-    env,
-    fixedExtension: false,
-    platform: "node",
-  },
+  // Daemon CLI removed (Docker-only deployment)
   {
     entry: "src/infra/warning-filter.ts",
     env,

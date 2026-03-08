@@ -13,11 +13,7 @@ export type { GatewayRequestHandlerOptions } from "../gateway/server-methods/typ
 export { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 export { buildOauthProviderAuthResult } from "./provider-auth-result.js";
 
-export {
-  approveDevicePairing,
-  listDevicePairing,
-  rejectDevicePairing,
-} from "../infra/device-pairing.js";
+// Device pairing removed (companion apps deleted)
 
 export {
   runPluginCommandWithTimeout,

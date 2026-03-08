@@ -132,6 +132,26 @@ Forked with respect from [OpenClaw](https://openclaw.ai). Inherits the robust ga
 
 ---
 
+## The Diet: -377,000 Lines of Code
+
+apM Claw removed **377,174 lines across 2,178 files** from OpenClaw:
+
+| Removed | Files | Lines | What |
+|---------|-------|-------|------|
+| **Channel Directories** | 319 | 68,266 | Discord, Slack, WhatsApp, iMessage entire codebases |
+| **Apps & Extensions** | 1,799 | 299,325 | iOS/Android apps, channel plugins, Python skills |
+| **Device Control** | 34 | 3,134 | TTS, Canvas, camera control, voice features |
+| **Config Files** | 26 | 6,449 | Cloud deployment, test configs, unused docs |
+| **Total** | **2,178** | **377,174** | ~38% of original codebase |
+
+**Result:**
+- ✅ Telegram-only, Docker-only
+- ✅ No companion apps, no device control
+- ✅ Minimized attack surface for crypto security
+- ✅ Kept OpenClaw's core: memory, context, sessions
+
+---
+
 ## Quick Start
 
 ### Prerequisites

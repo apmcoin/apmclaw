@@ -12,11 +12,9 @@ function resolveAutoDefault(providerId?: ChannelId): boolean {
   if (!id) {
     return false;
   }
-  if (id === "discord" || id === "telegram") {
+  // Discord, Slack removed - only Telegram supports auto-default
+  if (id === "telegram") {
     return true;
-  }
-  if (id === "slack") {
-    return false;
   }
   return false;
 }

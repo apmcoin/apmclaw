@@ -1,8 +1,10 @@
 import type { Server as HttpServer } from "node:http";
 import { WebSocketServer } from "ws";
-import { CANVAS_HOST_PATH } from "../canvas-host/a2ui.js";
-import { type CanvasHostHandler, createCanvasHostHandler } from "../canvas-host/server.js";
 import type { CliDeps } from "../cli/deps.js";
+
+// Stub: Canvas removed in apM Claw
+const CANVAS_HOST_PATH = "/canvas";
+type CanvasHostHandler = null;
 import type { createSubsystemLogger } from "../logging/subsystem.js";
 import type { PluginRegistry } from "../plugins/registry.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -84,26 +86,8 @@ export async function createGatewayRuntimeState(params: {
   chatAbortControllers: Map<string, ChatAbortControllerEntry>;
   toolEventRecipients: ReturnType<typeof createToolEventRecipientRegistry>;
 }> {
-  let canvasHost: CanvasHostHandler | null = null;
-  if (params.canvasHostEnabled) {
-    try {
-      const handler = await createCanvasHostHandler({
-        runtime: params.canvasRuntime,
-        rootDir: params.cfg.canvasHost?.root,
-        basePath: CANVAS_HOST_PATH,
-        allowInTests: params.allowCanvasHostInTests,
-        liveReload: params.cfg.canvasHost?.liveReload,
-      });
-      if (handler.rootDir) {
-        canvasHost = handler;
-        params.logCanvas.info(
-          `canvas host mounted at http://${params.bindHost}:${params.port}${CANVAS_HOST_PATH}/ (root ${handler.rootDir})`,
-        );
-      }
-    } catch (err) {
-      params.logCanvas.warn(`canvas host failed to start: ${String(err)}`);
-    }
-  }
+  // Stub: Canvas removed in apM Claw
+  const canvasHost: CanvasHostHandler = null;
 
   const clients = new Set<GatewayWsClient>();
   const { broadcast, broadcastToConnIds } = createGatewayBroadcaster({ clients });

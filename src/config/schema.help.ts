@@ -1,8 +1,8 @@
-import {
-  DISCORD_DEFAULT_INBOUND_WORKER_TIMEOUT_MS,
-  DISCORD_DEFAULT_LISTENER_TIMEOUT_MS,
-} from "../discord/monitor/timeouts.js";
 import { MEDIA_AUDIO_FIELD_HELP } from "./media-audio-field-metadata.js";
+
+// Stub: Discord removed in apM Claw
+const DISCORD_DEFAULT_INBOUND_WORKER_TIMEOUT_MS = 30000;
+const DISCORD_DEFAULT_LISTENER_TIMEOUT_MS = 30000;
 import { IRC_FIELD_HELP } from "./schema.irc.js";
 
 export const FIELD_HELP: Record<string, string> = {

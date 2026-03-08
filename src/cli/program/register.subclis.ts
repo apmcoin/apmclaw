@@ -55,15 +55,7 @@ const entries: SubCliEntry[] = [
       mod.registerGatewayCli(program);
     },
   },
-  {
-    name: "daemon",
-    description: "Gateway service (legacy alias)",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../daemon-cli.js");
-      mod.registerDaemonCli(program);
-    },
-  },
+  // Daemon removed (Docker-only deployment)
   {
     name: "logs",
     description: "Tail gateway file logs via RPC",
@@ -109,15 +101,7 @@ const entries: SubCliEntry[] = [
       mod.registerDevicesCli(program);
     },
   },
-  {
-    name: "node",
-    description: "Run and manage the headless node host service",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../node-cli.js");
-      mod.registerNodeCli(program);
-    },
-  },
+  // Node CLI removed (device control deleted)
   {
     name: "sandbox",
     description: "Manage sandbox containers for agent isolation",
@@ -204,13 +188,9 @@ const entries: SubCliEntry[] = [
     description: "Secure DM pairing (approve inbound requests)",
     hasSubcommands: true,
     register: async (program) => {
-      // Initialize plugins before registering pairing CLI.
-      // The pairing CLI calls listPairingChannels() at registration time,
-      // which requires the plugin registry to be populated with channel plugins.
+      // Pairing removed (companion apps deleted)
       const { registerPluginCliCommands } = await import("../../plugins/cli.js");
       registerPluginCliCommands(program, await loadConfig());
-      const mod = await import("../pairing-cli.js");
-      mod.registerPairingCli(program);
     },
   },
   {
@@ -269,15 +249,7 @@ const entries: SubCliEntry[] = [
       mod.registerSkillsCli(program);
     },
   },
-  {
-    name: "update",
-    description: "Update OpenClaw and inspect update channel status",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../update-cli.js");
-      mod.registerUpdateCli(program);
-    },
-  },
+  // Update CLI removed (Docker-only deployment)
   {
     name: "completion",
     description: "Generate shell completion script",

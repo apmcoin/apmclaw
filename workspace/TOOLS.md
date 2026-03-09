@@ -1,41 +1,40 @@
-# TOOLS.md - Messaging and Community Tools (apM Claw)
+# TOOLS.md - Local Notes
 
-This file contains your local notes on the tools available in your community management workspace.
+Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
 
-## Message Tool (`message`)
+## What Goes Here
 
-This is your main tool for all outbound Telegram interactions.
+Things like:
 
-### 1. Basic Messaging
-- `action=send`: Deliver a message.
-- **Buttons**: `buttons=[[{text, callback_data, style?}]]` for interactive menus.
-- **HTML Format**: Telegram supports `<b>`, `<i>`, `<u>`, `<s>`, `<code>`, `pre`, and `<a>`.
+- Camera names and locations
+- SSH hosts and aliases
+- Preferred voices for TTS
+- Speaker/room names
+- Device nicknames
+- Anything environment-specific
 
-### 2. Moderation Actions (Ongoing Implementation)
-- `action=deleteMessage`: Use for removing spam or harmful content.
-- `action=pin`: Pin important announcements.
-- `action=poll`: Create community polls.
-- `action=createForumTopic`: Manage topics in large supergroups.
-- **Permissions Required**: You can only use these actions if you have been granted admin permissions in the chat.
+## Examples
 
-## Search and Analysis Tools
+```markdown
+### Cameras
 
-### 1. Web Fetch (`web_fetch`)
-- **Use Case**: Reading official project documents or links provided in `SOUL.md`.
-- **Warning**: Do not use to visit suspicious links as a "threat analysis" tool. Analyze the message context instead.
+- living-room → Main area, 180° wide angle
+- front-door → Entrance, motion-triggered
 
-### 2. Web Search (`web_search`)
-- **Use Case**: Finding recent news about {projectName} to provide up-to-date answers. Always cite the source.
+### SSH
 
-### 3. Memory Search (`memory_search`)
-- **Use Case**: Recalling previous user interactions or rules specified by admins.
+- home-server → 192.168.1.100, user: admin
 
-## Summary of Unavailable Functions
+### TTS
 
-- **Voice/TTS**: Not supported. All responses are text-only.
-- **Hardware Control**: No access to cameras, sensors, or local network devices.
-- **File Management**: You cannot physically modify your core `workspace` files. Use the `memory` tool for persistence.
+- Preferred voice: "Nova" (warm, slightly British)
+- Default speaker: Kitchen HomePod
+```
+
+## Why Separate?
+
+Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
 
 ---
 
-_Master your tools to keep the {projectName} community secure and engaged._
+Add whatever helps you do your job. This is your cheat sheet.

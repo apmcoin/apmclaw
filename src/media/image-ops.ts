@@ -391,8 +391,8 @@ export async function resizeToPng(params: {
   withoutEnlargement?: boolean;
 }): Promise<Buffer> {
   const sharp = await loadSharp();
-  // Compression level 6 is a good balance (0=fastest, 9=smallest)
-  const compressionLevel = params.compressionLevel ?? 6;
+  // Compression level 9 is smallest (0=fastest, 9=smallest)
+  const compressionLevel = params.compressionLevel ?? 9;
 
   return await sharp(params.buffer)
     .rotate() // Auto-rotate based on EXIF if present
@@ -418,7 +418,7 @@ export async function optimizeImageToPng(
   // Try a grid of sizes/compression levels until under the limit.
   // PNG uses compression levels 0-9 (higher = smaller but slower).
   const sides = [2048, 1536, 1280, 1024, 800];
-  const compressionLevels = [6, 7, 8, 9];
+  const compressionLevels = [9]; // Forced maximum compression for smallest size
   let smallest: {
     buffer: Buffer;
     size: number;

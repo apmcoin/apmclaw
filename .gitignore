@@ -143,3 +143,9 @@ config/telegram/
 config/identity/
 config/media/
 
+
+# Build and state artifacts
+workspace/.apmclaw/
+*.tsbuildinfo
+workspace/test_*.txt
+

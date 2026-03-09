@@ -149,3 +149,7 @@ workspace/.apmclaw/
 *.tsbuildinfo
 workspace/test_*.txt
 
+
+config/logs/
+config/cron/
+

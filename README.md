@@ -20,9 +20,17 @@ PM-E is built with a **"Lean & Strong"** security philosophy. We continuously pe
 | **Privilege Escalation** | ✅ **PASSED** | Real-time system-level verification of 'Admin' roles. |
 | **Information Disclosure (SSRF)** | ✅ **PASSED** | HTTPS-only enforcement for `web_fetch` and local network blocking. |
 | **Intelligence Poisoning** | ✅ **PASSED** | `memory_save` restricted to verified admin sessions only. |
-| **Resource Exhaustion** | ✅ **PASSED** | Removed `subagents` and `browser` to eliminate infinite loops. |
+| Resource Exhaustion | ✅ **PASSED** | Removed `subagents` and `browser` to eliminate infinite loops. |
+
+## 🛠️ Future Security Enhancements (Roadmap)
+We are evolving PM-E to handle extreme social engineering and DoS attacks (e.g., 300+ simultaneous spammers):
+- **Surge Detection**: Automated "Slow Mode" when message volume spikes, preventing LLM API exhaustion.
+- **Hot-Path Filtering**: Local pattern matching against verified spam in `MEMORY.md` to skip AI calls for known threats.
+- **Inbound Batch Analysis**: Processing multiple messages in a single AI turn during high-traffic periods to optimize costs and speed.
+- **Real-time Role Sync**: Enhanced caching of Telegram admin roles to ensure zero-latency exemption for authorized senders.
 
 ## 🚀 Key Features
+
 - **Ambient Awareness**: PM-E observes chat dynamics. It stays silent when the community is quiet or when it has been the only one talking, avoiding "bot monologue."
 - **Strategic Memory**: Uses `memory_search` and `memory_save` to recall previous admin instructions and learn new spam patterns.
 - **Contextual Moderation**: Deletes spam based on intent, not just keywords. Provides safe, non-leaking explanations only when necessary.

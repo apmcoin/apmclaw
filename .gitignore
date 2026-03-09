@@ -5,7 +5,6 @@ docker-compose.extra.yml
 
 # Config runtime data (전체 차단)
 config/
-!config/apmclaw.sample.json
 dist
 pnpm-lock.yaml
 bun.lock

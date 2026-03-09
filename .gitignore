@@ -3,15 +3,9 @@ node_modules
 .env
 docker-compose.extra.yml
 
-# Config with real data (DO NOT COMMIT)
-config/apmclaw.json
-config/gateway.yml
-config/AGENTS.md
-config/SOUL.md
-config/memory/
-config/cron/
-config/logs/
-config/workspace/
+# Config runtime data (전체 차단)
+config/
+!config/apmclaw.sample.json
 dist
 pnpm-lock.yaml
 bun.lock
@@ -138,10 +132,6 @@ dist/protocol.schema.json
 build.log
 
 # Sessions and dynamic data
-config/agents/
-config/telegram/
-config/identity/
-config/media/
 workspace/CORE.md
 
 
@@ -149,8 +139,4 @@ workspace/CORE.md
 workspace/.apmclaw/
 *.tsbuildinfo
 workspace/test_*.txt
-
-
-config/logs/
-config/cron/
 

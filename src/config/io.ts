@@ -683,16 +683,13 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
     try {
       maybeLoadDotEnvForConfig(deps.env);
       if (!deps.fs.existsSync(configPath)) {
-        if (shouldEnableShellEnvFallback(deps.env) && !shouldDeferShellEnvFallback(deps.env)) {
-          loadShellEnvFallback({
-            enabled: true,
-            env: deps.env,
-            expectedKeys: SHELL_ENV_EXPECTED_KEYS,
-            logger: deps.logger,
-            timeoutMs: resolveShellEnvFallbackTimeoutMs(deps.env),
-          });
-        }
-        return {};
+        const error = new Error(
+          `Configuration file not found: ${configPath}\n\n` +
+          `Please create this file manually with your settings.\n` +
+          `See README.md for configuration examples.`
+        );
+        (error as { code?: string }).code = "CONFIG_NOT_FOUND";
+        throw error;
       }
       const raw = deps.fs.readFileSync(configPath, "utf-8");
       const parsed = deps.json5.parse(raw);

@@ -49,6 +49,42 @@ Copy `.env.example` to `.env` and provide your keys:
 - `BRAVE_SEARCH_API_KEY` (for web search)
 - `ANTHROPIC_API_KEY` or `BEDROCK_CONFIG`
 
+### 3. Create Configuration File
+Create `~/.apmclaw/apmclaw.json` manually:
+```json
+{
+  "models": {
+    "mode": "replace",
+    "bedrockDiscovery": {
+      "enabled": true,
+      "region": "us-east-1",
+      "providerFilter": ["anthropic"]
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "groups": {
+        "-1001234567890": {
+          "enabled": true,
+          "requireMention": false
+        }
+      }
+    }
+  }
+}
+```
+
+**⚠️ This file must be created manually before running the bot.**
+
 ## 🤝 Contribution
 As an evolving project, PM-E grows through community interaction and open-source contributions.
 Check our repository: [https://github.com/apmcoin/apmclaw](https://github.com/apmcoin/apmclaw)

@@ -34,7 +34,7 @@ We are evolving PM-E to handle extreme social engineering and DoS attacks (e.g.,
 - **Ambient Awareness**: PM-E observes chat dynamics. It stays silent when the community is quiet or when it has been the only one talking, avoiding "bot monologue."
 - **Strategic Memory**: Uses `memory_search` and `memory_save` to recall previous admin instructions and learn new spam patterns.
 - **Contextual Moderation**: Deletes spam based on intent, not just keywords. Provides safe, non-leaking explanations only when necessary.
-- **Admin Exemption**: 100% trusted path for verified administrators and CEO messages.
+- **Admin Exemption**: 100% trusted path for verified Telegram group administrators.
 
 ## 🛠️ Getting Started
 PM-E is an open-source project designed for crypto community protection.

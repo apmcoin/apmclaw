@@ -10,8 +10,10 @@
 - **Since 2023**: **PM-E** (피엠이) was the original guardian of the apM community, serving as a dedicated AI anti-spam bot.
 - **2025 Evolution**: PM-E evolved by adopting the advanced memory-context architecture of apM Claw. It is now a leaner, context-aware community manager that learns from interactions.
 
-## 🛡️ Security Audit Report (2026-03-09)
-PM-E is built with a **"Lean & Strong"** security philosophy. Recent hardening measures:
+## 🛡️ Security & Guardrails
+PM-E is built with a **"Lean & Strong"** security philosophy. We continuously perform security audits and automated self-testing (see `scripts/security-audit.ts`).
+
+> **⚠️ Note on AI Characteristics**: While we implement rigorous guardrails, the nature of Large Language Models (LLMs) means that rare, non-deterministic behaviors can occur. Users and admins should remain vigilant. We actively welcome any feedback or suggestions to further harden our security.
 
 | Attack Vector | Status | Defense Mechanism |
 | :--- | :---: | :--- |

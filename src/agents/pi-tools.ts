@@ -1,4 +1,4 @@
-import { codingTools, createReadTool, readTool } from "@mariozechner/pi-coding-agent";
+import { codingTools } from "@mariozechner/pi-coding-agent";
 import type { ApmClawConfig } from "../config/config.js";
 import type { ToolLoopDetectionConfig } from "../config/types.tools.js";
 import { resolveMergedSafeBinProfileFixtures } from "../infra/exec-safe-bin-runtime-policy.js";
@@ -7,7 +7,6 @@ import { getPluginToolMeta } from "../plugins/tools.js";
 import { isSubagentSessionKey } from "../routing/session-key.js";
 import { resolveGatewayMessageChannel } from "../utils/message-channel.js";
 import { resolveAgentConfig } from "./agent-scope.js";
-import { createApplyPatchTool } from "./apply-patch.js";
 type ExecToolDefaults = Record<string, unknown>;
 type ProcessToolDefaults = Record<string, unknown>;
 import { listChannelAgentTools } from "./channel-tools.js";
@@ -22,20 +21,6 @@ import {
   resolveGroupToolPolicy,
   resolveSubagentToolPolicy,
 } from "./pi-tools.policy.js";
-import {
-  assertRequiredParams,
-  createHostWorkspaceEditTool,
-  createHostWorkspaceWriteTool,
-  createApmClawReadTool,
-  createSandboxedEditTool,
-  createSandboxedReadTool,
-  createSandboxedWriteTool,
-  normalizeToolParams,
-  patchToolSchemaForClaudeCompatibility,
-  wrapToolWorkspaceRootGuard,
-  wrapToolWorkspaceRootGuardWithOptions,
-  wrapToolParamNormalization,
-} from "./pi-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./pi-tools.schema.js";
 import type { AnyAgentTool } from "./pi-tools.types.js";
 import type { SandboxContext } from "./sandbox.js";
@@ -97,34 +82,6 @@ function applyModelProviderToolPolicy(
   return tools.filter((tool) => !TOOL_DENY_FOR_XAI_PROVIDERS.has(tool.name));
 }
 
-function isApplyPatchAllowedForModel(params: {
-  modelProvider?: string;
-  modelId?: string;
-  allowModels?: string[];
-}) {
-  const allowModels = Array.isArray(params.allowModels) ? params.allowModels : [];
-  if (allowModels.length === 0) {
-    return true;
-  }
-  const modelId = params.modelId?.trim();
-  if (!modelId) {
-    return false;
-  }
-  const normalizedModelId = modelId.toLowerCase();
-  const provider = params.modelProvider?.trim().toLowerCase();
-  const normalizedFull =
-    provider && !normalizedModelId.includes("/")
-      ? `${provider}/${normalizedModelId}`
-      : normalizedModelId;
-  return allowModels.some((entry) => {
-    const normalized = entry.trim().toLowerCase();
-    if (!normalized) {
-      return false;
-    }
-    return normalized === normalizedModelId || normalized === normalizedFull;
-  });
-}
-
 function resolveExecConfig(params: { cfg?: ApmClawConfig; agentId?: string }) {
   const cfg = params.cfg;
   const globalExec = cfg?.tools?.exec;
@@ -183,10 +140,6 @@ export function resolveToolLoopDetectionConfig(params: {
 
 export const __testing = {
   cleanToolSchemaForGemini,
-  normalizeToolParams,
-  patchToolSchemaForClaudeCompatibility,
-  wrapToolParamNormalization,
-  assertRequiredParams,
   applyModelProviderToolPolicy,
 } as const;
 
@@ -304,17 +257,6 @@ export function createApmClawCodingTools(options?: {
           getSubagentDepthFromSessionStore(options.sessionKey, { cfg: options.config }),
         )
       : undefined;
-  const allowBackground = isToolAllowedByPolicies("process", [
-    profilePolicyWithAlsoAllow,
-    providerProfilePolicyWithAlsoAllow,
-    globalPolicy,
-    globalProviderPolicy,
-    agentPolicy,
-    agentProviderPolicy,
-    groupPolicy,
-    sandbox?.tools,
-    subagentPolicy,
-  ]);
   const execConfig = resolveExecConfig({ cfg: options?.config, agentId });
   const fsConfig = resolveToolFsConfig({ cfg: options?.config, agentId });
   const fsPolicy = createToolFsPolicy({
@@ -322,108 +264,22 @@ export function createApmClawCodingTools(options?: {
   });
   const sandboxRoot = sandbox?.workspaceDir;
   const sandboxFsBridge = sandbox?.fsBridge;
-  const allowWorkspaceWrites = sandbox?.workspaceAccess !== "ro";
   const workspaceRoot = resolveWorkspaceRoot(options?.workspaceDir);
-  const workspaceOnly = fsPolicy.workspaceOnly;
-  const applyPatchConfig = execConfig.applyPatch;
-  // Secure by default: apply_patch is workspace-contained unless explicitly disabled.
-  // (tools.fs.workspaceOnly is a separate umbrella flag for read/write/edit/apply_patch.)
-  const applyPatchWorkspaceOnly = workspaceOnly || applyPatchConfig?.workspaceOnly !== false;
-  const applyPatchEnabled =
-    !!applyPatchConfig?.enabled &&
-    isOpenAIProvider(options?.modelProvider) &&
-    isApplyPatchAllowedForModel({
-      modelProvider: options?.modelProvider,
-      modelId: options?.modelId,
-      allowModels: applyPatchConfig?.allowModels,
-    });
 
   if (sandboxRoot && !sandboxFsBridge) {
     throw new Error("Sandbox filesystem bridge is unavailable.");
   }
-  const imageSanitization = resolveImageSanitizationLimits(options?.config);
 
   const base = (codingTools as unknown as AnyAgentTool[]).flatMap((tool) => {
-    if (tool.name === readTool.name) {
-      if (sandboxRoot) {
-        const sandboxed = createSandboxedReadTool({
-          root: sandboxRoot,
-          bridge: sandboxFsBridge!,
-          modelContextWindowTokens: options?.modelContextWindowTokens,
-          imageSanitization,
-        });
-        return [
-          workspaceOnly
-            ? wrapToolWorkspaceRootGuardWithOptions(sandboxed, sandboxRoot, {
-                containerWorkdir: sandbox.containerWorkdir,
-              })
-            : sandboxed,
-        ];
-      }
-      const freshReadTool = createReadTool(workspaceRoot);
-      const wrapped = createApmClawReadTool(freshReadTool, {
-        modelContextWindowTokens: options?.modelContextWindowTokens,
-        imageSanitization,
-      });
-      return [workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, workspaceRoot) : wrapped];
-    }
-    if (tool.name === "bash" || tool.name === execToolName) {
+    // Physically removed RW tools from core.
+    if (["read", "write", "edit", "bash", execToolName, "apply_patch"].includes(tool.name)) {
       return [];
-    }
-    if (tool.name === "write") {
-      if (sandboxRoot) {
-        return [];
-      }
-      const wrapped = createHostWorkspaceWriteTool(workspaceRoot, { workspaceOnly });
-      return [workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, workspaceRoot) : wrapped];
-    }
-    if (tool.name === "edit") {
-      if (sandboxRoot) {
-        return [];
-      }
-      const wrapped = createHostWorkspaceEditTool(workspaceRoot, { workspaceOnly });
-      return [workspaceOnly ? wrapToolWorkspaceRootGuard(wrapped, workspaceRoot) : wrapped];
     }
     return [tool];
   });
-  const applyPatchTool =
-    !applyPatchEnabled || (sandboxRoot && !allowWorkspaceWrites)
-      ? null
-      : createApplyPatchTool({
-          cwd: sandboxRoot ?? workspaceRoot,
-          sandbox:
-            sandboxRoot && allowWorkspaceWrites
-              ? { root: sandboxRoot, bridge: sandboxFsBridge! }
-              : undefined,
-          workspaceOnly: applyPatchWorkspaceOnly,
-        });
+
   const tools: AnyAgentTool[] = [
     ...base,
-    ...(sandboxRoot
-      ? allowWorkspaceWrites
-        ? [
-            workspaceOnly
-              ? wrapToolWorkspaceRootGuardWithOptions(
-                  createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-                  sandboxRoot,
-                  {
-                    containerWorkdir: sandbox.containerWorkdir,
-                  },
-                )
-              : createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-            workspaceOnly
-              ? wrapToolWorkspaceRootGuardWithOptions(
-                  createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-                  sandboxRoot,
-                  {
-                    containerWorkdir: sandbox.containerWorkdir,
-                  },
-                )
-              : createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! }),
-          ]
-        : []
-      : []),
-    ...(applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...listChannelAgentTools({ cfg: options?.config }),
     ...createApmClawTools({

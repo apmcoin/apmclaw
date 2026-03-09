@@ -142,6 +142,7 @@ config/agents/
 config/telegram/
 config/identity/
 config/media/
+workspace/CORE.md
 
 
 # Build and state artifacts

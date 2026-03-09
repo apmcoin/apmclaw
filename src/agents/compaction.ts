@@ -11,7 +11,7 @@ const log = createSubsystemLogger("compaction");
 
 export const BASE_CHUNK_RATIO = 0.4;
 export const MIN_CHUNK_RATIO = 0.15;
-export const SAFETY_MARGIN = 1.2; // 20% buffer for estimateTokens() inaccuracy
+export const SAFETY_MARGIN = 1.1; // Reduced from 1.2 to increase context utilization
 const DEFAULT_SUMMARY_FALLBACK = "No prior history.";
 const DEFAULT_PARTS = 2;
 const MERGE_SUMMARIES_INSTRUCTIONS = [
@@ -130,7 +130,7 @@ export function splitMessagesByTokenShare(
 // Overhead reserved for summarization prompt, system prompt, previous summary,
 // and serialization wrappers (<conversation> tags, instructions, etc.).
 // generateSummary uses reasoning: "high" which also consumes context budget.
-export const SUMMARIZATION_OVERHEAD_TOKENS = 4096;
+export const SUMMARIZATION_OVERHEAD_TOKENS = 2048; // Reduced from 4096
 
 export function chunkMessagesByMaxTokens(
   messages: AgentMessage[],

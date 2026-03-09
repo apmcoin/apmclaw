@@ -391,6 +391,7 @@ export { redactSensitiveText } from "../logging/redact.js";
 export {
   listTelegramAccountIds,
   resolveDefaultTelegramAccountId,
+  resolveDefaultTelegramAccountId as resolveDefaultAccountId,
   resolveTelegramAccount,
   type ResolvedTelegramAccount,
 } from "../telegram/accounts.js";

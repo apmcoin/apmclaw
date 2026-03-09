@@ -136,3 +136,10 @@ dist/protocol.schema.json
 # Synthing
 **/.stfolder/
 build.log
+
+# Sessions and dynamic data
+config/agents/
+config/telegram/
+config/identity/
+config/media/
+

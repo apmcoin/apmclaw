@@ -134,7 +134,6 @@ build.log
 
 
 # Build and state artifacts
-workspace/.apmclaw/
+workspace/
 *.tsbuildinfo
-workspace/test_*.txt
 

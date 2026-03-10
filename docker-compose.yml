@@ -21,13 +21,11 @@ services:
       APMCLAW_LOG_LEVEL: debug
       # Telegram
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      # AI providers
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # AWS Bedrock (Claude Sonnet 4.5)
+      AWS_BEARER_TOKEN_BEDROCK: ${AWS_BEARER_TOKEN_BEDROCK}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
       # Web search (optional)
-      BRAVE_API_KEY: ${BRAVE_API_KEY:-}
-      PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY:-}
+      BRAVE_SEARCH_API_KEY: ${BRAVE_SEARCH_API_KEY:-}
     volumes:
       - ${APMCLAW_CONFIG_DIR:-./config}:/home/node/.apmclaw
       - ${APMCLAW_WORKSPACE_DIR:-./workspace}:/home/node/.apmclaw/workspace
@@ -49,7 +47,7 @@ services:
     command:
       [
         "node",
-        "apmclaw.mjs",
+        "dist/entry.mjs",
         "gateway",
         "--bind",
         "lan",

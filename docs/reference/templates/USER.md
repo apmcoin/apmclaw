@@ -1,23 +1,13 @@
----
-summary: "User profile record"
-read_when:
-  - Bootstrapping a workspace manually
----
+# USER - apM Community
 
-# USER.md - About Your Human
+**Community:** apM (apM Coin)
 
-_Learn about the person you're helping. Update this as you go._
+**Platform:** Telegram
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
+**Focus:** Crypto project community management
 
-## Context
-
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+**Timezone:** KST (Korea)
 
 ---
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+_Protecting the apM community 24/7_

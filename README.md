@@ -40,8 +40,15 @@ We are evolving PM-E to handle extreme social engineering and DoS attacks (e.g.,
 PM-E is an open-source project designed for crypto community protection.
 
 ### 1. Configure the Persona
-All core logic and personality traits are unified in:
-- **`workspace/CORE.md`**: The single source of truth for PM-E's identity and rules.
+PM-E's identity and rules are distributed across workspace template files:
+- **`workspace/SOUL.md`**: Who PM-E is
+- **`workspace/AGENTS.md`**: Operation guidelines and security policies
+- **`workspace/TOOLS.md`**: Learning capabilities and available operations
+- **`workspace/IDENTITY.md`**: PM-E's metadata and branding
+- **`workspace/USER.md`**: Community profile (apM)
+- **`workspace/HEARTBEAT.md`**: Status check configuration
+
+These files are auto-generated from templates on first run.
 
 ### 2. Set Up Environment
 Copy `.env.example` to `.env` and provide your keys:

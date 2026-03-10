@@ -449,7 +449,6 @@ export const dispatchTelegramMessage = async ({
     const result = await deliverReplies({
       ...deliveryBaseOptions,
       replies: [payload],
-      onVoiceRecording: sendRecordVoice,
     });
     if (result.delivered) {
       deliveryState.markDelivered();

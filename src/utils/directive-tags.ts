@@ -67,3 +67,30 @@ export function stripInlineDirectiveTagsFromMessageForDisplay<T extends { conten
   }
   return message;
 }
+
+// Deprecated: Compatibility wrapper for old interface
+export type InlineDirectiveParseResult = {
+  text: string;
+  audioAsVoice: boolean;
+  replyToId?: string;
+  replyToExplicitId?: string; // Deprecated: same as replyToId
+  replyToCurrent: boolean;
+  hasReplyTag: boolean;
+  hasAudioTag: boolean; // Deprecated: always false
+};
+
+export function parseInlineDirectives(
+  text: string,
+  _options?: { currentMessageId?: string; stripAudioTag?: boolean; stripReplyTags?: boolean },
+): InlineDirectiveParseResult {
+  const result = extractDirectiveTags(text);
+  return {
+    text: result.cleanText,
+    audioAsVoice: false, // Deprecated: always false
+    replyToId: result.tags.replyToId,
+    replyToExplicitId: result.tags.replyToId, // Deprecated: same as replyToId
+    replyToCurrent: result.tags.replyToCurrent,
+    hasReplyTag: !!(result.tags.replyToId || result.tags.replyToCurrent),
+    hasAudioTag: false, // Deprecated: always false
+  };
+}

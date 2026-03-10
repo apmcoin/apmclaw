@@ -46,7 +46,7 @@ import { resolveAgentRoute } from "../routing/resolve-route.js";
 import { resolveThreadSessionKeys } from "../routing/session-key.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
-import { isSenderAllowed, normalizeDmAllowFromWithStore } from "./bot-access.js";
+import { isSenderAllowed, normalizeAllowFrom, normalizeDmAllowFromWithStore } from "./bot-access.js";
 import type { TelegramMediaRef } from "./bot-message-context.js";
 import {
   buildCappedTelegramMenuCommands,
@@ -163,13 +163,14 @@ async function resolveTelegramCommandAuth(params: {
     cfg,
     accountId,
     telegramCfg,
-    allowFrom,
+    allowFrom: allowFromRaw,
     groupAllowFrom,
     useAccessGroups,
     resolveGroupPolicy,
     resolveTelegramGroupConfig,
     requireAuth,
   } = params;
+  const allowFrom = normalizeAllowFrom(allowFromRaw);
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
   const messageThreadId = (msg as { message_thread_id?: number }).message_thread_id;
@@ -283,16 +284,19 @@ async function resolveTelegramCommandAuth(params: {
     }
   }
 
+  const normalizedGroupAllowOverride = groupAllowOverride ? normalizeAllowFrom(groupAllowOverride) : undefined;
+  const effectiveAllow = normalizedGroupAllowOverride ?? allowFrom;
+
   const senderAllowed = isSenderAllowed({
-    allow: groupAllowOverride ?? allowFrom,
+    allow: effectiveAllow,
     senderId,
     senderUsername,
   });
-  
+
   // Physical bypass: Real administrators are always authorized
   const commandAuthorized = senderIsAdmin || resolveCommandAuthorizedFromAuthorizers({
     useAccessGroups,
-    authorizers: [{ configured: (groupAllowOverride ?? allowFrom).hasEntries, allowed: senderAllowed }],
+    authorizers: [{ configured: effectiveAllow.hasEntries, allowed: senderAllowed }],
     modeWhenAccessGroupsOff: "configured",
   });
 

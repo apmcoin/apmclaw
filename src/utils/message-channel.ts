@@ -14,6 +14,11 @@ import {
 } from "../gateway/protocol/client-info.js";
 import { getActivePluginRegistry } from "../plugins/runtime.js";
 
+// Deprecated: WebChat removed, kept for compatibility during transition
+export const INTERNAL_MESSAGE_CHANNEL = "webchat" as const;
+export type InternalMessageChannel = typeof INTERNAL_MESSAGE_CHANNEL;
+export type GatewayMessageChannel = ChannelId | InternalMessageChannel;
+
 const MARKDOWN_CAPABLE_CHANNELS = new Set<string>([
   "telegram",
   "tui",
@@ -30,6 +35,16 @@ type GatewayClientInfoLike = {
 
 export function isGatewayCliClient(client?: GatewayClientInfoLike | null): boolean {
   return normalizeGatewayClientMode(client?.mode) === GATEWAY_CLIENT_MODES.CLI;
+}
+
+// Deprecated: WebChat removed, always returns false
+export function isInternalMessageChannel(raw?: string | null): raw is InternalMessageChannel {
+  return false;
+}
+
+// Deprecated: WebChat removed, always returns false
+export function isWebchatClient(_client?: GatewayClientInfoLike | null): boolean {
+  return false;
 }
 
 export function normalizeMessageChannel(raw?: string | null): string | undefined {

@@ -9,7 +9,7 @@ export function extractReplyToTag(
   replyToCurrent: boolean;
   hasTag: boolean;
 } {
-  const result = parseInlineDirectives(text, {
+  const result = parseInlineDirectives(text ?? "", {
     currentMessageId,
     stripAudioTag: false,
   });

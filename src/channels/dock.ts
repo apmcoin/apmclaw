@@ -8,8 +8,6 @@ import { normalizeAccountId } from "../routing/session-key.js";
 import { inspectTelegramAccount } from "../telegram/account-inspect.js";
 import { normalizeE164 } from "../utils.js";
 import {
-  resolveGoogleChatGroupRequireMention,
-  resolveGoogleChatGroupToolPolicy,
   resolveTelegramGroupRequireMention,
   resolveTelegramGroupToolPolicy,
 } from "./plugins/group-mentions.js";
@@ -218,111 +216,7 @@ const DOCKS: Record<ChatChannelId, ChannelDock> = {
       },
     },
   },
-  irc: {
-    id: "irc",
-    capabilities: {
-      chatTypes: ["direct", "group"],
-      media: true,
-      blockStreaming: true,
-    },
-    outbound: { textChunkLimit: 350 },
-    streaming: {
-      blockStreamingCoalesceDefaults: { minChars: 300, idleMs: 1000 },
-    },
-    config: {
-      resolveAllowFrom: ({ cfg, accountId }) => {
-        const channel = cfg.channels?.irc;
-        const account = resolveCaseInsensitiveAccount(channel?.accounts, accountId);
-        return (account?.allowFrom ?? channel?.allowFrom ?? []).map((entry) => String(entry));
-      },
-      formatAllowFrom: ({ allowFrom }) =>
-        formatAllowFromWithReplacements(allowFrom, [/^irc:/i, /^user:/i]),
-      resolveDefaultTo: ({ cfg, accountId }) =>
-        resolveNamedChannelDefaultTo({
-          channels: cfg.channels as CaseInsensitiveDefaultToChannels | undefined,
-          channelId: "irc",
-          accountId,
-        }),
-    },
-    groups: {
-      resolveRequireMention: ({ cfg, accountId, groupId }) => {
-        if (!groupId) {
-          return true;
-        }
-        return resolveChannelGroupRequireMention({
-          cfg,
-          channel: "irc",
-          groupId,
-          accountId,
-          groupIdCaseInsensitive: true,
-        });
-      },
-      resolveToolPolicy: ({ cfg, accountId, groupId, senderId, senderName, senderUsername }) => {
-        if (!groupId) {
-          return undefined;
-        }
-        // IRC supports per-channel tool policies. Prefer the shared resolver so
-        // toolsBySender is honored consistently across surfaces.
-        return resolveChannelGroupToolsPolicy({
-          cfg,
-          channel: "irc",
-          groupId,
-          accountId,
-          groupIdCaseInsensitive: true,
-          senderId,
-          senderName,
-          senderUsername,
-        });
-      },
-    },
-  },
-  googlechat: {
-    id: "googlechat",
-    capabilities: {
-      chatTypes: ["direct", "group", "thread"],
-      reactions: true,
-      media: true,
-      threads: true,
-      blockStreaming: true,
-    },
-    outbound: DEFAULT_OUTBOUND_TEXT_CHUNK_LIMIT_4000,
-    config: {
-      resolveAllowFrom: ({ cfg, accountId }) => {
-        const channel = cfg.channels?.googlechat as
-          | {
-              accounts?: Record<string, { dm?: { allowFrom?: Array<string | number> } }>;
-              dm?: { allowFrom?: Array<string | number> };
-            }
-          | undefined;
-        const account = resolveCaseInsensitiveAccount(channel?.accounts, accountId);
-        return (account?.dm?.allowFrom ?? channel?.dm?.allowFrom ?? []).map((entry) =>
-          String(entry),
-        );
-      },
-      formatAllowFrom: ({ allowFrom }) =>
-        formatAllowFromWithReplacements(allowFrom, [
-          /^(googlechat|google-chat|gchat):/i,
-          /^user:/i,
-          /^users\//i,
-        ]),
-      resolveDefaultTo: ({ cfg, accountId }) =>
-        resolveNamedChannelDefaultTo({
-          channels: cfg.channels as CaseInsensitiveDefaultToChannels | undefined,
-          channelId: "googlechat",
-          accountId,
-        }),
-    },
-    groups: {
-      resolveRequireMention: resolveGoogleChatGroupRequireMention,
-      resolveToolPolicy: resolveGoogleChatGroupToolPolicy,
-    },
-    threading: {
-      resolveReplyToMode: ({ cfg }) => cfg.channels?.googlechat?.replyToMode ?? "off",
-      buildToolContext: ({ context, hasRepliedRef }) =>
-        buildThreadToolContextFromMessageThreadOrReply({ context, hasRepliedRef }),
-    },
-  },
-  // Signal removed (Telegram-only)
+  // IRC, GoogleChat, Signal removed (Telegram-only)
 };
 
 function buildDockFromPlugin(plugin: ChannelPlugin): ChannelDock {

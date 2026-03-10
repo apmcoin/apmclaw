@@ -94,11 +94,11 @@ export function createApmClawTools(options?: {
         requesterSenderId: options?.requesterSenderId ?? undefined,
       });
 
-  const tools: AnyAgentTool[] = [
+  const tools: AnyAgentTool[] = ([
     createCronTool({
       agentSessionKey: options?.agentSessionKey,
     }),
-    ...(messageTool ? [messageTool] : []),
+    messageTool,
     createAgentsListTool({
       agentSessionKey: options?.agentSessionKey,
       requesterAgentIdOverride: options?.requesterAgentIdOverride,
@@ -148,10 +148,10 @@ export function createApmClawTools(options?: {
       agentSessionKey: options?.agentSessionKey,
       config: options?.config,
     }),
-    ...(webSearchTool ? [webSearchTool] : []),
-    ...(webFetchTool ? [webFetchTool] : []),
-    ...(imageTool ? [imageTool] : []),
-  ];
+    webSearchTool,
+    webFetchTool,
+    imageTool,
+  ] as Array<AnyAgentTool | null>).filter(Boolean) as AnyAgentTool[];
 
   const pluginTools = resolvePluginTools({
     context: {

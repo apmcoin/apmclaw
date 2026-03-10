@@ -131,7 +131,6 @@ dist/protocol.schema.json
 build.log
 
 # Sessions and dynamic data
-workspace/CORE.md
 
 
 # Build and state artifacts

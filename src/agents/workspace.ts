@@ -369,6 +369,7 @@ export async function ensureAgentWorkspace(params?: {
     return existing.every((v) => !v);
   })();
 
+  // apM Claw: Template files populated with CORE.md content (distributed)
   const agentsTemplate = await loadTemplate(DEFAULT_AGENTS_FILENAME);
   const soulTemplate = await loadTemplate(DEFAULT_SOUL_FILENAME);
   const toolsTemplate = await loadTemplate(DEFAULT_TOOLS_FILENAME);
@@ -498,6 +499,7 @@ async function resolveMemoryBootstrapEntries(
 export async function loadWorkspaceBootstrapFiles(dir: string): Promise<WorkspaceBootstrapFile[]> {
   const resolvedDir = resolveUserPath(dir);
 
+  // apM Claw: Load all template files (populated with CORE.md content)
   const entries: Array<{
     name: WorkspaceBootstrapFileName;
     filePath: string;

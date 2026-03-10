@@ -1,14 +1,7 @@
 import { z } from "zod";
 import { ChannelHeartbeatVisibilitySchema } from "./zod-schema.channels.js";
 import { GroupPolicySchema } from "./zod-schema.core.js";
-import {
-  BlueBubblesConfigSchema,
-  GoogleChatConfigSchema,
-  IrcConfigSchema,
-  MSTeamsConfigSchema,
-  SignalConfigSchema,
-  TelegramConfigSchema,
-} from "./zod-schema.providers-core.js";
+import { TelegramConfigSchema } from "./zod-schema.providers-core.js";
 
 export * from "./zod-schema.providers-core.js";
 export { ChannelHeartbeatVisibilitySchema } from "./zod-schema.channels.js";
@@ -28,11 +21,6 @@ export const ChannelsSchema = z
       .optional(),
     modelByChannel: ChannelModelByChannelSchema,
     telegram: TelegramConfigSchema.optional(),
-    irc: IrcConfigSchema.optional(),
-    googlechat: GoogleChatConfigSchema.optional(),
-    signal: SignalConfigSchema.optional(),
-    bluebubbles: BlueBubblesConfigSchema.optional(),
-    msteams: MSTeamsConfigSchema.optional(),
   })
-  .passthrough() // Allow extension channel configs (nostr, matrix, zalo, etc.)
+  .passthrough() // Allow extension channel configs
   .optional();

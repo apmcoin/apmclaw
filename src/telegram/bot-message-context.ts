@@ -776,10 +776,8 @@ export const buildTelegramMessageContext = async ({
     ? (groupLabel ?? `group:${chatId}`)
     : buildSenderLabel(msg, senderId || chatId);
 
-  // Mark admins in the conversation label for better AI awareness
-  if (senderIsAdmin) {
-    conversationLabel = `[Admin] ${conversationLabel}`;
-  }
+  // Removed: [Admin] tag pattern - LLMs cannot reliably enforce security via prompts
+  // Security is enforced at the API/tool level (method-scopes.ts), not via conversation labels
 
   const storePath = resolveStorePath(cfg.session?.store, {
     agentId: route.agentId,

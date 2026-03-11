@@ -75,7 +75,8 @@ import {
 } from "./events.js";
 import { ExecApprovalManager } from "./exec-approval-manager.js";
 import { NodeRegistry } from "./node-registry.js";
-import type { startBrowserControlServerIfEnabled } from "./server-browser.js";
+// Removed: Browser tool dependency
+// import type { startBrowserControlServerIfEnabled } from "./server-browser.js";
 import { createChannelManager } from "./server-channels.js";
 import { createAgentEventHandler } from "./server-chat.js";
 import { createGatewayCloseHandler } from "./server-close.js";
@@ -914,7 +915,8 @@ export async function startGatewayServer(
         logTailscale,
       });
 
-  let browserControl: Awaited<ReturnType<typeof startBrowserControlServerIfEnabled>> = null;
+  // Removed: Browser tool dependency
+  let browserControl: null = null;
   if (!minimalTestGateway) {
     ({ browserControl, pluginServices } = await startGatewaySidecars({
       cfg: cfgAtStart,

@@ -87,7 +87,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...usageHandlers,
   ...agentHandlers,
   ...agentsHandlers,
-  ...browserHandlers,
+  // Removed: Browser tool dependency
+  // ...browserHandlers,
 };
 
 export async function handleGatewayRequest(

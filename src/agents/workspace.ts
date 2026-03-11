@@ -301,21 +301,10 @@ async function isGitAvailable(): Promise<boolean> {
   return gitAvailabilityPromise;
 }
 
-async function ensureGitRepo(dir: string, isBrandNewWorkspace: boolean) {
-  if (!isBrandNewWorkspace) {
-    return;
-  }
-  if (await hasGitRepo(dir)) {
-    return;
-  }
-  if (!(await isGitAvailable())) {
-    return;
-  }
-  try {
-    await runCommandWithTimeout(["git", "init"], { cwd: dir, timeoutMs: 10_000 });
-  } catch {
-    // Ignore git init failures; workspace creation should still succeed.
-  }
+async function ensureGitRepo(_dir: string, _isBrandNewWorkspace: boolean) {
+  // Disabled: workspace should not have its own git repository
+  // The workspace directory is part of the main apmclaw repository
+  return;
 }
 
 export async function ensureAgentWorkspace(params?: {

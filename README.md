@@ -101,57 +101,116 @@ if (!["administrator", "creator"].includes(member.status)) {
 
 #### How It Works
 
-**1. PM-E Detects Pattern → Proposal (Not Direct Write)**
+**Workflow Based on Confidence**
+
+**High Confidence (>0.85)**: Known spam pattern from MEMORY.md
 ```
-🔍 [PM-E] New Spam Pattern Detected
-
-Pattern: "XXX link spam"
-Evidence: 3 identical messages in 5min
-Trust Score: 0.72 (Medium)
-
-[ ✅ Approve ]
+1. Delete immediately (silent)
+2. No proposal needed
 ```
 
-**2. Admin Reviews**
-- ✅ **Approve**: Click button → MEMORY.md updated (silent)
-- ❌ **Reject**: Reply with reason → Public discussion + MEMORY_REJECTED.md
-
-**3. Community Learns from Rejections**
+**Medium Confidence (0.3-0.85)**: Suspicious but uncertain
 ```
-@admin: "XXX is our official partner since Jan 2025.
-         Not spam—collaboration announcement."
+1. Delete message immediately
+2. Send confirmation request:
+   "🤔 Deleted this message - was it spam?
 
-PM-E: "✅ Noted. XXX.com whitelisted. Thank you!"
-```
+   Content: [summary]
+   Reason: [pattern match details]
 
-**Why Asymmetric?**
-- **90% approvals**: Fast, silent, no chat pollution
-- **10% rejections**: Teach PM-E + educate community publicly
-- **Transparency**: No hidden AI decision-making
+   Wrong call? Let me know."
 
-#### Three-Tier Architecture
-
-```
-workspace/
-├── MEMORY.md             # ✅ Approved (operational)
-├── MEMORY_PENDING.md     # ⏳ Awaiting review (48h expiry)
-└── MEMORY_REJECTED.md    # ❌ Learning from mistakes
+3-A. Admin replies "Correct" → Silent confirmation
+3-B. Admin replies "No, XXX is partner" → Add to Whitelist section
+3-C. No response (24h) → Auto-confirm as spam
 ```
 
-**Security Benefits**:
-- Defense in depth: Staging before production
-- Audit trail: Every decision recorded
-- Negative learning: Rejected patterns prevent false positives
-- Temporal decay: Re-evaluate rejections after 90 days
+**Low Confidence (<0.3)**: Genuinely uncertain
+```
+1. Do NOT delete
+2. Send query:
+   "⚠️ Suspicious pattern detected
+
+   Evidence: [details]
+   Is this spam?"
+
+3. Admin decision → Update MEMORY.md
+```
+
+**Why Delete-First for Medium Confidence?**
+- Crypto communities: Speed > caution (spam spreads in seconds)
+- False positives rare with 0.3-0.85 threshold
+- Admin can correct immediately via reply
+- Transparent: Deletion reason always shown
+
+#### Section-Based Memory Architecture
+
+**Single File, Multiple Sections**: MEMORY.md
+
+```markdown
+# PM-E Memory
+
+## 1. Approved Patterns (Operational)
+Verified spam patterns - immediate action
+
+### [2025-03-12] XXX Link Spam
+Pattern: XXX.com repeated links
+Action: Delete immediately
+Trust: 0.95
+
+## 2. Trusted Entities (Whitelist)
+Never flag as spam
+
+### [2025-03-12] YYY Official Partner
+Domain: YYY.com
+Verified: 2025-01 by @admin
+
+## 3. Pending Proposals (Temporary - 48h expiry)
+Awaiting admin confirmation
+
+### [PENDING-001] Pattern: "ZZZ token shill"
+Evidence: 5 msgs in 10min
+Proposed: 2025-03-12 14:23
+Status: Deleted + Awaiting confirmation
+Telegram Msg: #67890
+
+## 4. Rejected Patterns (Learning - 90d decay)
+Admin-rejected proposals
+
+### [2025-03-11] REJECTED: "AAA as spam"
+Admin: @alice - "AAA is official collab"
+Re-evaluate: 2025-06-11
+```
+
+**Why Single File?**
+- LLMs load entire workspace context anyway (file splitting = security theater)
+- Section-based organization sufficient for clarity
+- Simpler file I/O (append/move sections vs multi-file management)
+- Defense = admin approval, not file structure
 
 #### Implementation Roadmap
 
-**Phase 1** (Current): Basic approval flow
-**Phase 2**: Trust scoring (auto-approve >0.85, flag <0.30)
-**Phase 3**: Batch review for attack surges
-**Phase 4**: Rejection clustering ("60% cite 'Official Partner'" → auto-whitelist)
+**Phase 1** (Current): Section-based memory + basic approval
+- 4-section MEMORY.md (Approved/Trusted/Pending/Rejected)
+- Telegram button (approve) + reply (reject)
+- Delete-first for medium confidence (0.3-0.85)
 
-**Status**: Design complete, implementation pending. See [Implementation Details](#implementation-details-todo) below.
+**Phase 2**: Confidence-based automation
+- Trust scoring: Auto-approve >0.85, manual <0.30
+- 48h auto-expiry for pending proposals
+- 90d decay for rejected patterns
+
+**Phase 3**: Attack surge handling
+- Batch review interface
+- Rate limiting + exponential backoff
+- Emergency slow-mode
+
+**Phase 4**: Pattern intelligence
+- Rejection clustering analysis
+- Auto-whitelist suggestions
+- Weekly admin digest
+
+**Status**: Design simplified (single-file), implementation pending. See [Implementation Details](#implementation-details-todo) below.
 
 ---
 
@@ -198,22 +257,15 @@ execute: async (params) => {
 New `memory_propose` tool:
 ```typescript
 // src/agents/tools/memory-propose-tool.ts (NEW - SECURE)
-description: "Propose a new pattern for admin approval. Creates a proposal that will be reviewed before being added to memory."
+description: "Propose a new pattern for admin approval."
 execute: async (params) => {
-  // 1. Generate trust score
   const trustScore = calculateTrustScore(params);
 
-  // 2. Create proposal in MEMORY_PENDING.md
-  const proposalId = await savePendingProposal({
-    pattern: params.content,
-    evidence: params.evidence,
-    reason: params.reason,
-    trustScore: trustScore,
-    timestamp: new Date(),
-  });
+  // 1. Add to MEMORY.md "Pending" section
+  await appendToMemorySection("Pending Proposals", formatProposal(params));
 
-  // 3. Send Telegram message with inline buttons
-  await telegram.sendMessage(chatId, formatProposal(proposal), {
+  // 2. Send Telegram message with inline button
+  await telegram.sendMessage(chatId, formatProposalMessage(params), {
     reply_markup: {
       inline_keyboard: [[
         { text: "✅ Approve", callback_data: `approve_${proposalId}` }
@@ -221,13 +273,7 @@ execute: async (params) => {
     }
   });
 
-  // 4. Return success (proposal created, not executed)
-  return {
-    success: true,
-    message: "Proposal sent to admins for review",
-    proposalId: proposalId,
-    status: "pending"
-  };
+  return { success: true, status: "pending", proposalId };
 }
 ```
 
@@ -236,115 +282,88 @@ execute: async (params) => {
 ```typescript
 // src/channels/telegram/proposal-handler.ts (NEW)
 
-// Handle [✅ Approve] button click
+// Handle [✅ Approve] button
 bot.on("callback_query", async (query) => {
   if (!query.data.startsWith("approve_")) return;
 
-  // Verify admin status (CODE-LEVEL, NOT PROMPT)
+  // Admin verification (CODE, not prompts)
   const isAdmin = await telegram.getChatMember(chatId, query.from.id)
-    .then(member => ["administrator", "creator"].includes(member.status));
+    .then(m => ["administrator", "creator"].includes(m.status));
 
   if (!isAdmin) {
     await bot.answerCallbackQuery(query.id, {
-      text: "❌ Only admins can approve proposals",
-      show_alert: true
+      text: "❌ Admins only", show_alert: true
     });
     return;
   }
 
-  // Execute proposal
+  // Move from Pending → Approved section
   const proposalId = query.data.split("_")[1];
-  const proposal = await loadPendingProposal(proposalId);
+  await moveMemorySection(proposalId, "Pending", "Approved");
 
-  await fs.appendFile("workspace/MEMORY.md", formatMemoryEntry(proposal));
-  await deletePendingProposal(proposalId);
-
-  // Update message
   await bot.editMessageText(
     `✅ Approved by @${query.from.username}\n\n${query.message.text}`,
     { chat_id: chatId, message_id: query.message.message_id }
   );
 });
 
-// Handle rejection via reply (NOT callback_query)
+// Handle rejection via reply
 bot.on("message", async (msg) => {
-  if (!msg.reply_to_message?.from?.is_bot) return;
-  if (!msg.reply_to_message.text.includes("[PM-E] New")) return;
+  if (!msg.reply_to_message?.text.includes("[PM-E]")) return;
 
-  // Verify admin status
   const isAdmin = await telegram.getChatMember(chatId, msg.from.id)
-    .then(member => ["administrator", "creator"].includes(member.status));
+    .then(m => ["administrator", "creator"].includes(m.status));
 
-  if (!isAdmin) return; // Silently ignore non-admin replies
+  if (!isAdmin) return;
 
-  // Extract proposal from replied message
+  // Move Pending → Rejected section (with admin's reason)
   const proposalId = extractProposalId(msg.reply_to_message);
-  const proposal = await loadPendingProposal(proposalId);
-
-  // Save to MEMORY_REJECTED.md with admin's reason
-  await fs.appendFile("workspace/MEMORY_REJECTED.md", formatRejection({
-    proposal: proposal,
-    rejectionReason: msg.text,
+  await moveMemorySection(proposalId, "Pending", "Rejected", {
+    reason: msg.text,
     rejectedBy: msg.from.username,
-    rejectedAt: new Date(),
-    telegramMessageId: msg.message_id  // For public audit trail
-  }));
+  });
 
-  await deletePendingProposal(proposalId);
-
-  // Confirm to admin
   await bot.sendMessage(chatId,
-    `✅ Rejection recorded. Thank you for the clarification, @${msg.from.username}!`
-  );
-
-  // Update original proposal message
-  await bot.editMessageText(
-    `❌ Rejected by @${msg.from.username}\n\n${msg.reply_to_message.text}`,
-    { chat_id: chatId, message_id: msg.reply_to_message.message_id }
+    `✅ Rejection recorded. Thank you, @${msg.from.username}!`
   );
 });
 ```
 
-**File Format Specifications**
+**MEMORY.md Format** (Section-Based)
 
-MEMORY_PENDING.md:
 ```markdown
-## [PENDING-2025-03-12-001] Trust: 0.72
-**Pattern**: "XXX link spam"
-**Evidence**:
-- #12345 (@spammer, 12:01)
-- #12346 (@spammer, 12:03)
-**Reason**: 3 identical links in 5min
-**Proposed**: 2025-03-12 14:23:00 UTC
-**Expires**: 2025-03-14 14:23:00 UTC (48h)
-**Telegram Message ID**: 67890
-```
+# PM-E Memory
 
-MEMORY_REJECTED.md:
-```markdown
-## [2025-03-12 14:30] REJECTED by @admin_alice
-**Proposed Pattern**: "XXX link spam"
-**Evidence**:
-- Message #12345 (@user1, 12:01) "Check XXX"
-- Message #12346 (@user2, 12:03) "XXX great!"
-**PM-E's Reason**: 3 identical links in 5min + clickbait
+## 1. Approved Patterns
+### [2025-03-12] XXX Link Spam
+Pattern: XXX.com repeated in 5min
+Action: Delete + 30min mute
+Evidence: #12345, #12346, #12347
+Trust: 0.95
+Approved: @admin_alice
 
-**Admin Rejection Reason** (@admin_alice):
-> "XXX is our verified partner since January 2025.
-> Their announcements are official collaboration, not spam.
-> Please whitelist XXX.com domain."
+## 2. Trusted Entities
+### [2025-03-12] YYY Partner
+Domain: YYY.com
+Verified: 2025-01 by @admin_bob
+Note: Official collaboration announcements
 
-**Community Context**:
-- Telegram Message ID: 67891 (public thread)
-- 3 reactions: 👍👍👍
-- Action Taken: Added XXX.com to whitelist
+## 3. Pending Proposals (48h auto-expire)
+### [PENDING-001] "ZZZ token shill"
+Proposed: 2025-03-12 14:23
+Expires: 2025-03-14 14:23
+Evidence: 5 msgs in 10min
+Trust: 0.62
+Status: Deleted + awaiting confirmation
+Telegram: #67890
 
-**Lesson Learned**:
-- XXX.com = trusted partner (verified 2025-01)
-- Multiple mentions ≠ spam if official partnership
-- Check partnership list before spam classification
-
-**Re-evaluation Date**: 2025-06-12 (90 days)
+## 4. Rejected Patterns (90d decay)
+### [2025-03-11] REJECTED: "AAA spam claim"
+Rejected by: @admin_alice
+Reason: "AAA is official collab, not spam"
+Action taken: Added AAA.com to Whitelist
+Re-evaluate: 2025-06-11
+Telegram: #67891 (3👍)
 ```
 
 **Tool Registry Update**
@@ -370,44 +389,50 @@ export function createOpenClawTools(config) {
 
 **Security Checklist**
 
-- [ ] Remove `memory_save` tool completely
+- [x] Disable `memory_save` tool (done)
 - [ ] Implement `memory_propose` tool with trust scoring
-- [ ] Add Telegram inline button handler (approval)
-- [ ] Add Telegram reply handler (rejection)
-- [ ] Implement admin verification via `getChatMember` API
-- [ ] Create MEMORY_PENDING.md file structure
-- [ ] Create MEMORY_REJECTED.md file structure
-- [ ] Add proposal expiration cron job (48 hours)
-- [ ] Implement trust score calculator
-- [ ] Add temporal decay for rejected patterns (90 days)
-- [ ] Update TOOLS.md template to reflect new behavior
-- [ ] Write integration tests for approval workflow
-- [ ] Document in CLAUDE.md for future sessions
+- [ ] Implement section-based MEMORY.md structure (4 sections)
+- [ ] Telegram button handler (approval → move section)
+- [ ] Telegram reply handler (rejection → move section + reason)
+- [ ] Admin verification via `getChatMember` API
+- [ ] Proposal expiration (48h auto-cleanup)
+- [ ] Temporal decay for rejected patterns (90d)
+- [ ] Update TOOLS/AGENTS/SOUL templates
+- [ ] Integration tests for approval workflow
 
 ---
 
 #### Why This Design Works
 
-**Security Layer 1: Code-Level Enforcement**
-- `memory_save` tool disabled—PM-E cannot write directly
-- Only `memory_propose` tool available
-- Telegram API verifies admin status on button clicks
+**Security ≠ File Structure**
+> "LLMs load entire workspace context. Splitting files doesn't prevent memory poisoning—only admin approval does."
 
-**Security Layer 2: Community Transparency**
-- Rejections are public—no hidden decision-making
-- Users learn community policies in real-time
-- Attackers cannot silently poison memory
+**Real Security Layers:**
 
-**Security Layer 3: Learning from Mistakes**
-- MEMORY_REJECTED.md prevents repeated false positives
-- PM-E learns "XXX.com = trusted" without storing it as spam
-- Negative signals are as valuable as positive ones
+1. **Admin Approval Bottleneck**
+   - PM-E proposes, admin decides
+   - Telegram API verifies admin status (code, not prompts)
+   - No LLM bypass possible
 
-**Compliance & Trust**
-- OWASP LLM security: Memory poisoning defense
-- EU AI Act: HITL for high-risk decisions
-- NIST/ISO 27001: Audit trails and access control
-- Crypto community: Transparent moderation builds trust
+2. **Community Transparency**
+   - Rejections are public discussions
+   - "Why not spam?" visible to all members
+   - Attackers can't silently poison memory
+
+3. **Negative Feedback Learning**
+   - Rejected patterns prevent repeated mistakes
+   - "XXX = partner" stored in Whitelist section
+   - 90-day decay for stale rejections
+
+4. **Delete-First Philosophy**
+   - Speed > perfect accuracy in crypto communities
+   - Admin can correct false positives immediately
+   - Transparent reasoning always shown
+
+**Compliance**
+- OWASP LLM: Memory poisoning defense via HITL
+- EU AI Act: High-risk system compliance
+- NIST/ISO 27001: Audit trails in MEMORY.md sections
 
 ### Security Test Results
 

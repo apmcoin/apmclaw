@@ -62,13 +62,15 @@ export async function startGatewaySidecars(params: {
     params.log.warn(`session lock cleanup failed on startup: ${String(err)}`);
   }
 
+  // Removed: Browser tool dependency
   // Start ApmClaw browser control server (unless disabled via config).
-  let browserControl: Awaited<ReturnType<typeof startBrowserControlServerIfEnabled>> = null;
-  try {
-    browserControl = await startBrowserControlServerIfEnabled();
-  } catch (err) {
-    params.logBrowser.error(`server failed to start: ${String(err)}`);
-  }
+  // let browserControl: Awaited<ReturnType<typeof startBrowserControlServerIfEnabled>> = null;
+  // try {
+  //   browserControl = await startBrowserControlServerIfEnabled();
+  // } catch (err) {
+  //   params.logBrowser.error(`server failed to start: ${String(err)}`);
+  // }
+  const browserControl = null;
 
   // Start Gmail watcher if configured (hooks.gmail.account).
   await startGmailWatcherWithLogs({

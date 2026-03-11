@@ -28,7 +28,8 @@ type GatewayHotReloadState = {
   hooksConfig: ReturnType<typeof resolveHooksConfig>;
   heartbeatRunner: HeartbeatRunner;
   cronState: GatewayCronState;
-  browserControl: Awaited<ReturnType<typeof startBrowserControlServerIfEnabled>> | null;
+  // Removed: Browser tool dependency
+  browserControl: null;
   channelHealthMonitor: ChannelHealthMonitor | null;
 };
 
@@ -84,15 +85,17 @@ export function createGatewayReloadHandlers(params: {
         .catch((err) => params.logCron.error(`failed to start: ${String(err)}`));
     }
 
+    // Removed: Browser tool dependency
     if (plan.restartBrowserControl) {
-      if (state.browserControl) {
-        await state.browserControl.stop().catch(() => {});
-      }
-      try {
-        nextState.browserControl = await startBrowserControlServerIfEnabled();
-      } catch (err) {
-        params.logBrowser.error(`server failed to start: ${String(err)}`);
-      }
+      // if (state.browserControl) {
+      //   await state.browserControl.stop().catch(() => {});
+      // }
+      // try {
+      //   nextState.browserControl = await startBrowserControlServerIfEnabled();
+      // } catch (err) {
+      //   params.logBrowser.error(`server failed to start: ${String(err)}`);
+      // }
+      nextState.browserControl = null;
     }
 
     if (plan.restartHealthMonitor) {

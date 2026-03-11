@@ -31,7 +31,8 @@ import {
   handleStopCommand,
   handleUsageCommand,
 } from "./commands-session.js";
-import { handleSubagentsCommand } from "./commands-subagents.js";
+// Removed: Subagents tool dependency
+// import { handleSubagentsCommand } from "./commands-subagents.js";
 import type {
   CommandHandler,
   CommandHandlerResult,
@@ -183,7 +184,7 @@ export async function handleCommands(params: HandleCommandsParams): Promise<Comm
       handleContextCommand,
       handleExportSessionCommand,
       handleWhoamiCommand,
-      handleSubagentsCommand,
+      // Removed: handleSubagentsCommand (Subagents tool removed)
       handleAcpCommand,
       handleConfigCommand,
       handleDebugCommand,

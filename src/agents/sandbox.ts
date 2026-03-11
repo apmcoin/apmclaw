@@ -14,11 +14,9 @@ export { ensureSandboxWorkspaceForSession, resolveSandboxContext } from "./sandb
 
 export { buildSandboxCreateArgs } from "./sandbox/docker.js";
 export {
-  listSandboxBrowsers,
   listSandboxContainers,
-  removeSandboxBrowserContainer,
   removeSandboxContainer,
-  type SandboxBrowserInfo,
+  // Removed: SandboxBrowserInfo, listSandboxBrowsers, removeSandboxBrowserContainer (Browser tool removed)
   type SandboxContainerInfo,
 } from "./sandbox/manage.js";
 export {

@@ -27,8 +27,8 @@ import type { ElevatedLevel, ReasoningLevel, ThinkLevel, VerboseLevel } from "..
 import type { ReplyPayload } from "../types.js";
 import type { CommandContext } from "./commands-types.js";
 import { getFollowupQueueDepth, resolveQueueSettings } from "./queue.js";
-import { resolveSubagentLabel } // Removed: Subagents tool dependency
-// from "./subagents-utils.js";
+// Removed: Subagents tool dependencies
+// import { resolveSubagentLabel } from "./subagents-utils.js";
 
 export async function buildStatusReply(params: {
   cfg: ApmClawConfig;
@@ -118,27 +118,28 @@ export async function buildStatusReply(params: {
     sessionEntry?.queueDebounceMs ?? sessionEntry?.queueCap ?? sessionEntry?.queueDrop,
   );
 
-  let subagentsLine: string | undefined;
-  if (sessionKey) {
-    const { mainKey, alias } = resolveMainSessionAlias(cfg);
-    const requesterKey = resolveInternalSessionKey({ key: sessionKey, alias, mainKey });
-    const runs = listSubagentRunsForRequester(requesterKey);
-    const verboseEnabled = resolvedVerboseLevel && resolvedVerboseLevel !== "off";
-    if (runs.length > 0) {
-      const active = runs.filter((entry) => !entry.endedAt);
-      const done = runs.length - active.length;
-      if (verboseEnabled) {
-        const labels = active
-          .map((entry) => resolveSubagentLabel(entry, ""))
-          .filter(Boolean)
-          .slice(0, 3);
-        const labelText = labels.length ? ` (${labels.join(", ")})` : "";
-        subagentsLine = `🤖 Subagents: ${active.length} active${labelText} · ${done} done`;
-      } else if (active.length > 0) {
-        subagentsLine = `🤖 Subagents: ${active.length} active`;
-      }
-    }
-  }
+  // Removed: Subagents tool dependency
+  // let subagentsLine: string | undefined;
+  // if (sessionKey) {
+  //   const { mainKey, alias } = resolveMainSessionAlias(cfg);
+  //   const requesterKey = resolveInternalSessionKey({ key: sessionKey, alias, mainKey });
+  //   const runs = listSubagentRunsForRequester(requesterKey);
+  //   const verboseEnabled = resolvedVerboseLevel && resolvedVerboseLevel !== "off";
+  //   if (runs.length > 0) {
+  //     const active = runs.filter((entry) => !entry.endedAt);
+  //     const done = runs.length - active.length;
+  //     if (verboseEnabled) {
+  //       const labels = active
+  //         .map((entry) => resolveSubagentLabel(entry, ""))
+  //         .filter(Boolean)
+  //         .slice(0, 3);
+  //       const labelText = labels.length ? ` (${labels.join(", ")})` : "";
+  //       subagentsLine = `🤖 Subagents: ${active.length} active${labelText} · ${done} done`;
+  //     } else if (active.length > 0) {
+  //       subagentsLine = `🤖 Subagents: ${active.length} active`;
+  //     }
+  //   }
+  // }
   const groupActivation = isGroup
     ? (normalizeGroupActivation(sessionEntry?.groupActivation) ?? defaultGroupActivation())
     : undefined;
@@ -197,7 +198,7 @@ export async function buildStatusReply(params: {
       dropPolicy: queueSettings.dropPolicy,
       showDetails: queueOverrides,
     },
-    subagentsLine,
+    subagentsLine: undefined, // Removed: Subagents tool dependency
     mediaDecisions: params.mediaDecisions,
     includeTranscriptUsage: false,
   });

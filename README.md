@@ -35,35 +35,29 @@ PM-E is purpose-built for **Telegram crypto communities**, where attacks are fas
 **Challenge**: How can PM-E learn spam patterns without allowing anyone to poison its memory?
 
 **Solution**: Pull Request Pattern
-```
+
 1. PM-E detects new spam pattern
 2. Creates Telegram message with inline buttons:
-```
 
-**Telegram Message (Admin-Only Buttons):**
-```
-┌──────────────────────────────────────────────┐
-│ 🔍 [PM-E] New Spam Pattern Detected          │
-│                                              │
-│ Pattern: "XXX link spam"                     │
-│                                              │
-│ 📊 Evidence:                                 │
-│ • #12345 (@spammer, 12:01)                   │
-│ • #12346 (@spammer, 12:03)                   │
-│ • #12347 (@spammer, 12:05)                   │
-│                                              │
-│ 💡 Reason:                                   │
-│ 3 identical links in 5min + clickbait phrase │
-│                                              │
-│ [ ✅ Approve ] [ ❌ Reject ]                 │
-└──────────────────────────────────────────────┘
-```
 
-```
+> 🔍 **[PM-E] New Spam Pattern Detected**
+>
+> **Pattern:** "XXX link spam"
+>
+> 📊 **Evidence:**
+> - Message #12345 (@spammer, 12:01)
+> - Message #12346 (@spammer, 12:03)
+> - Message #12347 (@spammer, 12:05)
+>
+> 💡 **Reason:**
+> 3 identical links in 5 minutes + clickbait phrases
+>
+> `[ ✅ Approve ]` `[ ❌ Reject ]`
+
+
 3. Admin clicks button (Telegram API verifies admin status)
-4. ✅ Approved → MEMORY.md updated
-5. ❌ Rejected → Proposal deleted
-```
+4. ✅ **Approved** → MEMORY.md updated with new pattern
+5. ❌ **Rejected** → Proposal deleted, no memory change
 
 **Why This Works:**
 - PM-E can only **propose**, not directly write

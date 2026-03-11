@@ -3,7 +3,7 @@ import type { AgentBinding, AgentsConfig } from "./types.agents.js";
 import type { ApprovalsConfig } from "./types.approvals.js";
 import type { AuthConfig } from "./types.auth.js";
 import type { DiagnosticsConfig, LoggingConfig, SessionConfig, WebConfig } from "./types.base.js";
-import type { BrowserConfig } from "./types.browser.js";
+// Removed: import type { BrowserConfig } from "./types.browser.js"; (Browser tool removed)
 import type { ChannelsConfig } from "./types.channels.js";
 import type { CliConfig } from "./types.cli.js";
 import type { CronConfig } from "./types.cron.js";
@@ -80,7 +80,7 @@ export type ApmClawConfig = {
       betaCheckIntervalHours?: number;
     };
   };
-  browser?: BrowserConfig;
+  // Removed: browser?: BrowserConfig; (Browser tool removed for security)
   ui?: {
     /** Accent color for ApmClaw UI chrome (hex). */
     seamColor?: string;

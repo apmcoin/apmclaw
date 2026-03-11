@@ -1,14 +1,15 @@
-import { stopBrowserBridgeServer } from "../../browser/bridge-server.js";
+// Removed: Browser tool dependencies
+// import { stopBrowserBridgeServer } from "../../browser/bridge-server.js";
 import { loadConfig } from "../../config/config.js";
-import { BROWSER_BRIDGES } from "./browser-bridges.js";
+// import { BROWSER_BRIDGES } from "./browser-bridges.js";
 import { resolveSandboxConfigForAgent } from "./config.js";
 import { dockerContainerState, execDocker } from "./docker.js";
 import {
-  readBrowserRegistry,
+  // readBrowserRegistry,
   readRegistry,
-  removeBrowserRegistryEntry,
+  // removeBrowserRegistryEntry,
   removeRegistryEntry,
-  type SandboxBrowserRegistryEntry,
+  // type SandboxBrowserRegistryEntry,
   type SandboxRegistryEntry,
 } from "./registry.js";
 import { resolveSandboxAgentId } from "./shared.js";
@@ -18,10 +19,11 @@ export type SandboxContainerInfo = SandboxRegistryEntry & {
   imageMatch: boolean;
 };
 
-export type SandboxBrowserInfo = SandboxBrowserRegistryEntry & {
-  running: boolean;
-  imageMatch: boolean;
-};
+// Removed: Browser tool type
+// export type SandboxBrowserInfo = SandboxBrowserRegistryEntry & {
+//   running: boolean;
+//   imageMatch: boolean;
+// };
 
 async function listSandboxRegistryItems<
   TEntry extends { containerName: string; image: string; sessionKey: string },

@@ -12,7 +12,12 @@ const MemorySaveSchema = Type.Object({
 });
 
 /**
- * memory_save tool: Allows the bot to persist information by appending to MEMORY.md.
+ * memory_save tool: TEMPORARILY DISABLED - Under redesign for Memory Proposal System.
+ *
+ * Security Issue: Direct memory writes allow memory poisoning attacks.
+ * New Design: Memory Proposal System with admin approval (see README.md).
+ *
+ * TODO: Replace with memory_propose tool that creates admin-reviewed proposals.
  */
 export function createMemorySaveTool(options: {
   config?: any;
@@ -22,18 +27,25 @@ export function createMemorySaveTool(options: {
   return {
     label: "Memory Save",
     name: "memory_save",
-    description: "Save a new pattern, decision, or instruction to your long-term memory (MEMORY.md). Use this when an admin gives a specific instruction or when you identify a new spam pattern to remember for the future.",
+    description: "⚠️ DISABLED: This tool is temporarily unavailable during Memory Proposal System implementation. Memory writes now require admin approval to prevent poisoning attacks. You can still use memory_search and memory_get to read existing knowledge.",
     parameters: MemorySaveSchema,
     execute: async (_toolCallId, params) => {
+      // DISABLED: Return error message instead of writing
+      return jsonResult({
+        success: false,
+        error: "memory_save is temporarily disabled. Memory Proposal System under implementation. Use memory_search to access existing knowledge."
+      });
+
+      /* ORIGINAL CODE (disabled):
       const content = readStringParam(params, "content", { required: true });
       const category = readStringParam(params, "category") || "general";
-      
+
       const workspaceDir = resolveWorkspaceRoot(options.workspaceDir);
       const memoryFilePath = path.join(workspaceDir, "MEMORY.md");
-      
+
       const timestamp = new Date().toISOString();
       const entry = `\n\n### [${timestamp}] Category: ${category}\n${content.trim()}`;
-      
+
       try {
         await fs.appendFile(memoryFilePath, entry, "utf-8");
         return jsonResult({ success: true, message: "Information saved to MEMORY.md successfully." });
@@ -41,6 +53,7 @@ export function createMemorySaveTool(options: {
         const error = err instanceof Error ? err.message : String(err);
         return jsonResult({ success: false, error: `Failed to save to memory: ${error}` });
       }
+      */
     }
   };
 }

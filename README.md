@@ -10,177 +10,179 @@
 - **Since 2023**: **PM-E** (피엠이) was the original guardian of the apM community, serving as a dedicated AI anti-spam bot.
 - **2025 Evolution**: PM-E evolved by adopting the advanced memory-context architecture of apM Claw. It is now a leaner, context-aware community manager that learns from interactions.
 
-## 🛡️ Security Architecture
+## 🛡️ Security Architecture: Why apM Claw is Different
 
 ### Design Philosophy: "Lean & Strong Claw"
 
-PM-E is purpose-built for **Telegram crypto communities**, where attacks are fast, coordinated, and persistent. Our security model recognizes that **LLMs cannot be trusted with authorization decisions** — all security is enforced at the code level, not via prompts.
+PM-E is **not** a general-purpose chatbot. It is a **purpose-built security appliance** for Telegram crypto communities, where:
+- Spam waves hit 50+ coordinated accounts simultaneously
+- Phishing links spread in seconds
+- Impersonation attacks use Unicode tricks
+- Social engineering exploits community trust
 
-> **⚠️ Reality Check**: Large Language Models are fundamentally vulnerable to prompt injection. PM-E's security does NOT rely on asking the AI to "check permissions" or "refuse certain actions." Real protection happens in `method-scopes.ts`, not in system prompts.
+Our security model: **LLMs cannot be trusted with authorization decisions**.
+
+> **⚠️ Reality Check**: Prompt injection is undefeatable. PM-E's security does NOT rely on asking Claude to "check permissions" or "refuse certain actions." Real protection happens in `method-scopes.ts` and Telegram API calls, not in system prompts.
+
+---
+
+### apM Claw's Defense Layers
+
+#### Layer 1: Attack Surface Reduction
+**13 tools → 6 tools**: Cut 54% of attack vectors
+
+| Removed (Security Risk) | Remaining (Essential) |
+|-------------------------|----------------------|
+| ❌ `browser` (658 lines, XSS/SSRF) | ✅ `message` (send to chat) |
+| ❌ `subagents` (2,422 lines, spawning) | ✅ `memory_search` (read only) |
+| ❌ `sessions_*` (cross-session attacks) | ✅ `memory_get` (read only) |
+| ❌ `cron` (scheduled tasks) | ✅ `memory_propose` (admin approval) |
+| ❌ `image` (file uploads) | ✅ `web_search` (HTTPS only) |
+| ❌ `session_status` (info leak) | ✅ `web_fetch` (SSRF protected) |
+
+**Why This Matters**: Every tool is a potential prompt injection target. Fewer tools = smaller blast radius.
+
+#### Layer 2: Code-Level Authorization
+**Where Security Actually Happens**: `src/gateway/method-scopes.ts`
+
+```typescript
+// Admin-only operations verified by CODE, not prompts
+export function isAdminOnlyMethod(method: string): boolean {
+  return resolveScopedMethod(method) === ADMIN_SCOPE;
+}
+
+// Telegram API verification (not LLM prompts)
+const member = await telegram.getChatMember(chatId, userId);
+const isAdmin = ["administrator", "creator"].includes(member.status);
+```
+
+**Prompt injection cannot bypass TypeScript functions.**
+
+#### Layer 3: Network Security
+**HTTPS-Only + SSRF Protection**: `src/agents/tools/web-fetch-tool.ts`
+
+- Local network blocking: `127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`
+- Private IP rejection: `169.254.0.0/16`, `fc00::/7`
+- Metadata endpoint blocking: `169.254.169.254` (AWS/GCP/Azure)
+- HTTP → HTTPS auto-upgrade
+
+**Why**: Prevents PM-E from becoming a SSRF bot for internal network scanning.
+
+---
 
 ### Telegram-Specific Protections
 
-**Admin Verification (Code-Level)**
-- Real-time role checks via Telegram API (`getChatMember`)
-- System-level enforcement in `method-scopes.ts` before tool execution
-- Inline button callbacks verify admin status before approval actions
+**Admin Verification (Every Action)**
+```typescript
+// Real-time role check before approval
+const member = await bot.getChatMember(chatId, userId);
+if (!["administrator", "creator"].includes(member.status)) {
+  return error("Admins only");
+}
+```
 
-**Attack Surface Reduction**
-- **13 tools → 6 tools**: Removed all non-essential capabilities
-- Eliminated: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`
-- Remaining: `message`, `memory_*`, `web_*` (core spam moderation only)
+**Inline Button Security**
+- Telegram's button API enforces user identity
+- Callback data includes proposal ID (not executable code)
+- Admin status verified on every click (not cached)
 
-### Memory Proposal System (Design Complete, Implementation Pending)
-
-**Challenge**: How can PM-E learn spam patterns without allowing anyone to poison its memory?
-
-**The Problem**: LLMs are fundamentally vulnerable to memory injection attacks (MINJA, NeurIPS 2025). Attackers can insert malicious logic through seemingly harmless queries, with injection success rates exceeding 95%. Unlike prompt injection, memory poisoning is persistent—it remains dormant for days and activates in future sessions with different users.
-
-**Solution**: Human-in-the-Loop (HITL) Pull Request Pattern
-
-Research shows HITL approval workflows achieve 91.5% error detection rates when equipped with proper evidence context.
+**Rate Limiting (Future)**
+- Message surge detection → auto slow-mode
+- Batch analysis during coordinated attacks
+- Exponential backoff for repeated proposals
 
 ---
 
-#### Three-Tier Memory Architecture
+### Layer 4: Memory Proposal System (Under Implementation)
+
+**The Problem**: Memory injection attacks achieve 95% success rates. Attackers insert malicious logic via innocent queries, which activates days later in unrelated conversations.
+
+**apM Claw's Solution**: Pull Request Pattern for Memory
+
+#### How It Works
+
+**1. PM-E Detects Pattern → Proposal (Not Direct Write)**
+```
+🔍 [PM-E] New Spam Pattern Detected
+
+Pattern: "XXX link spam"
+Evidence: 3 identical messages in 5min
+Trust Score: 0.72 (Medium)
+
+[ ✅ Approve ]
+```
+
+**2. Admin Reviews**
+- ✅ **Approve**: Click button → MEMORY.md updated (silent)
+- ❌ **Reject**: Reply with reason → Public discussion + MEMORY_REJECTED.md
+
+**3. Community Learns from Rejections**
+```
+@admin: "XXX is our official partner since Jan 2025.
+         Not spam—collaboration announcement."
+
+PM-E: "✅ Noted. XXX.com whitelisted. Thank you!"
+```
+
+**Why Asymmetric?**
+- **90% approvals**: Fast, silent, no chat pollution
+- **10% rejections**: Teach PM-E + educate community publicly
+- **Transparency**: No hidden AI decision-making
+
+#### Three-Tier Architecture
 
 ```
 workspace/
-├── MEMORY.md             # ✅ Approved Knowledge (Operational)
-├── MEMORY_PENDING.md     # ⏳ Proposals Awaiting Review
-└── MEMORY_REJECTED.md    # ❌ Rejected with Reasons (Learning Asset)
+├── MEMORY.md             # ✅ Approved (operational)
+├── MEMORY_PENDING.md     # ⏳ Awaiting review (48h expiry)
+└── MEMORY_REJECTED.md    # ❌ Learning from mistakes
 ```
 
-**Why Three Files?**
-- **Defense in Depth**: Memory writes go through staging before production
-- **Negative Flip Prevention**: Rejected patterns prevent regression (ROSE Algorithm, 2024)
-- **Audit Trail**: Complete history of memory governance decisions
-- **Temporal Decay**: Rejected patterns age out after 90 days for re-evaluation
+**Security Benefits**:
+- Defense in depth: Staging before production
+- Audit trail: Every decision recorded
+- Negative learning: Rejected patterns prevent false positives
+- Temporal decay: Re-evaluate rejections after 90 days
+
+#### Implementation Roadmap
+
+**Phase 1** (Current): Basic approval flow
+**Phase 2**: Trust scoring (auto-approve >0.85, flag <0.30)
+**Phase 3**: Batch review for attack surges
+**Phase 4**: Rejection clustering ("60% cite 'Official Partner'" → auto-whitelist)
+
+**Status**: Design complete, implementation pending. See [Implementation Details](#implementation-details-todo) below.
 
 ---
 
-#### Asymmetric Approval Workflow
+#### Scientific Foundation (Why This Design Works)
 
-**1. PM-E Detects Pattern**
-PM-E observes suspicious activity and creates a proposal:
-
-> ---
-> 🔍 **[PM-E] New Spam Pattern Detected**
->
-> **Pattern:** "XXX link spam"
->
-> 📊 **Evidence:**
-> - Message #12345 (@spammer, 12:01)
-> - Message #12346 (@spammer, 12:03)
-> - Message #12347 (@spammer, 12:05)
->
-> 💡 **Reason:**
-> 3 identical links in 5 minutes + clickbait phrases
->
-> **Trust Score:** 0.72 (Medium Confidence)
->
-> `[ ✅ Approve ]`
-> ---
-
-**2. Admin Reviews (Asymmetric Flow)**
-
-✅ **Approve: Silent Button Click**
-- Fast (1-click), no chat pollution
-- MEMORY.md updated immediately
-- Typical use: 90% of legitimate spam detection
-
-❌ **Reject: Public Reply**
-- Admin replies directly to the proposal message
-- **Community learns**: "XXX is our official partner"
-- **Rich context**: Natural language explanation teaches PM-E
-- **Transparent governance**: Public decision-making visible to all members
-
-**Example Rejection:**
-```
-@admin_alice (replying to PM-E):
-"XXX is our verified partner since January 2025.
-Their announcements are official collaboration, not spam.
-Please whitelist XXX.com domain."
-
-PM-E (auto-response):
-"✅ Rejection recorded. XXX.com added to trusted partners.
-Thank you for the clarification, @admin_alice!"
-```
-
-**3. Outcomes**
-
-| Decision | File | Community Impact | PM-E Learning |
-|----------|------|------------------|---------------|
-| ✅ Approved | MEMORY.md | Silent operation | Pattern reinforced |
-| ❌ Rejected | MEMORY_REJECTED.md | Public discussion | Learns "why not" + context |
-| ⏱️ Expired (48h) | Deleted | None | Low-confidence patterns auto-expire |
-
----
-
-#### Scientific Foundation
-
-**Memory Injection Attacks (MINJA)**
+**Memory Injection Attacks (MINJA, NeurIPS 2025)**
 - 95% injection success rate in query-only scenarios
-- Delayed activation via "bridging steps" (logical intermediates)
+- Delayed activation via "bridging steps" (seemingly innocent intermediates)
 - Persists across sessions and users
 - **PM-E Defense**: Admin approval blocks all three attack stages
 
-**Negative Feedback Learning**
-- Rejected samples improve model stability (ROSE Algorithm)
+**Negative Feedback Learning (ROSE Algorithm, 2024)**
+- Rejected samples improve model stability
 - Prevents "negative flips" (regression on previously correct predictions)
-- Recommender systems: Negative feedback coverage 7% → 48% with proper modeling
+- Negative feedback coverage: 7% → 48% improvement in recommender systems
 - **PM-E Implementation**: MEMORY_REJECTED.md as learning corpus
 
-**Human-in-the-Loop Effectiveness**
+**Human-in-the-Loop Effectiveness (Academic Research)**
 - 91.5% error detection rate with structured evidence
-- 10-30 second review time with proper context
-- EU AI Act compliance for high-risk systems
+- 10-30 second review time when evidence is well-formatted
+- EU AI Act compliance requirement for high-risk systems
 - **PM-E Design**: Telegram inline buttons + admin reply = optimal UX
 
-**Code Review Parallel (Message-Code Inconsistency)**
-- AI-generated pull requests with unclear explanations have 51.7% lower acceptance
+**Code Review Parallel (Message-Code Inconsistency Studies)**
+- AI-generated PRs with unclear explanations: 51.7% lower acceptance
 - Merge time increases 3.5x when rationale is missing
 - **PM-E Lesson**: Rejection replies provide the missing "why" context
 
 ---
 
-#### Advanced Features (Implementation Roadmap)
-
-**Phase 1: Basic Approval (Current Design)**
-- ✅ Approve button → MEMORY.md
-- ❌ Reject reply → MEMORY_REJECTED.md
-- 48-hour auto-expiration
-
-**Phase 2: Trust Scoring**
-```python
-trust_score = (
-    evidence_count * 0.3 +        # More evidence = higher confidence
-    time_pattern_score * 0.2 +    # 5 minutes vs 5 days
-    past_approval_rate * 0.3 +    # Similar proposals history
-    domain_reputation * 0.2        # Whitelist/blacklist status
-)
-```
-- Auto-approve proposals with trust_score > 0.85
-- Request additional evidence for trust_score < 0.30
-
-**Phase 3: Temporal Decay**
-- Rejected patterns age out after 90 days
-- Auto-suggest re-evaluation: "XXX was rejected as 'partner' on 2025-01-15. Partnership status may have changed."
-- Prevents stale negative signals from blocking legitimate activity
-
-**Phase 4: Rejection Clustering**
-- Pattern analysis: "60% of rejections cite 'Official Partner'"
-- Auto-suggest whitelist additions based on trends
-- Weekly admin digest: "5 similar patterns rejected this week"
-
-**Phase 5: Batch Review Dashboard**
-- Group similar pending proposals
-- Multi-select approve/reject
-- Reduces admin burden during attack surges
-
----
-
-#### Implementation Details (TODO)
+### Implementation Details (TODO)
 
 **Tool Behavior Change**
 

@@ -37,21 +37,32 @@ PM-E is purpose-built for **Telegram crypto communities**, where attacks are fas
 **Solution**: Pull Request Pattern
 ```
 1. PM-E detects new spam pattern
-2. Creates proposal with evidence:
-   🔍 New Pattern: "XXX link spam"
+2. Creates Telegram message with inline buttons:
+```
 
-   Evidence:
-   • #12345 (@spammer, 12:01)
-   • #12346 (@spammer, 12:03)
-   • #12347 (@spammer, 12:05)
+**Telegram Message (Admin-Only Buttons):**
+```
+┌──────────────────────────────────────────────┐
+│ 🔍 [PM-E] New Spam Pattern Detected          │
+│                                              │
+│ Pattern: "XXX link spam"                     │
+│                                              │
+│ 📊 Evidence:                                 │
+│ • #12345 (@spammer, 12:01)                   │
+│ • #12346 (@spammer, 12:03)                   │
+│ • #12347 (@spammer, 12:05)                   │
+│                                              │
+│ 💡 Reason:                                   │
+│ 3 identical links in 5min + clickbait phrase │
+│                                              │
+│ [ ✅ Approve ] [ ❌ Reject ]                 │
+└──────────────────────────────────────────────┘
+```
 
-   Reason: 3 identical links in 5min + clickbait phrases
-
-   [ ✅ Approve ] [ ❌ Reject ]
-
-3. Admin clicks button (Telegram verifies admin status)
-4. Approved → MEMORY.md updated
-5. Rejected → Proposal deleted
+```
+3. Admin clicks button (Telegram API verifies admin status)
+4. ✅ Approved → MEMORY.md updated
+5. ❌ Rejected → Proposal deleted
 ```
 
 **Why This Works:**

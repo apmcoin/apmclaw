@@ -4,7 +4,8 @@ import {
   resolveSessionAgentId,
 } from "../../agents/agent-scope.js";
 import { resolveModelAuthLabel } from "../../agents/model-auth-label.js";
-import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
+// Removed: Subagents tool dependency
+// import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
 import {
   resolveInternalSessionKey,
   resolveMainSessionAlias,
@@ -26,7 +27,8 @@ import type { ElevatedLevel, ReasoningLevel, ThinkLevel, VerboseLevel } from "..
 import type { ReplyPayload } from "../types.js";
 import type { CommandContext } from "./commands-types.js";
 import { getFollowupQueueDepth, resolveQueueSettings } from "./queue.js";
-import { resolveSubagentLabel } from "./subagents-utils.js";
+import { resolveSubagentLabel } // Removed: Subagents tool dependency
+// from "./subagents-utils.js";
 
 export async function buildStatusReply(params: {
   cfg: ApmClawConfig;

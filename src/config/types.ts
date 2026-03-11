@@ -6,10 +6,10 @@ export * from "./types.acp.js";
 export * from "./types.approvals.js";
 export * from "./types.auth.js";
 export * from "./types.base.js";
-export * from "./types.browser.js";
+// Removed: export * from "./types.browser.js"; (Browser tool removed for security)
 export * from "./types.channels.js";
 export * from "./types.cli.js";
-export * from "./types.apmclaw.js";
+// Note: types.apmclaw.js exports are inlined below to avoid module resolution issues
 export * from "./types.cron.js";
 export * from "./types.googlechat.js";
 export * from "./types.gateway.js";
@@ -28,3 +28,6 @@ export * from "./types.skills.js";
 export * from "./types.telegram.js";
 export * from "./types.tools.js";
 export * from "./types.memory.js";
+
+// Inline exports from types.apmclaw.ts
+export type { ApmClawConfig, ConfigValidationIssue, LegacyConfigIssue, ConfigFileSnapshot } from "./types.apmclaw.js";

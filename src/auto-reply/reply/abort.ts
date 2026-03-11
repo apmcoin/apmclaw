@@ -1,10 +1,11 @@
 import { getAcpSessionManager } from "../../acp/control-plane/manager.js";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { abortEmbeddedPiRun } from "../../agents/pi-embedded.js";
-import {
-  listSubagentRunsForRequester,
-  markSubagentRunTerminated,
-} from "../../agents/subagent-registry.js";
+// Removed: Subagents tool dependency
+// import {
+//   listSubagentRunsForRequester,
+//   markSubagentRunTerminated,
+// } from "../../agents/subagent-registry.js";
 import {
   resolveInternalSessionKey,
   resolveMainSessionAlias,

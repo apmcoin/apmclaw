@@ -12,7 +12,8 @@ import { isDangerousNetworkMode, normalizeNetworkMode } from "../agents/sandbox/
 import type { SandboxToolPolicy } from "../agents/sandbox/types.js";
 import { getBlockedBindReason } from "../agents/sandbox/validate-sandbox-security.js";
 import { resolveToolProfilePolicy } from "../agents/tool-policy.js";
-import { resolveBrowserConfig } from "../browser/config.js";
+// Removed: Browser tool dependency
+// import { resolveBrowserConfig } from "../browser/config.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import type { ApmClawConfig } from "../config/config.js";
 import {

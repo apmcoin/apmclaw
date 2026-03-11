@@ -163,19 +163,20 @@ const coreEntries: CoreCliEntry[] = [
       mod.registerStatusHealthSessionsCommands(program);
     },
   },
-  {
-    commands: [
-      {
-        name: "browser",
-        description: "Manage ApmClaw's dedicated browser (Chrome/Chromium)",
-        hasSubcommands: true,
-      },
-    ],
-    register: async ({ program }) => {
-      const mod = await import("../browser-cli.js");
-      mod.registerBrowserCli(program);
-    },
-  },
+  // Removed: browser command (Browser tool removed for security)
+  // {
+  //   commands: [
+  //     {
+  //       name: "browser",
+  //       description: "Manage ApmClaw's dedicated browser (Chrome/Chromium)",
+  //       hasSubcommands: true,
+  //     },
+  //   ],
+  //   register: async ({ program }) => {
+  //     const mod = await import("../browser-cli.js");
+  //     mod.registerBrowserCli(program);
+  //   },
+  // },
 ];
 
 function collectCoreCliCommandNames(predicate?: (command: CoreCliCommandDescriptor) => boolean) {

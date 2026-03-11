@@ -1,6 +1,8 @@
-import { stopBrowserBridgeServer } from "../../browser/bridge-server.js";
+// Removed: Browser tool dependency
+// import { stopBrowserBridgeServer } from "../../browser/bridge-server.js";
 import { defaultRuntime } from "../../runtime.js";
-import { BROWSER_BRIDGES } from "./browser-bridges.js";
+// Removed: Browser tool dependency
+// import { BROWSER_BRIDGES } from "./browser-bridges.js";
 import { dockerContainerState, execDocker } from "./docker.js";
 import {
   readBrowserRegistry,

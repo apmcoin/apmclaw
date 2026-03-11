@@ -205,66 +205,13 @@ function normalizeRequesterSessionKey(
   return resolveInternalSessionKey({ key: cleaned, alias, mainKey });
 }
 
-export function stopSubagentsForRequester(params: {
+// Removed: Subagents tool dependency
+export function stopSubagentsForRequester(_params: {
   cfg: ApmClawConfig;
   requesterSessionKey?: string;
 }): { stopped: number } {
-  const requesterKey = normalizeRequesterSessionKey(params.cfg, params.requesterSessionKey);
-  if (!requesterKey) {
-    return { stopped: 0 };
-  }
-  const runs = listSubagentRunsForRequester(requesterKey);
-  if (runs.length === 0) {
-    return { stopped: 0 };
-  }
-
-  const storeCache = new Map<string, Record<string, SessionEntry>>();
-  const seenChildKeys = new Set<string>();
-  let stopped = 0;
-
-  for (const run of runs) {
-    const childKey = run.childSessionKey?.trim();
-    if (!childKey || seenChildKeys.has(childKey)) {
-      continue;
-    }
-    seenChildKeys.add(childKey);
-
-    if (!run.endedAt) {
-      const cleared = clearSessionQueues([childKey]);
-      const parsed = parseAgentSessionKey(childKey);
-      const storePath = resolveStorePath(params.cfg.session?.store, { agentId: parsed?.agentId });
-      let store = storeCache.get(storePath);
-      if (!store) {
-        store = loadSessionStore(storePath);
-        storeCache.set(storePath, store);
-      }
-      const entry = store[childKey];
-      const sessionId = entry?.sessionId;
-      const aborted = sessionId ? abortEmbeddedPiRun(sessionId) : false;
-      const markedTerminated =
-        markSubagentRunTerminated({
-          runId: run.runId,
-          childSessionKey: childKey,
-          reason: "killed",
-        }) > 0;
-
-      if (markedTerminated || aborted || cleared.followupCleared > 0 || cleared.laneCleared > 0) {
-        stopped += 1;
-      }
-    }
-
-    // Cascade: also stop any sub-sub-agents spawned by this child.
-    const cascadeResult = stopSubagentsForRequester({
-      cfg: params.cfg,
-      requesterSessionKey: childKey,
-    });
-    stopped += cascadeResult.stopped;
-  }
-
-  if (stopped > 0) {
-    logVerbose(`abort: stopped ${stopped} subagent run(s) for ${requesterKey}`);
-  }
-  return { stopped };
+  // Subagents removed - no-op
+  return { stopped: 0 };
 }
 
 export async function tryFastAbortFromMessage(params: {

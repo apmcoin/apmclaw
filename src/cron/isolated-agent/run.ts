@@ -24,10 +24,11 @@ import {
   resolveThinkingDefault,
 } from "../../agents/model-selection.js";
 import { runEmbeddedPiAgent } from "../../agents/pi-embedded.js";
-import {
-  countActiveDescendantRuns,
-  listDescendantRunsForRequester,
-} from "../../agents/subagent-registry.js";
+// Removed: Subagents tool dependency
+// import {
+//   countActiveDescendantRuns,
+//   listDescendantRunsForRequester,
+// } from "../../agents/subagent-registry.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { deriveSessionTotalTokens, hasNonzeroUsage } from "../../agents/usage.js";
 import { ensureAgentWorkspace } from "../../agents/workspace.js";
@@ -72,7 +73,8 @@ import {
 import { resolveCronAgentSessionKey } from "./session-key.js";
 import { resolveCronSession } from "./session.js";
 import { resolveCronSkillsSnapshot } from "./skills-snapshot.js";
-import { isLikelyInterimCronMessage } from "./subagent-followup.js";
+// Removed: Subagents tool dependency
+// import { isLikelyInterimCronMessage } from "./subagent-followup.js";
 
 export type RunCronAgentTurnResult = {
   /** Last non-empty agent text output (not truncated). */
@@ -558,44 +560,45 @@ export async function runCronIsolatedAgentTurn(params: {
       throw new Error("cron isolated run returned no result");
     }
 
+    // Removed: Subagents tool dependency - interim ack retry logic disabled
     // Guardrail for cron jobs: if the first turn is only an interim ack
     // (e.g. "on it") and no descendants are active, run one focused follow-up
     // turn so the cron run returns an actual completion.
-    if (!isAborted()) {
-      const interimRunResult = runResult;
-      const interimPayloads = interimRunResult.payloads ?? [];
-      const interimDeliveryPayload = pickLastDeliverablePayload(interimPayloads);
-      const interimPayloadHasStructuredContent =
-        Boolean(interimDeliveryPayload?.mediaUrl) ||
-        (interimDeliveryPayload?.mediaUrls?.length ?? 0) > 0 ||
-        Object.keys(interimDeliveryPayload?.channelData ?? {}).length > 0;
-      const interimText = pickLastNonEmptyTextFromPayloads(interimPayloads)?.trim() ?? "";
-      const hasDescendantsSinceRunStart = listDescendantRunsForRequester(agentSessionKey).some(
-        (entry) => {
-          const descendantStartedAt =
-            typeof entry.startedAt === "number" ? entry.startedAt : entry.createdAt;
-          return typeof descendantStartedAt === "number" && descendantStartedAt >= runStartedAt;
-        },
-      );
-      const shouldRetryInterimAck =
-        !interimRunResult.meta?.error &&
-        !interimRunResult.didSendViaMessagingTool &&
-        !interimPayloadHasStructuredContent &&
-        !interimPayloads.some((payload) => payload?.isError === true) &&
-        countActiveDescendantRuns(agentSessionKey) === 0 &&
-        !hasDescendantsSinceRunStart &&
-        isLikelyInterimCronMessage(interimText);
-
-      if (shouldRetryInterimAck) {
-        const continuationPrompt = [
-          "Your previous response was only an acknowledgement and did not complete this cron task.",
-          "Complete the original task now.",
-          "Do not send a status update like 'on it'.",
-          "Use tools when needed, including sessions_spawn for parallel subtasks, wait for spawned subagents to finish, then return only the final summary.",
-        ].join(" ");
-        await runPrompt(continuationPrompt);
-      }
-    }
+    // if (!isAborted()) {
+    //   const interimRunResult = runResult;
+    //   const interimPayloads = interimRunResult.payloads ?? [];
+    //   const interimDeliveryPayload = pickLastDeliverablePayload(interimPayloads);
+    //   const interimPayloadHasStructuredContent =
+    //     Boolean(interimDeliveryPayload?.mediaUrl) ||
+    //     (interimDeliveryPayload?.mediaUrls?.length ?? 0) > 0 ||
+    //     Object.keys(interimDeliveryPayload?.channelData ?? {}).length > 0;
+    //   const interimText = pickLastNonEmptyTextFromPayloads(interimPayloads)?.trim() ?? "";
+    //   const hasDescendantsSinceRunStart = listDescendantRunsForRequester(agentSessionKey).some(
+    //     (entry) => {
+    //       const descendantStartedAt =
+    //         typeof entry.startedAt === "number" ? entry.startedAt : entry.createdAt;
+    //       return typeof descendantStartedAt === "number" && descendantStartedAt >= runStartedAt;
+    //     },
+    //   );
+    //   const shouldRetryInterimAck =
+    //     !interimRunResult.meta?.error &&
+    //     !interimRunResult.didSendViaMessagingTool &&
+    //     !interimPayloadHasStructuredContent &&
+    //     !interimPayloads.some((payload) => payload?.isError === true) &&
+    //     countActiveDescendantRuns(agentSessionKey) === 0 &&
+    //     !hasDescendantsSinceRunStart &&
+    //     isLikelyInterimCronMessage(interimText);
+    //
+    //   if (shouldRetryInterimAck) {
+    //     const continuationPrompt = [
+    //       "Your previous response was only an acknowledgement and did not complete this cron task.",
+    //       "Complete the original task now.",
+    //       "Do not send a status update like 'on it'.",
+    //       "Use tools when needed, including sessions_spawn for parallel subtasks, wait for spawned subagents to finish, then return only the final summary.",
+    //     ].join(" ");
+    //     await runPrompt(continuationPrompt);
+    //   }
+    // }
   } catch (err) {
     return withRunSession({ status: "error", error: String(err) });
   }

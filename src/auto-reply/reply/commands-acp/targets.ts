@@ -1,9 +1,30 @@
+import { resolveInternalSessionKey, resolveMainSessionAlias } from "../../../agents/tools/sessions-helpers.js";
 import { callGateway } from "../../../gateway/call.js";
 import { resolveEffectiveResetTargetSessionKey } from "../acp-reset-target.js";
-import { resolveRequesterSessionKey } from "../commands-subagents/shared.js";
+// Removed: Subagents tool dependency
+// import { resolveRequesterSessionKey } from "../commands-subagents/shared.js";
 import type { HandleCommandsParams } from "../commands-types.js";
 import { resolveAcpCommandBindingContext } from "./context.js";
 import { SESSION_ID_RE } from "./shared.js";
+
+// Inlined from commands-subagents/shared.ts (Subagents tool removed)
+function resolveRequesterSessionKey(
+  params: HandleCommandsParams,
+  opts?: { preferCommandTarget?: boolean },
+): string | undefined {
+  const commandTarget = params.ctx.CommandTargetSessionKey?.trim();
+  const commandSession = params.sessionKey?.trim();
+  const shouldPreferCommandTarget =
+    opts?.preferCommandTarget ?? params.ctx.CommandSource === "native";
+  const raw = shouldPreferCommandTarget
+    ? commandTarget || commandSession
+    : commandSession || commandTarget;
+  if (!raw) {
+    return undefined;
+  }
+  const { mainKey, alias } = resolveMainSessionAlias(params.cfg);
+  return resolveInternalSessionKey({ key: raw, alias, mainKey });
+}
 
 async function resolveSessionKeyByToken(token: string): Promise<string | null> {
   const trimmed = token.trim();

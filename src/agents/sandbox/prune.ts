@@ -72,18 +72,8 @@ async function pruneSandboxContainers(cfg: SandboxConfig) {
 }
 
 async function pruneSandboxBrowsers(cfg: SandboxConfig) {
-  await pruneSandboxRegistryEntries<SandboxBrowserRegistryEntry>({
-    cfg,
-    read: readBrowserRegistry,
-    remove: removeBrowserRegistryEntry,
-    onRemoved: async (entry) => {
-      const bridge = BROWSER_BRIDGES.get(entry.sessionKey);
-      if (bridge?.containerName === entry.containerName) {
-        await stopBrowserBridgeServer(bridge.bridge.server).catch(() => undefined);
-        BROWSER_BRIDGES.delete(entry.sessionKey);
-      }
-    },
-  });
+  // Removed: Browser tool dependency
+  // await pruneSandboxRegistryEntries<SandboxBrowserRegistryEntry>({ ... });
 }
 
 export async function maybePruneSandboxes(cfg: SandboxConfig) {

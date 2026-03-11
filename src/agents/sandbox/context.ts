@@ -140,33 +140,11 @@ export async function resolveSandboxContext(params: {
     cfg: resolvedCfg,
   });
 
-  const evaluateEnabled =
-    params.config?.browser?.evaluateEnabled ?? DEFAULT_BROWSER_EVALUATE_ENABLED;
-
-  const bridgeAuth = cfg.browser.enabled
-    ? await (async () => {
-        // Sandbox browser bridge server runs on a loopback TCP port; always wire up
-        // the same auth that loopback browser clients will send (token/password).
-        const cfgForAuth = params.config ?? loadConfig();
-        let browserAuth = resolveBrowserControlAuth(cfgForAuth);
-        try {
-          const ensured = await ensureBrowserControlAuth({ cfg: cfgForAuth });
-          browserAuth = ensured.auth;
-        } catch (error) {
-          const message = error instanceof Error ? error.message : JSON.stringify(error);
-          defaultRuntime.error?.(`Sandbox browser auth ensure failed: ${message}`);
-        }
-        return browserAuth;
-      })()
-    : undefined;
-  const browser = await ensureSandboxBrowser({
-    scopeKey,
-    workspaceDir,
-    agentWorkspaceDir,
-    cfg: resolvedCfg,
-    evaluateEnabled,
-    bridgeAuth,
-  });
+  // Removed: Browser tool dependency
+  // const evaluateEnabled = params.config?.browser?.evaluateEnabled ?? DEFAULT_BROWSER_EVALUATE_ENABLED;
+  // const bridgeAuth = ...
+  // const browser = await ensureSandboxBrowser({ ... });
+  const browser = undefined;
 
   const sandboxContext: SandboxContext = {
     enabled: true,

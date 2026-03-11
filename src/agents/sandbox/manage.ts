@@ -72,14 +72,8 @@ export async function listSandboxContainers(): Promise<SandboxContainerInfo[]> {
   });
 }
 
-export async function listSandboxBrowsers(): Promise<SandboxBrowserInfo[]> {
-  const config = loadConfig();
-  return listSandboxRegistryItems<SandboxBrowserRegistryEntry>({
-    read: readBrowserRegistry,
-    resolveConfiguredImage: (agentId) =>
-      resolveSandboxConfigForAgent(config, agentId).browser.image,
-  });
-}
+// Removed: Browser tool dependency
+// export async function listSandboxBrowsers(): Promise<SandboxBrowserInfo[]> { ... }
 
 export async function removeSandboxContainer(containerName: string): Promise<void> {
   try {
@@ -90,19 +84,5 @@ export async function removeSandboxContainer(containerName: string): Promise<voi
   await removeRegistryEntry(containerName);
 }
 
-export async function removeSandboxBrowserContainer(containerName: string): Promise<void> {
-  try {
-    await execDocker(["rm", "-f", containerName], { allowFailure: true });
-  } catch {
-    // ignore removal failures
-  }
-  await removeBrowserRegistryEntry(containerName);
-
-  // Stop browser bridge if active
-  for (const [sessionKey, bridge] of BROWSER_BRIDGES.entries()) {
-    if (bridge.containerName === containerName) {
-      await stopBrowserBridgeServer(bridge.bridge.server).catch(() => undefined);
-      BROWSER_BRIDGES.delete(sessionKey);
-    }
-  }
-}
+// Removed: Browser tool dependency
+// export async function removeSandboxBrowserContainer(containerName: string): Promise<void> { ... }

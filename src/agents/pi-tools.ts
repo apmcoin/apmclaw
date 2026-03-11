@@ -251,13 +251,11 @@ export function createApmClawCodingTools(options?: {
   // Fallback to agentId if no sessionKey is available (e.g. legacy or global contexts).
   const scopeKey =
     options?.exec?.scopeKey ?? options?.sessionKey ?? (agentId ? `agent:${agentId}` : undefined);
-  const subagentPolicy =
-    isSubagentSessionKey(options?.sessionKey) && options?.sessionKey
-      ? resolveSubagentToolPolicy(
-          options.config,
-          getSubagentDepthFromSessionStore(options.sessionKey, { cfg: options.config }),
-        )
-      : undefined;
+  // Removed: Subagents tool dependency
+  // const subagentPolicy = isSubagentSessionKey(options?.sessionKey) && options?.sessionKey
+  //   ? resolveSubagentToolPolicy(options.config, getSubagentDepthFromSessionStore(...))
+  //   : undefined;
+  const subagentPolicy = undefined;
   const execConfig = resolveExecConfig({ cfg: options?.config, agentId });
   const fsConfig = resolveToolFsConfig({ cfg: options?.config, agentId });
   const fsPolicy = createToolFsPolicy({

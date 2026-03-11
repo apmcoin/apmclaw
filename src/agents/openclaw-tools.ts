@@ -4,18 +4,21 @@ import type { GatewayMessageChannel } from "../utils/message-channel.js";
 import { resolveSessionAgentId } from "./agent-scope.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import type { ToolFsPolicy } from "./tool-fs-policy.js";
-import { createAgentsListTool } from "./tools/agents-list-tool.js";
+// Removed: Lean Strong Claw - unused tools
+// import { createAgentsListTool } from "./tools/agents-list-tool.js";
 import type { AnyAgentTool } from "./tools/common.js";
-import { createCronTool } from "./tools/cron-tool.js";
-import { createImageTool } from "./tools/image-tool.js";
+// Removed: Lean Strong Claw - unused tools
+// import { createCronTool } from "./tools/cron-tool.js";
+// import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";
 import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
 import { createMemorySaveTool } from "./tools/memory-save-tool.js";
-import { createSessionStatusTool } from "./tools/session-status-tool.js";
-import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
-import { createSessionsListTool } from "./tools/sessions-list-tool.js";
-import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
+// Removed: Lean Strong Claw - unused tools
+// import { createSessionStatusTool } from "./tools/session-status-tool.js";
+// import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
+// import { createSessionsListTool } from "./tools/sessions-list-tool.js";
+// import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
 // Removed: Subagents tool dependency
 // import { createSessionsSpawnTool } from "./tools/sessions-spawn-tool.js";
 import { createWebFetchTool, createWebSearchTool } from "./tools/web-tools.js";
@@ -56,17 +59,18 @@ export function createApmClawTools(options?: {
   sessionId?: string;
 }): AnyAgentTool[] {
   const workspaceDir = resolveWorkspaceRoot(options?.workspaceDir);
-  
-  const imageTool = options?.agentDir?.trim()
-    ? createImageTool({
-        config: options?.config,
-        agentDir: options.agentDir,
-        workspaceDir,
-        sandbox: options?.sandboxRoot && options?.sandboxFsBridge ? { root: options.sandboxRoot, bridge: options.sandboxFsBridge } : undefined,
-        fsPolicy: options?.fsPolicy,
-        modelHasVision: options?.modelHasVision,
-      })
-    : null;
+
+  // Removed: Lean Strong Claw - image tool (modelHasVision=true makes this redundant)
+  // const imageTool = options?.agentDir?.trim()
+  //   ? createImageTool({
+  //       config: options?.config,
+  //       agentDir: options.agentDir,
+  //       workspaceDir,
+  //       sandbox: options?.sandboxRoot && options?.sandboxFsBridge ? { root: options.sandboxRoot, bridge: options.sandboxFsBridge } : undefined,
+  //       fsPolicy: options?.fsPolicy,
+  //       modelHasVision: options?.modelHasVision,
+  //     })
+  //   : null;
 
   const webSearchTool = createWebSearchTool({
     config: options?.config,
@@ -96,27 +100,30 @@ export function createApmClawTools(options?: {
       });
 
   const tools: AnyAgentTool[] = ([
-    createCronTool({
-      agentSessionKey: options?.agentSessionKey,
-    }),
+    // Removed: Lean Strong Claw - cron tool (ownerOnly, not usable in Telegram)
+    // createCronTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    // }),
     messageTool,
-    createAgentsListTool({
-      agentSessionKey: options?.agentSessionKey,
-      requesterAgentIdOverride: options?.requesterAgentIdOverride,
-    }),
-    createSessionsListTool({
-      agentSessionKey: options?.agentSessionKey,
-      sandboxed: options?.sandboxed,
-    }),
-    createSessionsHistoryTool({
-      agentSessionKey: options?.agentSessionKey,
-      sandboxed: options?.sandboxed,
-    }),
-    createSessionsSendTool({
-      agentSessionKey: options?.agentSessionKey,
-      agentChannel: options?.agentChannel,
-      sandboxed: options?.sandboxed,
-    }),
+    // Removed: Lean Strong Claw - agents_list (requires sessions_spawn which was removed)
+    // createAgentsListTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    //   requesterAgentIdOverride: options?.requesterAgentIdOverride,
+    // }),
+    // Removed: Lean Strong Claw - sessions_* tools (no subagents, no use case)
+    // createSessionsListTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    //   sandboxed: options?.sandboxed,
+    // }),
+    // createSessionsHistoryTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    //   sandboxed: options?.sandboxed,
+    // }),
+    // createSessionsSendTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    //   agentChannel: options?.agentChannel,
+    //   sandboxed: options?.sandboxed,
+    // }),
     // Removed: Subagents tool dependency
     // createSessionsSpawnTool({
     //   agentSessionKey: options?.agentSessionKey,
@@ -146,13 +153,15 @@ export function createApmClawTools(options?: {
       }),
       workspaceDir: options?.workspaceDir,
     }),
-    createSessionStatusTool({
-      agentSessionKey: options?.agentSessionKey,
-      config: options?.config,
-    }),
+    // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
+    // createSessionStatusTool({
+    //   agentSessionKey: options?.agentSessionKey,
+    //   config: options?.config,
+    // }),
     webSearchTool,
     webFetchTool,
-    imageTool,
+    // Removed: Lean Strong Claw - image tool (modelHasVision=true makes this redundant)
+    // imageTool,
   ] as Array<AnyAgentTool | null>).filter(Boolean) as AnyAgentTool[];
 
   const pluginTools = resolvePluginTools({

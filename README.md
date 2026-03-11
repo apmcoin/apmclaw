@@ -17,10 +17,10 @@ PM-E is built with a **"Lean & Strong"** security philosophy. We continuously pe
 
 | Attack Vector | Status | Defense Mechanism |
 | :--- | :---: | :--- |
-| **Privilege Escalation** | ✅ **PASSED** | Real-time system-level verification of 'Admin' roles. |
+| **Privilege Escalation** | ✅ **PASSED** | Real-time system-level verification of 'Admin' roles via `method-scopes.ts`. |
 | **Information Disclosure (SSRF)** | ✅ **PASSED** | HTTPS-only enforcement for `web_fetch` and local network blocking. |
-| **Intelligence Poisoning** | ✅ **PASSED** | `memory_save` restricted to verified admin sessions only. |
-| Resource Exhaustion | ✅ **PASSED** | Removed `subagents` and `browser` to eliminate infinite loops. |
+| **Intelligence Poisoning** | 🚧 **UNDER DESIGN** | `memory_save` access control design in progress. |
+| **Resource Exhaustion** | ✅ **PASSED** | Removed `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status` tools. |
 
 ## 🛠️ Future Security Enhancements (Roadmap)
 We are evolving PM-E to handle extreme social engineering and DoS attacks (e.g., 300+ simultaneous spammers):

@@ -86,10 +86,13 @@ if (!["administrator", "creator"].includes(member.status)) {
 - Callback data includes proposal ID (not executable code)
 - Admin status verified on every click (not cached)
 
-**Rate Limiting (Future)**
-- Message surge detection → auto slow-mode
-- Batch analysis during coordinated attacks
-- Exponential backoff for repeated proposals
+**Attack Surge Handling (Future)**
+- **Problem**: 300 messages in 5 seconds → 25-minute sequential processing → spam spreads
+- **Solution**: Pre-processing buffer (2s window) + batch triage
+- **Parallel Processing**: Delete 300 spam messages simultaneously (seconds, not minutes)
+- **Coordinated Attack Detection**: Same link × 10 users → auto-flag for admin review
+- **Batch Reporting**: Single "Cleaned 300 spam" instead of 300 individual alerts
+- **Ambient Mode**: Skip LLM for normal messages during surges (stay silent)
 
 ---
 
@@ -201,7 +204,11 @@ Re-evaluate: 2025-06-11
 - 90d decay for rejected patterns
 
 **Phase 3**: Attack surge handling
-- Batch review interface
+- **Pre-processing buffer**: 2-second window or 100 messages
+- **Batch triage**: Spam/suspicious/normal classification without LLM
+- **Parallel deletion**: Process 300 spam messages in seconds (not 25 minutes)
+- **Coordinated attack detection**: Same link × 10 users = auto-flag
+- **Batch reporting**: Single summary instead of 300 individual alerts
 - Rate limiting + exponential backoff
 - Emergency slow-mode
 
@@ -387,6 +394,71 @@ export function createOpenClawTools(config) {
 }
 ```
 
+**Batch Processing Implementation** (Phase 3)
+
+```typescript
+// src/channels/telegram/batch-processor.ts (NEW)
+
+const messageBuffer: TelegramUpdate[] = [];
+let bufferTimer: NodeJS.Timeout;
+
+async function processBatch(messages: TelegramUpdate[]) {
+  // 1. Quick triage (pattern matching only, no LLM)
+  const { spam, suspicious, normal } = classifyBatch(messages);
+
+  // 2. Parallel spam deletion
+  if (spam.length > 0) {
+    await Promise.all(spam.map(msg =>
+      bot.deleteMessage(msg.chat.id, msg.message_id)
+    ));
+    await bot.sendMessage(chatId,
+      `🧹 Cleaned ${spam.length} spam (batch mode)`
+    );
+  }
+
+  // 3. Coordinated attack detection
+  if (detectCoordination(suspicious)) {
+    await memory_propose({
+      pattern: "Coordinated spam surge",
+      evidence: suspicious.slice(0, 10), // First 10 as evidence
+      batchSize: suspicious.length,
+      trustScore: 0.7
+    });
+    // Delete all immediately (review later)
+    await Promise.all(suspicious.map(msg =>
+      bot.deleteMessage(msg.chat.id, msg.message_id)
+    ));
+  }
+
+  // 4. Normal messages: ambient mode
+  if (normal.length > 20) {
+    // Skip LLM processing, stay silent
+    return;
+  }
+
+  // Process individually only if low volume
+  for (const msg of normal) {
+    await processMessage(msg);
+  }
+}
+
+function detectCoordination(messages: TelegramUpdate[]) {
+  const links = messages.map(extractLinks).flat();
+  const linkCounts = countOccurrences(links);
+
+  // Same link posted by 10+ different users
+  return Object.values(linkCounts).some(count => count >= 10);
+}
+```
+
+**Why This Works:**
+- **300 messages**: 25 minutes → **5 seconds** (parallel deletion)
+- **Spam spreads in seconds**: Delete-first, review later
+- **Admin review**: Batch proposal with top 10 evidence samples
+- **Ambient awareness**: Stay silent during normal high-volume periods
+
+---
+
 **Security Checklist**
 
 - [x] Disable `memory_save` tool (done)
@@ -397,6 +469,8 @@ export function createOpenClawTools(config) {
 - [ ] Admin verification via `getChatMember` API
 - [ ] Proposal expiration (48h auto-cleanup)
 - [ ] Temporal decay for rejected patterns (90d)
+- [ ] **Batch processor**: 2s buffer + parallel deletion (Phase 3)
+- [ ] **Coordination detector**: Same link × 10 users (Phase 3)
 - [ ] Update TOOLS/AGENTS/SOUL templates
 - [ ] Integration tests for approval workflow
 

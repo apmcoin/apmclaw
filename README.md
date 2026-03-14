@@ -204,21 +204,20 @@ Re-evaluate: 2025-06-11
 - 48h auto-expiry for pending proposals
 - 90d decay for rejected patterns
 
-**Phase 3**: Attack surge handling
-- **Message buffering**: 2-second window or 50 messages (whichever first)
-- **Batch LLM inference**: Single API call for 50 messages (7s vs 250s sequential)
-- **Parallel deletion**: Delete spam/suspicious simultaneously (seconds, not minutes)
+**Phase 3 (Implemented)**: Attack surge handling
+- **Messages array architecture**: All messages equal with messageId/chatId
+- **Batch LLM inference**: Single API call for N messages (7s vs N×5s sequential)
+- **Selective control**: LLM can delete spam, answer questions, ignore noise - per message
 - **Coordinated attack detection**: LLM sees cross-message patterns in context
-- **Natural responses**: Draft replies within batch analysis (ambient-aware)
+- **Natural responses**: Single coordinated reply instead of per-message spam
 - **Performance**: 300 messages = 42s (6 batches) vs 25 minutes (sequential)
-- Rate limiting + emergency slow-mode
 
 **Phase 4**: Pattern intelligence
 - Rejection clustering analysis
 - Auto-whitelist suggestions
 - Weekly admin digest
 
-**Status**: Design simplified (single-file), implementation pending. See [Implementation Details](#implementation-details-todo) below.
+**Status**: Phase 3 implemented. Memory Proposal System (Phase 1-2) pending implementation.
 
 ---
 
@@ -395,99 +394,6 @@ export function createOpenClawTools(config) {
 }
 ```
 
-**Batch Processing Implementation** (Phase 3)
-
-**Key Insight: Batch LLM Inference is Fast**
-
-```
-Sequential Processing (50 messages):
-Message 1 → LLM (5s) → Message 2 → LLM (5s) → ...
-= 50 × 5s = 250 seconds (4 minutes)
-
-Batch Processing (50 messages):
-All 50 messages → Single LLM call (7s)
-= 7 seconds
-```
-
-**Advantages:**
-- **35x faster** for attack surges
-- **Context-aware**: LLM sees message relationships (coordinated attacks)
-- **Natural responses**: Can draft replies when needed
-- **Single API call**: Lower latency and cost
-
-```typescript
-// src/channels/telegram/batch-processor.ts (NEW)
-
-const messageBuffer: TelegramUpdate[] = [];
-let bufferTimer: NodeJS.Timeout;
-
-async function processBatch(messages: TelegramUpdate[]) {
-  if (messages.length === 0) return;
-
-  // Single LLM call analyzes entire batch
-  const analysis = await llm({
-    role: "You are monitoring a crypto community chat.",
-    context: await loadMemoryContext(), // MEMORY.md sections
-    messages: messages.slice(0, 50), // Max 50 per batch
-    tasks: [
-      "1. Classify each message: spam/suspicious/normal",
-      "2. Detect coordinated attacks (same link × N users)",
-      "3. Draft reply if appropriate (ambient awareness rules apply)",
-    ]
-  });
-
-  // Parallel deletion (spam + suspicious)
-  const toDelete = [...analysis.spam, ...analysis.suspicious];
-  if (toDelete.length > 0) {
-    await Promise.all(toDelete.map(msg =>
-      bot.deleteMessage(msg.chat.id, msg.message_id)
-    ));
-  }
-
-  // Coordinated attack proposal
-  if (analysis.coordinatedAttack) {
-    await memory_propose({
-      pattern: analysis.coordinatedAttack.pattern,
-      evidence: analysis.coordinatedAttack.messages.slice(0, 10),
-      batchSize: toDelete.length,
-      trustScore: analysis.coordinatedAttack.confidence,
-    });
-  }
-
-  // Natural response (if needed)
-  if (analysis.reply) {
-    await bot.sendMessage(chatId, analysis.reply);
-  }
-
-  // Silent logging (no spam to users)
-  if (toDelete.length > 0) {
-    console.log(`[Batch] Deleted ${toDelete.length} messages (${analysis.spam.length} spam, ${analysis.suspicious.length} suspicious)`);
-  }
-}
-
-// 2-second buffer or 50 messages (whichever comes first)
-function onMessage(msg: TelegramUpdate) {
-  messageBuffer.push(msg);
-
-  if (messageBuffer.length >= 50) {
-    clearTimeout(bufferTimer);
-    processBatch(messageBuffer.splice(0, 50));
-  } else {
-    clearTimeout(bufferTimer);
-    bufferTimer = setTimeout(() => {
-      processBatch(messageBuffer.splice(0));
-    }, 2000);
-  }
-}
-```
-
-**Why This Works:**
-- **300 messages**: 25 minutes → **42 seconds** (6 batches × 7s)
-- **Coordinated attack detection**: LLM sees cross-message patterns in one context
-- **Natural conversation**: Replies only when appropriate (not per-message spam)
-- **Cost efficient**: 6 API calls instead of 300
-
----
 
 **Security Checklist**
 
@@ -499,8 +405,8 @@ function onMessage(msg: TelegramUpdate) {
 - [ ] Admin verification via `getChatMember` API
 - [ ] Proposal expiration (48h auto-cleanup)
 - [ ] Temporal decay for rejected patterns (90d)
-- [ ] **Batch LLM processor**: 50-message batches with single API call (Phase 3)
-- [ ] **Coordinated attack detection**: Cross-message pattern analysis in batch context (Phase 3)
+- [x] **Batch LLM processor**: Messages array with messageId/chatId for all messages (Phase 3)
+- [x] **Coordinated attack detection**: Cross-message pattern analysis in batch context (Phase 3)
 - [ ] Update TOOLS/AGENTS/SOUL templates
 - [ ] Integration tests for approval workflow
 
@@ -561,7 +467,6 @@ PM-E defends against:
 
 - **Surge Detection**: Auto "Slow Mode" when message volume spikes
 - **Hot-Path Filtering**: Skip LLM for known patterns in `MEMORY.md`
-- **Batch Analysis**: Process multiple messages per AI turn during attacks
 - **Role Caching**: Zero-latency admin exemption
 
 ## 🚀 Key Features

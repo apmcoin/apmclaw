@@ -27,6 +27,19 @@ export type MsgContext = {
     timestamp?: number;
   }>;
   /**
+   * Messages array for batch processing. All messages are equal with full metadata.
+   * Single message: Messages = [msg1]
+   * Batch messages: Messages = [msg1, msg2, ..., msgN]
+   * Each message includes sender, body, messageId, chatId, timestamp.
+   */
+  Messages?: Array<{
+    sender: string;
+    body: string;
+    timestamp?: number;
+    messageId?: number;
+    chatId?: number | string;
+  }>;
+  /**
    * Raw message body without structural context (history, sender labels).
    * Legacy alias for CommandBody. Falls back to Body if not set.
    */

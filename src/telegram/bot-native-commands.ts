@@ -114,6 +114,13 @@ export type RegisterTelegramHandlerParams = {
       forceWasMentioned?: boolean;
     },
     replyMedia?: TelegramMediaRef[],
+    messages?: Array<{
+      sender: string;
+      body: string;
+      timestamp?: number;
+      messageId?: number;
+      chatId?: number | string;
+    }>,
   ) => Promise<void>;
   logger: ReturnType<typeof getChildLogger>;
 };

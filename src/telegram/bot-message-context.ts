@@ -145,6 +145,13 @@ export type BuildTelegramMessageContextParams = {
   resolveTelegramGroupConfig: ResolveTelegramGroupConfig;
   /** Global (per-account) handler for sendChatAction 401 backoff (#27092). */
   sendChatActionHandler: import("./sendchataction-401-backoff.js").TelegramSendChatActionHandler;
+  messages?: Array<{
+    sender: string;
+    body: string;
+    timestamp?: number;
+    messageId?: number;
+    chatId?: number | string;
+  }>;
 };
 
 async function resolveStickerVisionSupport(params: {
@@ -187,6 +194,7 @@ export const buildTelegramMessageContext = async ({
   resolveGroupRequireMention,
   resolveTelegramGroupConfig,
   sendChatActionHandler,
+  messages,
 }: BuildTelegramMessageContextParams) => {
   const msg = primaryCtx.message;
   const chatId = msg.chat.id;
@@ -826,21 +834,21 @@ export const buildTelegramMessageContext = async ({
     topicConfig,
   });
   const commandBody = normalizeCommandBody(rawBody, { botUsername });
-  const inboundHistory =
-    isGroup && historyKey && historyLimit > 0
-      ? (groupHistories.get(historyKey) ?? []).map((entry) => ({
-          sender: entry.sender,
-          body: entry.body,
-          timestamp: entry.timestamp,
-        }))
-      : undefined;
   const currentMediaForContext = stickerCacheHit ? [] : allMedia;
   const contextMedia = [...currentMediaForContext, ...replyMedia];
   const ctxPayload = finalizeInboundContext({
+    Messages: messages
+      ? messages
+      : isGroup && historyKey && historyLimit > 0
+        ? (groupHistories.get(historyKey) ?? []).map((entry) => ({
+            sender: entry.sender,
+            body: entry.body,
+            timestamp: entry.timestamp,
+          }))
+        : undefined,
     Body: combinedBody,
     // Agent prompt should be the raw user text only; metadata/context is provided via system prompt.
     BodyForAgent: bodyText,
-    InboundHistory: inboundHistory,
     RawBody: rawBody,
     CommandBody: commandBody,
     From: isGroup ? buildTelegramGroupFrom(chatId, resolvedThreadId) : `telegram:${chatId}`,

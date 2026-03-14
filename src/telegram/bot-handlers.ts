@@ -1,9 +1,5 @@
 import type { Message, ReactionTypeEmoji } from "@grammyjs/types";
 import { resolveAgentDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import {
-  createInboundDebouncer,
-  resolveInboundDebounceMs,
-} from "../auto-reply/inbound-debounce.js";
 import { buildCommandsPaginationKeyboard } from "../auto-reply/reply/commands-info.js";
 import {
   buildModelsProviderData,
@@ -12,7 +8,6 @@ import {
 import { resolveStoredModelOverride } from "../auto-reply/reply/model-selection.js";
 import { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
 import { buildCommandsMessagePaginated } from "../auto-reply/status.js";
-import { shouldDebounceTextInbound } from "../channels/inbound-debounce-policy.js";
 import { resolveChannelConfigWrites } from "../channels/plugins/config-writes.js";
 import { loadConfig } from "../config/config.js";
 import { writeConfigFile } from "../config/io.js";
@@ -44,6 +39,7 @@ import {
 } from "./bot-updates.js";
 import { resolveMedia } from "./bot/delivery.js";
 import {
+  buildSenderLabel,
   buildTelegramGroupPeerId,
   buildTelegramParentPeer,
   resolveTelegramForumThreadId,
@@ -147,34 +143,15 @@ export const registerTelegramHandlers = ({
   const textFragmentBuffer = new Map<string, TextFragmentEntry>();
   let textFragmentProcessing: Promise<void> = Promise.resolve();
 
-  const debounceMs = resolveInboundDebounceMs({ cfg, channel: "telegram" });
-  const FORWARD_BURST_DEBOUNCE_MS = 80;
-  type TelegramDebounceLane = "default" | "forward";
-  type TelegramDebounceEntry = {
+  // Batch processing: queue messages while Agent is processing
+  type TelegramMessageEntry = {
     ctx: TelegramContext;
     msg: Message;
     allMedia: TelegramMediaRef[];
     storeAllowFrom: string[];
-    debounceKey: string | null;
-    debounceLane: TelegramDebounceLane;
-    botUsername?: string;
   };
-  const resolveTelegramDebounceLane = (msg: Message): TelegramDebounceLane => {
-    const forwardMeta = msg as {
-      forward_origin?: unknown;
-      forward_from?: unknown;
-      forward_from_chat?: unknown;
-      forward_sender_name?: unknown;
-      forward_date?: unknown;
-    };
-    return (forwardMeta.forward_origin ??
-      forwardMeta.forward_from ??
-      forwardMeta.forward_from_chat ??
-      forwardMeta.forward_sender_name ??
-      forwardMeta.forward_date)
-      ? "forward"
-      : "default";
-  };
+  const processingLocks = new Map<string, Promise<void>>();
+  const pendingQueues = new Map<string, TelegramMessageEntry[]>();
   const buildSyntheticTextMessage = (params: {
     base: Message;
     text: string;
@@ -199,68 +176,76 @@ export const registerTelegramHandlers = ({
         : async () => ({});
     return { message, me: ctx.me, getFile };
   };
-  const inboundDebouncer = createInboundDebouncer<TelegramDebounceEntry>({
-    debounceMs,
-    resolveDebounceMs: (entry) =>
-      entry.debounceLane === "forward" ? FORWARD_BURST_DEBOUNCE_MS : debounceMs,
-    buildKey: (entry) => entry.debounceKey,
-    shouldDebounce: (entry) => {
-      const text = entry.msg.text ?? entry.msg.caption ?? "";
-      const hasDebounceableText = shouldDebounceTextInbound({
-        text,
-        cfg,
-        commandOptions: { botUsername: entry.botUsername },
-      });
-      if (entry.debounceLane === "forward") {
-        // Forwarded bursts often split text + media into adjacent updates.
-        // Debounce media-only forward entries too so they can coalesce.
-        return hasDebounceableText || entry.allMedia.length > 0;
+
+  const handleTelegramMessage = (entry: TelegramMessageEntry) => {
+    const chatId = entry.msg.chat.id;
+    const key = `telegram:${accountId ?? "default"}:${chatId}`;
+
+    // Check if already processing (synchronous check)
+    if (processingLocks.has(key)) {
+      // Agent is processing → queue this message
+      if (!pendingQueues.has(key)) {
+        pendingQueues.set(key, []);
       }
-      if (!hasDebounceableText) {
-        return false;
+      pendingQueues.get(key)!.push(entry);
+      return;
+    }
+
+    // Agent is idle → start processing (create and set lock synchronously)
+    const lock = (async () => {
+      try {
+        const replyMedia = await resolveReplyMediaForMessage(entry.ctx, entry.msg);
+        const messages = [
+          {
+            sender: buildSenderLabel(entry.msg, entry.msg.from?.id ?? entry.msg.chat.id),
+            body: entry.msg.text ?? entry.msg.caption ?? "",
+            timestamp: entry.msg.date ? entry.msg.date * 1000 : undefined,
+            messageId: entry.msg.message_id,
+            chatId: entry.msg.chat.id,
+          },
+        ];
+        await processMessage(
+          entry.ctx,
+          entry.allMedia,
+          entry.storeAllowFrom,
+          undefined,
+          replyMedia,
+          messages,
+        );
+
+        // Check for queued messages
+        while (pendingQueues.get(key)?.length ?? 0 > 0) {
+          const batch = pendingQueues.get(key)!;
+          pendingQueues.delete(key);
+
+          const messages = batch.map((e) => ({
+            sender: buildSenderLabel(e.msg, e.msg.from?.id ?? e.msg.chat.id),
+            body: e.msg.text ?? e.msg.caption ?? "",
+            timestamp: e.msg.date ? e.msg.date * 1000 : undefined,
+            messageId: e.msg.message_id,
+            chatId: e.msg.chat.id,
+          }));
+
+          const combinedMedia = batch.flatMap((e) => e.allMedia);
+          const first = batch[0];
+          const firstReplyMedia = await resolveReplyMediaForMessage(first.ctx, first.msg);
+
+          await processMessage(
+            first.ctx,
+            combinedMedia,
+            first.storeAllowFrom,
+            undefined,
+            firstReplyMedia,
+            messages,
+          );
+        }
+      } finally {
+        processingLocks.delete(key);
       }
-      return entry.allMedia.length === 0;
-    },
-    onFlush: async (entries) => {
-      const last = entries.at(-1);
-      if (!last) {
-        return;
-      }
-      if (entries.length === 1) {
-        const replyMedia = await resolveReplyMediaForMessage(last.ctx, last.msg);
-        await processMessage(last.ctx, last.allMedia, last.storeAllowFrom, undefined, replyMedia);
-        return;
-      }
-      const combinedText = entries
-        .map((entry) => entry.msg.text ?? entry.msg.caption ?? "")
-        .filter(Boolean)
-        .join("\n");
-      const combinedMedia = entries.flatMap((entry) => entry.allMedia);
-      if (!combinedText.trim() && combinedMedia.length === 0) {
-        return;
-      }
-      const first = entries[0];
-      const baseCtx = first.ctx;
-      const syntheticMessage = buildSyntheticTextMessage({
-        base: first.msg,
-        text: combinedText,
-        date: last.msg.date ?? first.msg.date,
-      });
-      const messageIdOverride = last.msg.message_id ? String(last.msg.message_id) : undefined;
-      const syntheticCtx = buildSyntheticContext(baseCtx, syntheticMessage);
-      const replyMedia = await resolveReplyMediaForMessage(baseCtx, syntheticMessage);
-      await processMessage(
-        syntheticCtx,
-        combinedMedia,
-        first.storeAllowFrom,
-        messageIdOverride ? { messageIdOverride } : undefined,
-        replyMedia,
-      );
-    },
-    onError: (err) => {
-      runtime.error?.(danger(`telegram debounce flush failed: ${String(err)}`));
-    },
-  });
+    })();
+
+    processingLocks.set(key, lock);
+  };
 
   const resolveTelegramSessionState = (params: {
     chatId: number | string;
@@ -370,7 +355,19 @@ export const registerTelegramHandlers = ({
 
       const storeAllowFrom = await loadStoreAllowFrom();
       const replyMedia = await resolveReplyMediaForMessage(primaryEntry.ctx, primaryEntry.msg);
-      await processMessage(primaryEntry.ctx, allMedia, storeAllowFrom, undefined, replyMedia);
+      const messages = [
+        {
+          sender: buildSenderLabel(
+            primaryEntry.msg,
+            primaryEntry.msg.from?.id ?? primaryEntry.msg.chat.id,
+          ),
+          body: primaryEntry.msg.text ?? primaryEntry.msg.caption ?? "",
+          timestamp: primaryEntry.msg.date ? primaryEntry.msg.date * 1000 : undefined,
+          messageId: primaryEntry.msg.message_id,
+          chatId: primaryEntry.msg.chat.id,
+        },
+      ];
+      await processMessage(primaryEntry.ctx, allMedia, storeAllowFrom, undefined, replyMedia, messages);
     } catch (err) {
       runtime.error?.(danger(`media group handler failed: ${String(err)}`));
     }
@@ -386,23 +383,18 @@ export const registerTelegramHandlers = ({
         return;
       }
 
-      const combinedText = entry.messages.map((m) => m.msg.text ?? "").join("");
-      if (!combinedText.trim()) {
-        return;
-      }
-
-      const syntheticMessage = buildSyntheticTextMessage({
-        base: first.msg,
-        text: combinedText,
-        date: last.msg.date ?? first.msg.date,
-      });
+      const messages = entry.messages.map((m) => ({
+        sender: buildSenderLabel(m.msg, m.msg.from?.id ?? m.msg.chat.id),
+        body: m.msg.text ?? "",
+        timestamp: m.msg.date ? m.msg.date * 1000 : undefined,
+        messageId: m.msg.message_id,
+        chatId: m.msg.chat.id,
+      }));
 
       const storeAllowFrom = await loadStoreAllowFrom();
       const baseCtx = first.ctx;
 
-      await processMessage(buildSyntheticContext(baseCtx, syntheticMessage), [], storeAllowFrom, {
-        messageIdOverride: String(last.msg.message_id),
-      });
+      await processMessage(baseCtx, [], storeAllowFrom, undefined, undefined, messages);
     } catch (err) {
       runtime.error?.(danger(`text fragment handler failed: ${String(err)}`));
     }
@@ -1010,22 +1002,11 @@ export const registerTelegramHandlers = ({
           },
         ]
       : [];
-    const senderId = msg.from?.id ? String(msg.from.id) : "";
-    const conversationThreadId = resolvedThreadId ?? dmThreadId;
-    const conversationKey =
-      conversationThreadId != null ? `${chatId}:topic:${conversationThreadId}` : String(chatId);
-    const debounceLane = resolveTelegramDebounceLane(msg);
-    const debounceKey = senderId
-      ? `telegram:${accountId ?? "default"}:${conversationKey}:${senderId}:${debounceLane}`
-      : null;
-    await inboundDebouncer.enqueue({
+    void handleTelegramMessage({
       ctx,
       msg,
       allMedia,
       storeAllowFrom,
-      debounceKey,
-      debounceLane,
-      botUsername: ctx.me?.username,
     });
   };
   bot.on("callback_query", async (ctx) => {
@@ -1290,10 +1271,26 @@ export const registerTelegramHandlers = ({
             from: callback.from,
             text: `/model ${selection.provider}/${selection.model}`,
           });
-          await processMessage(buildSyntheticContext(ctx, syntheticMessage), [], storeAllowFrom, {
-            forceWasMentioned: true,
-            messageIdOverride: callback.id,
-          });
+          const messages = [
+            {
+              sender: buildSenderLabel(callbackMessage, callback.from.id),
+              body: syntheticMessage.text ?? "",
+              timestamp: callbackMessage.date ? callbackMessage.date * 1000 : undefined,
+              messageId: callbackMessage.message_id,
+              chatId: callbackMessage.chat.id,
+            },
+          ];
+          await processMessage(
+            buildSyntheticContext(ctx, syntheticMessage),
+            [],
+            storeAllowFrom,
+            {
+              forceWasMentioned: true,
+              messageIdOverride: callback.id,
+            },
+            undefined,
+            messages,
+          );
           return;
         }
 
@@ -1305,10 +1302,26 @@ export const registerTelegramHandlers = ({
         from: callback.from,
         text: data,
       });
-      await processMessage(buildSyntheticContext(ctx, syntheticMessage), [], storeAllowFrom, {
-        forceWasMentioned: true,
-        messageIdOverride: callback.id,
-      });
+      const messages = [
+        {
+          sender: buildSenderLabel(callbackMessage, callback.from.id),
+          body: syntheticMessage.text ?? "",
+          timestamp: callbackMessage.date ? callbackMessage.date * 1000 : undefined,
+          messageId: callbackMessage.message_id,
+          chatId: callbackMessage.chat.id,
+        },
+      ];
+      await processMessage(
+        buildSyntheticContext(ctx, syntheticMessage),
+        [],
+        storeAllowFrom,
+        {
+          forceWasMentioned: true,
+          messageIdOverride: callback.id,
+        },
+        undefined,
+        messages,
+      );
     } catch (err) {
       runtime.error?.(danger(`callback handler failed: ${String(err)}`));
     }

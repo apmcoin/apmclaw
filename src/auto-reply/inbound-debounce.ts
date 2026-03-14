@@ -30,7 +30,7 @@ export function resolveInboundDebounceMs(params: {
     channel: params.channel,
   });
   const base = resolveMs(inbound?.debounceMs);
-  return override ?? byChannel ?? base ?? 0;
+  return override ?? byChannel ?? base ?? 800;
 }
 
 type DebounceBuffer<T> = {

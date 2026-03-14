@@ -86,13 +86,14 @@ if (!["administrator", "creator"].includes(member.status)) {
 - Callback data includes proposal ID (not executable code)
 - Admin status verified on every click (not cached)
 
-**Attack Surge Handling (Future)**
-- **Problem**: 300 messages × 5s each = 25 minutes sequential → spam spreads unchecked
-- **Solution**: Batch LLM inference (50 messages per API call)
-- **Performance**: 300 messages = 42 seconds (6 batches × 7s) instead of 25 minutes
-- **Context Awareness**: LLM sees entire batch → detects coordinated attacks naturally
-- **Parallel Deletion**: Delete all spam/suspicious messages simultaneously
-- **Natural Responses**: Draft replies within batch analysis (not per-message spam)
+**Attack Surge Handling (Implemented)**
+- **Architecture**: Messages array with messageId/chatId for all messages
+- **Single message**: LLM receives Messages = [msg1]
+- **Batch messages**: LLM receives Messages = [msg1, msg2, ..., msgN]
+- **Performance**: 300 messages = 6 batches (42 seconds) vs 300 individual calls (25 minutes)
+- **Context Awareness**: LLM sees all messages with full metadata (sender, body, messageId, chatId)
+- **Selective Control**: Delete spam, answer questions, ignore noise - per message
+- **Natural Responses**: Single coordinated reply instead of per-message spam
 
 ---
 

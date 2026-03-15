@@ -398,16 +398,16 @@ export function createOpenClawTools(config) {
 **Security Checklist**
 
 - [x] Disable `memory_save` tool (done)
-- [ ] Implement `memory_propose` tool with trust scoring
-- [ ] Implement section-based MEMORY.md structure (4 sections)
-- [ ] Telegram button handler (approval → move section)
-- [ ] Telegram reply handler (rejection → move section + reason)
-- [ ] Admin verification via `getChatMember` API
-- [ ] Proposal expiration (48h auto-cleanup)
-- [ ] Temporal decay for rejected patterns (90d)
+- [x] Implement `memory_propose` tool with reasoning-based workflow (done)
+- [x] Implement section-based MEMORY.md structure (4 sections) (done)
+- [x] Telegram button handler (approval → move section) (done)
+- [x] Telegram reply handler (rejection → move section + reason) (done)
+- [x] Admin verification via `getChatMember` API (done)
+- [~] Proposal expiration (48h auto-cleanup) - **Not needed** (admins review when ready)
+- [~] Temporal decay for rejected patterns (90d) - **Not needed** (dates in MEMORY.md sufficient)
 - [x] **Batch LLM processor**: Messages array with messageId/chatId for all messages (Phase 3)
 - [x] **Coordinated attack detection**: Cross-message pattern analysis in batch context (Phase 3)
-- [ ] Update TOOLS/AGENTS/SOUL templates
+- [x] Update TOOLS/AGENTS/SOUL templates (done)
 - [ ] Integration tests for approval workflow
 
 ---

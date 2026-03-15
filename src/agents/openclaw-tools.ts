@@ -14,6 +14,7 @@ import { createMessageTool } from "./tools/message-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";
 import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
 import { createMemorySaveTool } from "./tools/memory-save-tool.js";
+import { createMemoryProposeTool } from "./tools/memory-propose-tool.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createSessionStatusTool } from "./tools/session-status-tool.js";
 // import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
@@ -146,6 +147,14 @@ export function createApmClawTools(options?: {
       agentSessionKey: options?.agentSessionKey,
     }),
     createMemorySaveTool({
+      config: options?.config,
+      agentId: resolveSessionAgentId({
+        sessionKey: options?.agentSessionKey,
+        config: options?.config,
+      }),
+      workspaceDir: options?.workspaceDir,
+    }),
+    createMemoryProposeTool({
       config: options?.config,
       agentId: resolveSessionAgentId({
         sessionKey: options?.agentSessionKey,

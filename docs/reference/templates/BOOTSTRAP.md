@@ -1,0 +1,3 @@
+# Bootstrap
+
+Agent workspace initialized.

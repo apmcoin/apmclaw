@@ -64,114 +64,29 @@ jobs:
               ]
             }"
 
-      - name: Deploy to Ubuntu Server
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-            echo "=== Starting deployment ==="
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-            # 프로젝트 디렉토리로 이동
-            cd ~/apmclaw-dev
-
-            # Git pull (최신 dev 브랜치)
-            echo "Pulling latest code..."
-            git fetch origin dev
-            git reset --hard origin/dev
-
-            # .env 파일 업데이트 (GitHub Secrets에서)
-            echo "Updating .env file..."
-            cat > .env << EOF
-            TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_TOKEN_DEV }}
-            AWS_BEARER_TOKEN_BEDROCK=${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
-            AWS_REGION=us-east-1
-            BRAVE_SEARCH_API_KEY=${{ secrets.BRAVE_SEARCH_API_KEY }}
-            EOF
-
-            # config/apmclaw.json 생성 (동적 채팅방 배열)
-            echo "Creating config/apmclaw.json..."
-            mkdir -p config
-
-            # 채팅방 ID 배열을 JSON groups 객체로 변환
-            IFS=',' read -ra CHAT_IDS <<< "${{ secrets.TELEGRAM_CHAT_IDS_DEV }}"
-            GROUPS_JSON=""
-            for chat_id in "${CHAT_IDS[@]}"; do
-              chat_id=$(echo "$chat_id" | xargs)  # 공백 제거
-              if [ -n "$GROUPS_JSON" ]; then
-                GROUPS_JSON+=","
-              fi
-              GROUPS_JSON+="\"$chat_id\": {\"requireMention\": false, \"enabled\": true}"
-            done
-
-            cat > config/apmclaw.json << CONFIGEOF
-            {
-              "meta": {
-                "lastTouchedVersion": "2026.3.3",
-                "lastTouchedAt": "2026-03-15T00:00:00.000Z"
-              },
-              "models": {
-                "mode": "replace",
-                "bedrockDiscovery": {
-                  "enabled": true,
-                  "region": "us-east-1",
-                  "providerFilter": ["anthropic"],
-                  "refreshInterval": 3600,
-                  "defaultContextWindow": 200000,
-                  "defaultMaxTokens": 4096
-                }
-              },
-              "agents": {
-                "defaults": {
-                  "model": {
-                    "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-                    "fallbacks": []
-                  },
-                  "compaction": {
-                    "mode": "safeguard"
-                  }
-                }
-              },
-              "channels": {
-                "telegram": {
-                  "enabled": true,
-                  "botToken": "\${TELEGRAM_BOT_TOKEN}",
-                  "groups": {
-                    $GROUPS_JSON
-                  },
-                  "groupPolicy": "open",
-                  "streaming": "off",
-                  "autoDeleteSystemMessages": true
-                }
-              },
-              "gateway": {
-                "auth": {
-                  "mode": "token",
-                  "token": "7f1d4ffa9a239106a4ae4b74b77cacfdc5ddfcdfc29790d5"
-                },
-                "controlUi": {
-                  "enabled": false
-                }
-              }
-            }
-            CONFIGEOF
-
-            # Docker 이미지 빌드 및 재시작
-            echo "Building and restarting Docker container..."
-            docker compose down || true
-            docker compose build --no-cache
-            docker compose up -d
-
-            # 로그 확인 (최근 50줄)
-            echo "=== Deployment complete ==="
-            echo "=== Recent logs ==="
-            sleep 5
-            docker logs apmclaw --tail 50
-
-            echo "✅ Deployment successful!"
+      - name: Deploy to Ubuntu Server
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN_DEV }}
+          AWS_BEARER_TOKEN_BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
+          BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+          TELEGRAM_CHAT_IDS_DEV: ${{ secrets.TELEGRAM_CHAT_IDS_DEV }}
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "export TELEGRAM_BOT_TOKEN='$TELEGRAM_BOT_TOKEN' && \
+             export AWS_BEARER_TOKEN_BEDROCK='$AWS_BEARER_TOKEN_BEDROCK' && \
+             export BRAVE_SEARCH_API_KEY='$BRAVE_SEARCH_API_KEY' && \
+             export TELEGRAM_CHAT_IDS_DEV='$TELEGRAM_CHAT_IDS_DEV' && \
+             ~/apmclaw-dev/deploy.sh"
 
       - name: Notify Slack - Deployment Success
         if: success()

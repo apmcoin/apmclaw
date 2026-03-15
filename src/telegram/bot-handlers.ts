@@ -5,6 +5,7 @@ import {
   buildModelsProviderData,
   formatModelsAvailableHeader,
 } from "../auto-reply/reply/commands-models.js";
+import { registerProposalHandlers } from "../channels/telegram/proposal-handler.js";
 import { resolveStoredModelOverride } from "../auto-reply/reply/model-selection.js";
 import { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
 import { buildCommandsMessagePaginated } from "../auto-reply/status.js";
@@ -1580,4 +1581,7 @@ export const registerTelegramHandlers = ({
       errorMessage: "channel_post handler failed",
     });
   });
+
+  // Register Memory Proposal System handlers
+  registerProposalHandlers(bot);
 };

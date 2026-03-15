@@ -10,14 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
       - name: Notify Slack - Deployment Started
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Co-Authored-By 파싱
+          CO_AUTHORS=$(git log -1 --format=%B | grep -i "Co-Authored-By:" | sed 's/Co-Authored-By: //' | tr '\n' ', ' | sed 's/, $//')
+          if [ -n "$CO_AUTHORS" ]; then
+            AUTHOR_TEXT="${{ github.actor }}, $CO_AUTHORS"
+          else
+            AUTHOR_TEXT="${{ github.actor }}"
+          fi
+
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
             -H 'Content-Type: application/json' \
             -d "{
-              \"username\": \"apM Claw DevOps\",
-              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"username\": \"${{ github.actor }}\",
+              \"icon_url\": \"https://github.com/${{ github.actor }}.png\",
               \"text\": \"🚀 Dev deployment started\",
               \"attachments\": [
                 {
@@ -39,8 +53,8 @@ jobs:
                       \"short\": true
                     },
                     {
-                      \"title\": \"Author\",
-                      \"value\": \"${{ github.actor }}\",
+                      \"title\": \"Authors\",
+                      \"value\": \"$AUTHOR_TEXT\",
                       \"short\": true
                     }
                   ],
@@ -163,11 +177,20 @@ jobs:
         if: success()
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Co-Authored-By 파싱
+          CO_AUTHORS=$(git log -1 --format=%B | grep -i "Co-Authored-By:" | sed 's/Co-Authored-By: //' | tr '\n' ', ' | sed 's/, $//')
+          if [ -n "$CO_AUTHORS" ]; then
+            AUTHOR_TEXT="${{ github.actor }}, $CO_AUTHORS"
+          else
+            AUTHOR_TEXT="${{ github.actor }}"
+          fi
+
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
             -H 'Content-Type: application/json' \
             -d "{
-              \"username\": \"apM Claw DevOps\",
-              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"username\": \"${{ github.actor }}\",
+              \"icon_url\": \"https://github.com/${{ github.actor }}.png\",
               \"text\": \"✅ Dev deployment succeeded\",
               \"attachments\": [
                 {
@@ -192,6 +215,11 @@ jobs:
                       \"title\": \"Server\",
                       \"value\": \"***REDACTED***\",
                       \"short\": true
+                    },
+                    {
+                      \"title\": \"Authors\",
+                      \"value\": \"$AUTHOR_TEXT\",
+                      \"short\": false
                     }
                   ],
                   \"actions\": [
@@ -211,11 +239,20 @@ jobs:
         if: failure()
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Co-Authored-By 파싱
+          CO_AUTHORS=$(git log -1 --format=%B | grep -i "Co-Authored-By:" | sed 's/Co-Authored-By: //' | tr '\n' ', ' | sed 's/, $//')
+          if [ -n "$CO_AUTHORS" ]; then
+            AUTHOR_TEXT="${{ github.actor }}, $CO_AUTHORS"
+          else
+            AUTHOR_TEXT="${{ github.actor }}"
+          fi
+
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
             -H 'Content-Type: application/json' \
             -d "{
-              \"username\": \"apM Claw DevOps\",
-              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"username\": \"${{ github.actor }}\",
+              \"icon_url\": \"https://github.com/${{ github.actor }}.png\",
               \"text\": \"❌ Dev deployment failed\",
               \"attachments\": [
                 {
@@ -237,8 +274,8 @@ jobs:
                       \"short\": true
                     },
                     {
-                      \"title\": \"Author\",
-                      \"value\": \"${{ github.actor }}\",
+                      \"title\": \"Authors\",
+                      \"value\": \"$AUTHOR_TEXT\",
                       \"short\": true
                     }
                   ],

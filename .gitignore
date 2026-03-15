@@ -137,3 +137,4 @@ workspace/
 *.tsbuildinfo
 
 apmclaw-server.pem
+github-actions-key.pem

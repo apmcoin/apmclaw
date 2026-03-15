@@ -6,7 +6,6 @@ docker-compose.extra.yml
 # Config runtime data (전체 차단)
 config/
 dist
-pnpm-lock.yaml
 bun.lock
 bun.lockb
 coverage

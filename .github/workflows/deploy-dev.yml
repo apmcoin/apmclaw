@@ -10,6 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Notify Slack - Deployment Started
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"username\": \"apM Claw DevOps\",
+              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"text\": \"🚀 Dev deployment started\",
+              \"attachments\": [
+                {
+                  \"color\": \"#0066cc\",
+                  \"fields\": [
+                    {
+                      \"title\": \"Repository\",
+                      \"value\": \"<https://github.com/${{ github.repository }}|${{ github.repository }}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Branch\",
+                      \"value\": \"dev\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Commit\",
+                      \"value\": \"<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${SHORT_SHA}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Author\",
+                      \"value\": \"${{ github.actor }}\",
+                      \"short\": true
+                    }
+                  ],
+                  \"footer\": \"apM Claw DevOps\",
+                  \"footer_icon\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\"
+                }
+              ]
+            }"
+
       - name: Deploy to Ubuntu Server
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -118,3 +158,100 @@ jobs:
             docker logs apmclaw --tail 50
 
             echo "✅ Deployment successful!"
+
+      - name: Notify Slack - Deployment Success
+        if: success()
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"username\": \"apM Claw DevOps\",
+              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"text\": \"✅ Dev deployment succeeded\",
+              \"attachments\": [
+                {
+                  \"color\": \"good\",
+                  \"fields\": [
+                    {
+                      \"title\": \"Repository\",
+                      \"value\": \"<https://github.com/${{ github.repository }}|${{ github.repository }}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Branch\",
+                      \"value\": \"dev\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Commit\",
+                      \"value\": \"<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${SHORT_SHA}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Server\",
+                      \"value\": \"13.209.45.80\",
+                      \"short\": true
+                    }
+                  ],
+                  \"actions\": [
+                    {
+                      \"type\": \"button\",
+                      \"text\": \"View Logs\",
+                      \"url\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+                    }
+                  ],
+                  \"footer\": \"apM Claw DevOps\",
+                  \"footer_icon\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\"
+                }
+              ]
+            }"
+
+      - name: Notify Slack - Deployment Failed
+        if: failure()
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"username\": \"apM Claw DevOps\",
+              \"icon_url\": \"https://raw.githubusercontent.com/apmcoin/apmclaw/main/.github/images/icon-pm-e.png\",
+              \"text\": \"❌ Dev deployment failed\",
+              \"attachments\": [
+                {
+                  \"color\": \"danger\",
+                  \"fields\": [
+                    {
+                      \"title\": \"Repository\",
+                      \"value\": \"<https://github.com/${{ github.repository }}|${{ github.repository }}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Branch\",
+                      \"value\": \"dev\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Commit\",
+                      \"value\": \"<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${SHORT_SHA}>\",
+                      \"short\": true
+                    },
+                    {
+                      \"title\": \"Author\",
+                      \"value\": \"${{ github.actor }}\",
+                      \"short\": true
+                    }
+                  ],
+                  \"actions\": [
+                    {
+                      \"type\": \"button\",
+                      \"text\": \"View Logs\",
+                      \"url\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\",
+                      \"style\": \"danger\"
+                    }
+                  ],
+                  \"footer\": \"apM Claw DevOps\",
+                  \"footer_icon\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\"
+                }
+              ]
+            }"

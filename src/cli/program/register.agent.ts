@@ -219,7 +219,7 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.apmclaw.ai/cli/agen
         `
 ${theme.heading("Examples:")}
 ${formatHelpExamples([
-  ['openclaw agents set-identity --agent main --name "ApmClaw" --emoji "🦞"', "Set name + emoji."],
+  ['openclaw agents set-identity --agent main --name "ApmClaw" --emoji ""', "Set name + emoji."],
   ["openclaw agents set-identity --agent main --avatar avatars/openclaw.png", "Set avatar path."],
   [
     "openclaw agents set-identity --workspace ~/.apmclaw/workspace --from-identity",

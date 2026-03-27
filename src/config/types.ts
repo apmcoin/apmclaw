@@ -10,7 +10,6 @@ export * from "./types.base.js";
 export * from "./types.channels.js";
 export * from "./types.cli.js";
 // Note: types.apmclaw.js exports are inlined below to avoid module resolution issues
-export * from "./types.cron.js";
 export * from "./types.googlechat.js";
 export * from "./types.gateway.js";
 export * from "./types.hooks.js";

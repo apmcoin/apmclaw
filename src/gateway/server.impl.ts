@@ -80,7 +80,6 @@ import { NodeRegistry } from "./node-registry.js";
 import { createChannelManager } from "./server-channels.js";
 import { createAgentEventHandler } from "./server-chat.js";
 import { createGatewayCloseHandler } from "./server-close.js";
-import { buildGatewayCronService } from "./server-cron.js";
 import { startGatewayDiscovery } from "./server-discovery-runtime.js";
 import { applyGatewayLaneConcurrency } from "./server-lanes.js";
 import { startGatewayMaintenanceTimers } from "./server-maintenance.js";
@@ -128,7 +127,6 @@ const logTailscale = log.child("tailscale");
 const logChannels = log.child("channels");
 const logBrowser = log.child("browser");
 const logHealth = log.child("health");
-const logCron = log.child("cron");
 const logReload = log.child("reload");
 const logHooks = log.child("hooks");
 const logPlugins = log.child("plugins");
@@ -615,12 +613,6 @@ export async function startGatewayServer(
   const hasMobileNodeConnected = () => hasConnectedMobileNode(nodeRegistry);
   applyGatewayLaneConcurrency(cfgAtStart);
 
-  let cronState = buildGatewayCronService({
-    cfg: cfgAtStart,
-    deps,
-    broadcast,
-  });
-  let { cron, storePath: cronStorePath } = cronState;
 
   const channelManager = createChannelManager({
     loadConfig,
@@ -734,34 +726,6 @@ export async function startGatewayServer(
       });
 
   if (!minimalTestGateway) {
-    void cron
-      .start()
-      .then(async () => {
-        const allJobs = await cron.list({ includeDisabled: true });
-        const reflectionJobName = "Memory Reflection";
-        if (!allJobs.some((j) => j.name === reflectionJobName)) {
-          log.info("gateway: registering autonomous Memory Reflection job");
-          await cron.add({
-            name: reflectionJobName,
-            description: "Daily autonomous memory consolidation and cleanup",
-            agentId: defaultAgentId,
-            enabled: true,
-            schedule: { kind: "cron", expr: "0 4 * * *", tz: "UTC" },
-            sessionTarget: "isolated",
-            wakeMode: "next-heartbeat",
-            payload: {
-              kind: "agentTurn",
-              message:
-                "Reflect on your memory logs in MEMORY.md. Consolidate recent spam patterns, resolve conflicting admin instructions, and update the summary. Be professional and lean.",
-            },
-            delivery: { mode: "none" },
-            failureAlert: false,
-          });
-        }
-      })
-      .catch((err) => logCron.error(`failed to start: ${String(err)}`));
-  }
-
   // Recover pending outbound deliveries from previous crash/restart.
   if (!minimalTestGateway) {
     void (async () => {
@@ -810,8 +774,6 @@ export async function startGatewayServer(
 
   const gatewayRequestContext: import("./server-methods/types.js").GatewayRequestContext = {
     deps,
-    cron,
-    cronStorePath,
     execApprovalManager,
     loadGatewayModelCatalog,
     getHealthCache,
@@ -953,16 +915,12 @@ export async function startGatewayServer(
           getState: () => ({
             hooksConfig,
             heartbeatRunner,
-            cronState,
             browserControl,
             channelHealthMonitor,
           }),
           setState: (nextState) => {
             hooksConfig = nextState.hooksConfig;
             heartbeatRunner = nextState.heartbeatRunner;
-            cronState = nextState.cronState;
-            cron = cronState.cron;
-            cronStorePath = cronState.storePath;
             browserControl = nextState.browserControl;
             channelHealthMonitor = nextState.channelHealthMonitor;
           },
@@ -971,7 +929,6 @@ export async function startGatewayServer(
           logHooks,
           logBrowser,
           logChannels,
-          logCron,
           logReload,
           createHealthMonitor: (checkIntervalMs: number) =>
             startChannelHealthMonitor({ channelManager, checkIntervalMs }),
@@ -1017,7 +974,6 @@ export async function startGatewayServer(
     canvasHostServer,
     stopChannel,
     pluginServices,
-    cron,
     heartbeatRunner,
     updateCheckStop: stopGatewayUpdateCheck,
     nodePresenceTimers,

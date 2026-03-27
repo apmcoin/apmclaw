@@ -22,12 +22,10 @@ import type { GatewayReloadPlan } from "./config-reload.js";
 import { resolveHooksConfig } from "./hooks.js";
 // Removed: Browser tool dependency
 // import { startBrowserControlServerIfEnabled } from "./server-browser.js";
-import { buildGatewayCronService, type GatewayCronState } from "./server-cron.js";
 
 type GatewayHotReloadState = {
   hooksConfig: ReturnType<typeof resolveHooksConfig>;
   heartbeatRunner: HeartbeatRunner;
-  cronState: GatewayCronState;
   // Removed: Browser tool dependency
   browserControl: null;
   channelHealthMonitor: ChannelHealthMonitor | null;
@@ -47,7 +45,6 @@ export function createGatewayReloadHandlers(params: {
   };
   logBrowser: { error: (msg: string) => void };
   logChannels: { info: (msg: string) => void; error: (msg: string) => void };
-  logCron: { error: (msg: string) => void };
   logReload: { info: (msg: string) => void; warn: (msg: string) => void };
   createHealthMonitor: (checkIntervalMs: number) => ChannelHealthMonitor;
 }) {
@@ -73,17 +70,6 @@ export function createGatewayReloadHandlers(params: {
 
     resetDirectoryCache();
 
-    if (plan.restartCron) {
-      state.cronState.cron.stop();
-      nextState.cronState = buildGatewayCronService({
-        cfg: nextConfig,
-        deps: params.deps,
-        broadcast: params.broadcast,
-      });
-      void nextState.cronState.cron
-        .start()
-        .catch((err) => params.logCron.error(`failed to start: ${String(err)}`));
-    }
 
     // Removed: Browser tool dependency
     if (plan.restartBrowserControl) {
@@ -135,7 +121,6 @@ export function createGatewayReloadHandlers(params: {
       }
     }
 
-    setCommandLaneConcurrency(CommandLane.Cron, nextConfig.cron?.maxConcurrentRuns ?? 1);
     setCommandLaneConcurrency(CommandLane.Main, resolveAgentMaxConcurrent(nextConfig));
     setCommandLaneConcurrency(CommandLane.Subagent, resolveSubagentMaxConcurrent(nextConfig));
 

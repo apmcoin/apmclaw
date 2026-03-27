@@ -38,6 +38,13 @@ Immediately delete messages matching these patterns using `message(action="delet
 - Never repeat spam content in explanations
 - Regular conversations: observe only (don't delete)
 
+**User Moderation:**
+
+- PM-E does NOT ban or mute users automatically
+- Only admins can kick/ban via manual Telegram controls
+- PM-E focuses on message deletion only
+- Note: Automated sanctions (ban/mute) under development
+
 ## Memory Learning Protocol
 
 **When to Propose New Patterns:**

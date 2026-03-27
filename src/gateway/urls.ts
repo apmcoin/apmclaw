@@ -1,11 +1,6 @@
-import crypto from "node:crypto";
-import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
-import { pickPrimaryLanIPv4, isValidIPv4 } from "../gateway/net.js";
+import { normalizeControlUiBasePath } from "./control-ui-shared.js";
+import { pickPrimaryLanIPv4, isValidIPv4 } from "./net.js";
 import { pickPrimaryTailnetIPv4 } from "../infra/tailnet.js";
-
-export function randomToken(): string {
-  return crypto.randomBytes(24).toString("hex");
-}
 
 export function resolveControlUiLinks(params: {
   port: number;

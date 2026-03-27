@@ -510,7 +510,6 @@ export function createGatewayHttpServer(opts: {
   openResponsesEnabled: boolean;
   openResponsesConfig?: import("../config/types.gateway.js").GatewayHttpResponsesConfig;
   strictTransportSecurityHeader?: string;
-  handleHooksRequest: HooksRequestHandler;
   handlePluginRequest?: PluginHttpRequestHandler;
   shouldEnforcePluginGatewayAuth?: (pathContext: PluginRoutePathContext) => boolean;
   resolvedAuth: ResolvedGatewayAuth;
@@ -529,7 +528,6 @@ export function createGatewayHttpServer(opts: {
     openResponsesEnabled,
     openResponsesConfig,
     strictTransportSecurityHeader,
-    handleHooksRequest,
     handlePluginRequest,
     shouldEnforcePluginGatewayAuth,
     resolvedAuth,
@@ -571,10 +569,6 @@ export function createGatewayHttpServer(opts: {
         ? resolvePluginRoutePathContext(requestPath)
         : null;
       const requestStages: GatewayHttpRequestStage[] = [
-        {
-          name: "hooks",
-          run: () => handleHooksRequest(req, res),
-        },
         {
           name: "tools-invoke",
           run: () =>

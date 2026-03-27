@@ -6,10 +6,21 @@
   Protecting crypto communities the apM way, powered by the apM Claw engine.
 </p>
 
-## 📜 Heritage: From PM-E to Claw
+## 📜 Heritage
 
-- **Since 2023**: **PM-E** (피엠이) was the original guardian of the apM community, serving as a dedicated AI anti-spam bot.
-- **2025 Evolution**: PM-E evolved by adopting the advanced memory-context architecture of apM Claw. It is now a leaner, context-aware community manager that learns from interactions.
+**Built on OpenClaw, Rebuilt for Crypto Security**
+
+apM Claw is an independent project inspired by [OpenClaw](https://github.com/steipete/openclaw-agent)'s memory-context architecture (MIT License). However, **less than 10% of the original codebase remains**—this is a ground-up rebuild focused on Telegram spam defense.
+
+**What Changed:**
+- **OpenClaw**: General-purpose agent framework (Slack, Discord, Web UI, Telegram)
+- **apM Claw**: Telegram-only security appliance for crypto communities
+- **Removed**: 80% of features (cron, browser, sessions, subagents, image generation, multi-platform support)
+- **Added**: Memory Proposal System, spam forwarding, crypto-specific threat detection
+
+**PM-E's Journey:**
+- **Since 2023**: PM-E (피엠이) served as apM community's guardian
+- **2025**: Rebuilt from scratch as a specialized security tool
 
 ## 🛡️ Security Architecture
 

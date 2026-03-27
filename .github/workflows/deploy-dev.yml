@@ -74,18 +74,25 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Copy deploy script to server
+        run: |
+          scp scripts/deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/apmclaw-dev/deploy.sh
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "chmod +x ~/apmclaw-dev/deploy.sh"
+
       - name: Deploy to Ubuntu Server
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN_DEV }}
           AWS_BEARER_TOKEN_BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
           BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
           TELEGRAM_CHAT_IDS_DEV: ${{ secrets.TELEGRAM_CHAT_IDS_DEV }}
+          TELEGRAM_CHAT_IDS_FORWARD_SPAM: ${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "export TELEGRAM_BOT_TOKEN='$TELEGRAM_BOT_TOKEN' && \
              export AWS_BEARER_TOKEN_BEDROCK='$AWS_BEARER_TOKEN_BEDROCK' && \
              export BRAVE_SEARCH_API_KEY='$BRAVE_SEARCH_API_KEY' && \
              export TELEGRAM_CHAT_IDS_DEV='$TELEGRAM_CHAT_IDS_DEV' && \
+             export TELEGRAM_CHAT_IDS_FORWARD_SPAM='$TELEGRAM_CHAT_IDS_FORWARD_SPAM' && \
              ~/apmclaw-dev/deploy.sh"
 
       - name: Notify Slack - Deployment Success

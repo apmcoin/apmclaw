@@ -838,6 +838,22 @@ export async function deleteMessageTelegram(
     verbose: opts.verbose,
     shouldRetry: (err) => isRecoverableTelegramNetworkError(err, { context: "send" }),
   });
+
+  // Forward to spam archive before deletion (if configured)
+  const forwardSpamChatId = cfg.channels?.telegram?.forwardSpamChatId;
+  if (forwardSpamChatId) {
+    try {
+      await requestWithDiag(
+        () => api.forwardMessage(String(forwardSpamChatId), chatId, messageId),
+        "forwardMessage",
+      );
+      logVerbose(`[telegram] Forwarded message ${messageId} to spam archive ${forwardSpamChatId}`);
+    } catch (err) {
+      // Continue with deletion even if forward fails
+      logVerbose(`[telegram] Failed to forward message ${messageId}: ${String(err)}`);
+    }
+  }
+
   await requestWithDiag(() => api.deleteMessage(chatId, messageId), "deleteMessage");
   logVerbose(`[telegram] Deleted message ${messageId} from chat ${chatId}`);
   return { ok: true };

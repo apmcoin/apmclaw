@@ -178,6 +178,8 @@ export type TelegramAccountConfig = {
   ackReaction?: string;
   /** Automatically delete service messages (new members, left members, etc.) to keep chat clean. */
   autoDeleteSystemMessages?: boolean;
+  /** Chat ID to forward spam messages before deletion (for spam archiving). */
+  forwardSpamChatId?: string | number;
 };
 
 export type TelegramTopicConfig = {

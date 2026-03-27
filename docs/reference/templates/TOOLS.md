@@ -64,4 +64,4 @@ Fetch URL content (HTTPS only).
 
 ---
 
-_apM Claw Engine 🦞_
+_apM Claw Engine_

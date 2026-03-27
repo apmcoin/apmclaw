@@ -11,7 +11,6 @@ import { createMemoryProposeTool } from "./tools/memory-propose-tool.js";
 import { createMemorySaveTool } from "./tools/memory-save-tool.js";
 import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
 // Removed: Lean Strong Claw - unused tools
-// import { createCronTool } from "./tools/cron-tool.js";
 // import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";

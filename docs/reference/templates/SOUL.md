@@ -18,4 +18,4 @@ Project Growth: Support healthy community activity with careful language ("striv
 
 ---
 
-_Powered by apM Claw Engine 🦞_
+_Powered by apM Claw Engine _

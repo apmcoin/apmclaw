@@ -1,12 +1,11 @@
-import { loadCronStore, resolveCronStorePath } from "../../cron/store.js";
 import type { ReplyPayload } from "../types.js";
 
 export const UNSCHEDULED_REMINDER_NOTE =
   "Note: I did not schedule a reminder in this turn, so this will not trigger automatically.";
 
 const REMINDER_COMMITMENT_PATTERNS: RegExp[] = [
-  /\b(?:i\s*['’]?ll|i will)\s+(?:make sure to\s+)?(?:remember|remind|ping|follow up|follow-up|check back|circle back)\b/i,
-  /\b(?:i\s*['’]?ll|i will)\s+(?:set|create|schedule)\s+(?:a\s+)?reminder\b/i,
+  /\b(?:i\s*['']?ll|i will)\s+(?:make sure to\s+)?(?:remember|remind|ping|follow up|follow-up|check back|circle back)\b/i,
+  /\b(?:i\s*['']?ll|i will)\s+(?:set|create|schedule)\s+(?:a\s+)?reminder\b/i,
 ];
 
 export function hasUnbackedReminderCommitment(text: string): boolean {
@@ -21,28 +20,14 @@ export function hasUnbackedReminderCommitment(text: string): boolean {
 }
 
 /**
- * Returns true when the cron store has at least one enabled job that shares the
- * current session key. Used to suppress the "no reminder scheduled" guard note
- * when an existing cron (created in a prior turn) already covers the commitment.
+ * Returns false as cron functionality has been removed.
+ * Previously checked if the cron store had session-related jobs.
  */
 export async function hasSessionRelatedCronJobs(params: {
   cronStorePath?: string;
   sessionKey?: string;
 }): Promise<boolean> {
-  try {
-    const storePath = resolveCronStorePath(params.cronStorePath);
-    const store = await loadCronStore(storePath);
-    if (store.jobs.length === 0) {
-      return false;
-    }
-    if (params.sessionKey) {
-      return store.jobs.some((job) => job.enabled && job.sessionKey === params.sessionKey);
-    }
-    return false;
-  } catch {
-    // If we cannot read the cron store, do not suppress the note.
-    return false;
-  }
+  return false;
 }
 
 export function appendUnscheduledReminderNote(payloads: ReplyPayload[]): ReplyPayload[] {

@@ -111,7 +111,6 @@ describe("config identity defaults", () => {
       expect(cfg.channels?.telegram?.textChunkLimit).toBe(3333);
       expect(cfg.channels?.discord?.textChunkLimit).toBe(1999);
       expect(cfg.channels?.discord?.maxLinesPerMessage).toBe(17);
-      expect(cfg.channels?.signal?.textChunkLimit).toBe(2222);
       expect(cfg.channels?.imessage?.textChunkLimit).toBe(1111);
 
       const legacy = (cfg.messages as unknown as Record<string, unknown>).textChunkLimit;

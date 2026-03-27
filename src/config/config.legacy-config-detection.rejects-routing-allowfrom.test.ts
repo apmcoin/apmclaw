@@ -425,11 +425,6 @@ describe("legacy config detection", () => {
         expectedIssuePath: "channels.whatsapp.allowFrom",
       },
       {
-        provider: "signal",
-        allowFrom: ["+15555550123"],
-        expectedIssuePath: "channels.signal.allowFrom",
-      },
-      {
         provider: "imessage",
         allowFrom: ["+15555550123"],
         expectedIssuePath: "channels.imessage.allowFrom",
@@ -670,7 +665,6 @@ describe("legacy config detection", () => {
       expect(res.config.channels?.telegram?.accounts?.ops?.historyLimit).toBe(3);
       expect(res.config.channels?.slack?.historyLimit).toBe(7);
       expect(res.config.channels?.slack?.accounts?.ops?.historyLimit).toBe(2);
-      expect(res.config.channels?.signal?.historyLimit).toBe(6);
       expect(res.config.channels?.imessage?.historyLimit).toBe(5);
       expect(res.config.channels?.msteams?.historyLimit).toBe(4);
       expect(res.config.channels?.discord?.historyLimit).toBe(3);

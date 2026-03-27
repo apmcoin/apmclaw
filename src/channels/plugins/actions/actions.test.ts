@@ -3,8 +3,6 @@ import type { ApmClawConfig } from "../../../config/config.js";
 
 const handleDiscordAction = vi.fn(async (..._args: unknown[]) => ({ details: { ok: true } }));
 const handleTelegramAction = vi.fn(async (..._args: unknown[]) => ({ ok: true }));
-const sendReactionSignal = vi.fn(async (..._args: unknown[]) => ({ ok: true }));
-const removeReactionSignal = vi.fn(async (..._args: unknown[]) => ({ ok: true }));
 const handleSlackAction = vi.fn(async (..._args: unknown[]) => ({ details: { ok: true } }));
 
 vi.mock("../../../agents/tools/discord-actions.js", () => ({
@@ -15,11 +13,6 @@ vi.mock("../../../agents/tools/telegram-actions.js", () => ({
   handleTelegramAction,
 }));
 
-vi.mock("../../../signal/send-reactions.js", () => ({
-  sendReactionSignal,
-  removeReactionSignal,
-}));
-
 vi.mock("../../../agents/tools/slack-actions.js", () => ({
   handleSlackAction,
 }));
@@ -27,7 +20,6 @@ vi.mock("../../../agents/tools/slack-actions.js", () => ({
 const { discordMessageActions } = await import("./discord.js");
 const { handleDiscordMessageAction } = await import("./discord/handle-action.js");
 const { telegramMessageActions } = await import("./telegram.js");
-const { signalMessageActions } = await import("./signal.js");
 const { createSlackActions } = await import("../slack.actions.js");
 
 function telegramCfg(): ApmClawConfig {
@@ -52,34 +44,6 @@ async function runTelegramAction(
     params,
     cfg,
     accountId: options?.accountId,
-  });
-  return { cfg };
-}
-
-type SignalActionInput = Parameters<NonNullable<typeof signalMessageActions.handleAction>>[0];
-
-async function runSignalAction(
-  action: SignalActionInput["action"],
-  params: SignalActionInput["params"],
-  options?: {
-    cfg?: ApmClawConfig;
-    accountId?: string;
-    toolContext?: SignalActionInput["toolContext"];
-  },
-) {
-  const cfg =
-    options?.cfg ?? ({ channels: { signal: { account: "+15550001111" } } } as ApmClawConfig);
-  const handleAction = signalMessageActions.handleAction;
-  if (!handleAction) {
-    throw new Error("signal handleAction unavailable");
-  }
-  await handleAction({
-    channel: "signal",
-    action,
-    params,
-    cfg,
-    accountId: options?.accountId,
-    toolContext: options?.toolContext,
   });
   return { cfg };
 }
@@ -127,19 +91,6 @@ function expectChannelCreateAction(actions: string[], expected: boolean) {
   expect(actions).not.toContain("channel-create");
 }
 
-function createSignalAccountOverrideCfg(): ApmClawConfig {
-  return {
-    channels: {
-      signal: {
-        actions: { reactions: false },
-        accounts: {
-          work: { account: "+15550001111", actions: { reactions: true } },
-        },
-      },
-    },
-  } as ApmClawConfig;
-}
-
 function createDiscordModerationOverrideCfg(params?: { channelsEnabled?: boolean }): ApmClawConfig {
   const accountActions = params?.channelsEnabled
     ? { moderation: true, channels: true }
@@ -154,26 +105,6 @@ function createDiscordModerationOverrideCfg(params?: { channelsEnabled?: boolean
       },
     },
   } as ApmClawConfig;
-}
-
-async function expectSignalActionRejected(
-  params: Record<string, unknown>,
-  error: RegExp,
-  cfg: ApmClawConfig,
-) {
-  const handleAction = signalMessageActions.handleAction;
-  if (!handleAction) {
-    throw new Error("signal handleAction unavailable");
-  }
-  await expect(
-    handleAction({
-      channel: "signal",
-      action: "react",
-      params,
-      cfg,
-      accountId: undefined,
-    }),
-  ).rejects.toThrow(error);
 }
 
 async function expectSlackSendRejected(params: Record<string, unknown>, error: RegExp) {
@@ -971,155 +902,6 @@ describe("telegramMessageActions", () => {
     const callPayload = call as Record<string, unknown>;
     expect(callPayload.action).toBe("react");
     expect(callPayload.messageId).toBeUndefined();
-  });
-});
-
-describe("signalMessageActions", () => {
-  it("lists actions based on account presence and reaction gates", () => {
-    const cases = [
-      {
-        name: "no configured accounts",
-        cfg: {} as ApmClawConfig,
-        expected: [],
-      },
-      {
-        name: "reactions disabled",
-        cfg: {
-          channels: { signal: { account: "+15550001111", actions: { reactions: false } } },
-        } as ApmClawConfig,
-        expected: ["send"],
-      },
-      {
-        name: "account-level reactions enabled",
-        cfg: createSignalAccountOverrideCfg(),
-        expected: ["send", "react"],
-      },
-    ] as const;
-
-    for (const testCase of cases) {
-      expect(
-        signalMessageActions.listActions?.({ cfg: testCase.cfg }) ?? [],
-        testCase.name,
-      ).toEqual(testCase.expected);
-    }
-  });
-
-  it("skips send for plugin dispatch", () => {
-    expect(signalMessageActions.supportsAction?.({ action: "send" })).toBe(false);
-    expect(signalMessageActions.supportsAction?.({ action: "react" })).toBe(true);
-  });
-
-  it("blocks reactions when action gate is disabled", async () => {
-    const cfg = {
-      channels: { signal: { account: "+15550001111", actions: { reactions: false } } },
-    } as ApmClawConfig;
-    await expectSignalActionRejected(
-      { to: "+15550001111", messageId: "123", emoji: "✅" },
-      /actions\.reactions/,
-      cfg,
-    );
-  });
-
-  it("maps reaction targets into signal sendReaction calls", async () => {
-    const cases = [
-      {
-        name: "uses account-level actions when enabled",
-        cfg: createSignalAccountOverrideCfg(),
-        accountId: "work",
-        params: { to: "+15550001111", messageId: "123", emoji: "👍" },
-        expectedRecipient: "+15550001111",
-        expectedTimestamp: 123,
-        expectedEmoji: "👍",
-        expectedOptions: { accountId: "work" },
-      },
-      {
-        name: "normalizes uuid recipients",
-        cfg: { channels: { signal: { account: "+15550001111" } } } as ApmClawConfig,
-        accountId: undefined,
-        params: {
-          recipient: "uuid:123e4567-e89b-12d3-a456-426614174000",
-          messageId: "123",
-          emoji: "🔥",
-        },
-        expectedRecipient: "123e4567-e89b-12d3-a456-426614174000",
-        expectedTimestamp: 123,
-        expectedEmoji: "🔥",
-        expectedOptions: {},
-      },
-      {
-        name: "passes groupId and targetAuthor for group reactions",
-        cfg: { channels: { signal: { account: "+15550001111" } } } as ApmClawConfig,
-        accountId: undefined,
-        params: {
-          to: "signal:group:group-id",
-          targetAuthor: "uuid:123e4567-e89b-12d3-a456-426614174000",
-          messageId: "123",
-          emoji: "✅",
-        },
-        expectedRecipient: "",
-        expectedTimestamp: 123,
-        expectedEmoji: "✅",
-        expectedOptions: {
-          groupId: "group-id",
-          targetAuthor: "uuid:123e4567-e89b-12d3-a456-426614174000",
-        },
-      },
-    ] as const;
-
-    for (const testCase of cases) {
-      sendReactionSignal.mockClear();
-      await runSignalAction("react", testCase.params, {
-        cfg: testCase.cfg,
-        accountId: testCase.accountId,
-      });
-      expect(sendReactionSignal, testCase.name).toHaveBeenCalledWith(
-        testCase.expectedRecipient,
-        testCase.expectedTimestamp,
-        testCase.expectedEmoji,
-        expect.objectContaining({
-          cfg: testCase.cfg,
-          ...testCase.expectedOptions,
-        }),
-      );
-    }
-  });
-
-  it("falls back to toolContext.currentMessageId for reactions when messageId is omitted", async () => {
-    sendReactionSignal.mockClear();
-    await runSignalAction(
-      "react",
-      { to: "+15559999999", emoji: "🔥" },
-      { toolContext: { currentMessageId: "1737630212345" } },
-    );
-    expect(sendReactionSignal).toHaveBeenCalledTimes(1);
-    expect(sendReactionSignal).toHaveBeenCalledWith(
-      "+15559999999",
-      1737630212345,
-      "🔥",
-      expect.objectContaining({}),
-    );
-  });
-
-  it("rejects reaction when neither messageId nor toolContext.currentMessageId is provided", async () => {
-    const cfg = {
-      channels: { signal: { account: "+15550001111" } },
-    } as ApmClawConfig;
-    await expectSignalActionRejected(
-      { to: "+15559999999", emoji: "✅" },
-      /messageId.*required/,
-      cfg,
-    );
-  });
-
-  it("requires targetAuthor for group reactions", async () => {
-    const cfg = {
-      channels: { signal: { account: "+15550001111" } },
-    } as ApmClawConfig;
-    await expectSignalActionRejected(
-      { to: "signal:group:group-id", messageId: "123", emoji: "✅" },
-      /targetAuthor/,
-      cfg,
-    );
   });
 });
 

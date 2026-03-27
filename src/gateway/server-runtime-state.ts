@@ -26,7 +26,6 @@ import {
 import { MAX_PAYLOAD_BYTES } from "./server-constants.js";
 import { attachGatewayUpgradeHandler, createGatewayHttpServer } from "./server-http.js";
 import type { DedupeEntry } from "./server-shared.js";
-import { createGatewayHooksRequestHandler } from "./server/hooks.js";
 import { listenGatewayHttpServer } from "./server/http-listen.js";
 import {
   createGatewayPluginRequestHandler,
@@ -52,7 +51,6 @@ export async function createGatewayRuntimeState(params: {
   /** Optional rate limiter for auth brute-force protection. */
   rateLimiter?: AuthRateLimiter;
   gatewayTls?: GatewayTlsRuntime;
-  hooksConfig: () => HooksConfigResolved | null;
   pluginRegistry: PluginRegistry;
   deps: CliDeps;
   canvasRuntime: RuntimeEnv;
@@ -60,7 +58,6 @@ export async function createGatewayRuntimeState(params: {
   allowCanvasHostInTests?: boolean;
   logCanvas: { info: (msg: string) => void; warn: (msg: string) => void };
   log: { info: (msg: string) => void; warn: (msg: string) => void };
-  logHooks: ReturnType<typeof createSubsystemLogger>;
   logPlugins: ReturnType<typeof createSubsystemLogger>;
 }): Promise<{
   canvasHost: CanvasHostHandler | null;
@@ -89,14 +86,6 @@ export async function createGatewayRuntimeState(params: {
 
   const clients = new Set<GatewayWsClient>();
   const { broadcast, broadcastToConnIds } = createGatewayBroadcaster({ clients });
-
-  const handleHooksRequest = createGatewayHooksRequestHandler({
-    deps: params.deps,
-    getHooksConfig: params.hooksConfig,
-    bindHost: params.bindHost,
-    port: params.port,
-    logHooks: params.logHooks,
-  });
 
   const handlePluginRequest = createGatewayPluginRequestHandler({
     registry: params.pluginRegistry,
@@ -133,7 +122,6 @@ export async function createGatewayRuntimeState(params: {
       openResponsesEnabled: params.openResponsesEnabled,
       openResponsesConfig: params.openResponsesConfig,
       strictTransportSecurityHeader: params.strictTransportSecurityHeader,
-      handleHooksRequest,
       handlePluginRequest,
       shouldEnforcePluginGatewayAuth,
       resolvedAuth: params.resolvedAuth,

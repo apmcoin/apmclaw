@@ -4,8 +4,6 @@ import type { CliDeps } from "../cli/deps.js";
 import { resolveAgentMaxConcurrent, resolveSubagentMaxConcurrent } from "../config/agent-limits.js";
 import { isRestartEnabled } from "../config/commands.js";
 import type { loadConfig } from "../config/config.js";
-import { startGmailWatcherWithLogs } from "../hooks/gmail-watcher-lifecycle.js";
-import { stopGmailWatcher } from "../hooks/gmail-watcher.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import type { HeartbeatRunner } from "../infra/heartbeat-runner.js";
 import { resetDirectoryCache } from "../infra/outbound/target-resolver.js";
@@ -19,12 +17,10 @@ import { CommandLane } from "../process/lanes.js";
 import type { ChannelHealthMonitor } from "./channel-health-monitor.js";
 import type { ChannelKind } from "./config-reload-plan.js";
 import type { GatewayReloadPlan } from "./config-reload.js";
-import { resolveHooksConfig } from "./hooks.js";
 // Removed: Browser tool dependency
 // import { startBrowserControlServerIfEnabled } from "./server-browser.js";
 
 type GatewayHotReloadState = {
-  hooksConfig: ReturnType<typeof resolveHooksConfig>;
   heartbeatRunner: HeartbeatRunner;
   // Removed: Browser tool dependency
   browserControl: null;
@@ -38,14 +34,6 @@ export function createGatewayReloadHandlers(params: {
   setState: (state: GatewayHotReloadState) => void;
   startChannel: (name: ChannelKind) => Promise<void>;
   stopChannel: (name: ChannelKind) => Promise<void>;
-  logHooks: {
-    info: (msg: string) => void;
-    warn: (msg: string) => void;
-    error: (msg: string) => void;
-  };
-  logBrowser: { error: (msg: string) => void };
-  logChannels: { info: (msg: string) => void; error: (msg: string) => void };
-  logReload: { info: (msg: string) => void; warn: (msg: string) => void };
   createHealthMonitor: (checkIntervalMs: number) => ChannelHealthMonitor;
 }) {
   const applyHotReload = async (
@@ -60,13 +48,6 @@ export function createGatewayReloadHandlers(params: {
       try {
         nextState.hooksConfig = resolveHooksConfig(nextConfig);
       } catch (err) {
-        params.logHooks.warn(`hooks config reload failed: ${String(err)}`);
-      }
-    }
-
-    if (plan.restartHeartbeat) {
-      nextState.heartbeatRunner.updateConfig(nextConfig);
-    }
 
     resetDirectoryCache();
 
@@ -96,18 +77,6 @@ export function createGatewayReloadHandlers(params: {
       await startGmailWatcherWithLogs({
         cfg: nextConfig,
         log: params.logHooks,
-        onSkipped: () =>
-          params.logHooks.info("skipping gmail watcher restart (APMCLAW_SKIP_GMAIL_WATCHER=1)"),
-      });
-    }
-
-    if (plan.restartChannels.size > 0) {
-      if (
-        isTruthyEnvValue(process.env.APMCLAW_SKIP_CHANNELS) ||
-        isTruthyEnvValue(process.env.APMCLAW_SKIP_PROVIDERS)
-      ) {
-        params.logChannels.info(
-          "skipping channel reload (APMCLAW_SKIP_CHANNELS=1 or APMCLAW_SKIP_PROVIDERS=1)",
         );
       } else {
         const restartChannel = async (name: ChannelKind) => {

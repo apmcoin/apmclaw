@@ -128,7 +128,6 @@ const logChannels = log.child("channels");
 const logBrowser = log.child("browser");
 const logHealth = log.child("health");
 const logReload = log.child("reload");
-const logHooks = log.child("hooks");
 const logPlugins = log.child("plugins");
 const logWsControl = log.child("ws");
 const logSecrets = log.child("secrets");
@@ -499,7 +498,6 @@ export async function startGatewayServer(
     tailscaleConfig,
     tailscaleMode,
   } = runtimeConfig;
-  let hooksConfig = runtimeConfig.hooksConfig;
   const canvasHostEnabled = runtimeConfig.canvasHostEnabled;
 
   // Create auth rate limiters used by connect/auth flows.
@@ -581,7 +579,6 @@ export async function startGatewayServer(
     resolvedAuth,
     rateLimiter: authRateLimiter,
     gatewayTls,
-    hooksConfig: () => hooksConfig,
     pluginRegistry,
     deps,
     canvasRuntime,
@@ -589,7 +586,6 @@ export async function startGatewayServer(
     allowCanvasHostInTests: opts.allowCanvasHostInTests,
     logCanvas,
     log,
-    logHooks,
     logPlugins,
   });
   let bonjourStop: (() => Promise<void>) | null = null;
@@ -890,7 +886,6 @@ export async function startGatewayServer(
       deps,
       startChannels,
       log,
-      logHooks,
       logChannels,
       logBrowser,
     }));
@@ -913,20 +908,17 @@ export async function startGatewayServer(
           deps,
           broadcast,
           getState: () => ({
-            hooksConfig,
             heartbeatRunner,
             browserControl,
             channelHealthMonitor,
           }),
           setState: (nextState) => {
-            hooksConfig = nextState.hooksConfig;
             heartbeatRunner = nextState.heartbeatRunner;
             browserControl = nextState.browserControl;
             channelHealthMonitor = nextState.channelHealthMonitor;
           },
           startChannel,
           stopChannel,
-          logHooks,
           logBrowser,
           logChannels,
           logReload,

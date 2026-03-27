@@ -17,10 +17,6 @@ import { applyAgentBindings, describeBinding } from "../agents.bindings.js";
 import { buildAgentSummaries } from "../agents.config.js";
 import { setupChannels } from "../onboard-channels.js";
 import type { ChannelChoice } from "../onboard-types.js";
-import {
-  ensureOnboardingPluginInstalled,
-  reloadOnboardingPluginRegistry,
-} from "../onboarding/plugin-install.js";
 import { applyAccountName, applyChannelAccountConfig } from "./add-mutators.js";
 import { channelLabel, requireValidConfig, shouldUseWizard } from "./shared.js";
 
@@ -186,26 +182,8 @@ export async function channelsAddCommand(
   }
 
   const rawChannel = String(opts.channel ?? "");
-  let channel = normalizeChannelId(rawChannel);
-  let catalogEntry = channel ? undefined : resolveCatalogChannelEntry(rawChannel, nextConfig);
-
-  if (!channel && catalogEntry) {
-    const prompter = createClackPrompter();
-    const workspaceDir = resolveAgentWorkspaceDir(nextConfig, resolveDefaultAgentId(nextConfig));
-    const result = await ensureOnboardingPluginInstalled({
-      cfg: nextConfig,
-      entry: catalogEntry,
-      prompter,
-      runtime,
-      workspaceDir,
-    });
-    nextConfig = result.cfg;
-    if (!result.installed) {
-      return;
-    }
-    reloadOnboardingPluginRegistry({ cfg: nextConfig, runtime, workspaceDir });
-    channel = normalizeChannelId(catalogEntry.id) ?? (catalogEntry.id as ChannelId);
-  }
+  const channel = normalizeChannelId(rawChannel);
+  const catalogEntry = channel ? undefined : resolveCatalogChannelEntry(rawChannel, nextConfig);
 
   if (!channel) {
     const hint = catalogEntry

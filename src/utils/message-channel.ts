@@ -19,10 +19,7 @@ export const INTERNAL_MESSAGE_CHANNEL = "webchat" as const;
 export type InternalMessageChannel = typeof INTERNAL_MESSAGE_CHANNEL;
 export type GatewayMessageChannel = ChannelId | InternalMessageChannel;
 
-const MARKDOWN_CAPABLE_CHANNELS = new Set<string>([
-  "telegram",
-  "tui",
-]);
+const MARKDOWN_CAPABLE_CHANNELS = new Set<string>(["telegram", "tui"]);
 
 export { GATEWAY_CLIENT_NAMES, GATEWAY_CLIENT_MODES };
 export type { GatewayClientName, GatewayClientMode };
@@ -89,9 +86,7 @@ export const listDeliverableMessageChannels = (): ChannelId[] =>
 
 export type DeliverableMessageChannel = ChannelId;
 
-export const listGatewayMessageChannels = (): ChannelId[] => [
-  ...listDeliverableMessageChannels(),
-];
+export const listGatewayMessageChannels = (): ChannelId[] => [...listDeliverableMessageChannels()];
 
 export const listGatewayAgentChannelAliases = (): string[] =>
   Array.from(new Set([...listChatChannelAliases(), ...listPluginChannelAliases()]));
@@ -111,9 +106,7 @@ export function isDeliverableMessageChannel(value: string): value is ChannelId {
   return listDeliverableMessageChannels().includes(value as ChannelId);
 }
 
-export function resolveGatewayMessageChannel(
-  raw?: string | null,
-): ChannelId | undefined {
+export function resolveGatewayMessageChannel(raw?: string | null): ChannelId | undefined {
   const normalized = normalizeMessageChannel(raw);
   if (!normalized) {
     return undefined;

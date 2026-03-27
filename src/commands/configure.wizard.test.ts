@@ -95,8 +95,8 @@ vi.mock("./onboard-channels.js", () => ({
   setupChannels: vi.fn(),
 }));
 
-import { WizardCancelledError } from "./types.js";
 import { runConfigureWizard } from "./configure.wizard.js";
+import { WizardCancelledError } from "./types.js";
 
 describe("runConfigureWizard", () => {
   it("persists gateway.mode=local when only the run mode is selected", async () => {

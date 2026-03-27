@@ -7,7 +7,13 @@ import type { ApmClawConfig } from "../config/config.js";
 import { resolveGatewayPort, resolveIsNixMode } from "../config/paths.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 // Daemon removed (Docker-only deployment) - inline stubs
-type ExtraGatewayService = { label: string; scope: string; detail: string; legacy?: boolean; platform?: string };
+type ExtraGatewayService = {
+  label: string;
+  scope: string;
+  detail: string;
+  legacy?: boolean;
+  platform?: string;
+};
 const findExtraGatewayServices = async () => [] as ExtraGatewayService[];
 const renderGatewayServiceCleanupHints = () => [] as string[];
 const renderSystemNodeWarning = () => null as string | null;

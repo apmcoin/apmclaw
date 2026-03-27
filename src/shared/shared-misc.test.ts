@@ -75,9 +75,7 @@ describe("shared/frontmatter", () => {
 
   test("resolveApmClawManifestBlock returns undefined for invalid input", () => {
     expect(resolveApmClawManifestBlock({ frontmatter: {} })).toBeUndefined();
-    expect(
-      resolveApmClawManifestBlock({ frontmatter: { metadata: "not-json5" } }),
-    ).toBeUndefined();
+    expect(resolveApmClawManifestBlock({ frontmatter: { metadata: "not-json5" } })).toBeUndefined();
     expect(
       resolveApmClawManifestBlock({ frontmatter: { metadata: "{ nope: { a: 1 } }" } }),
     ).toBeUndefined();

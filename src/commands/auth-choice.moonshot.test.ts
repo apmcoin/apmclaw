@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { WizardPrompter } from "./types.js";
 import { applyAuthChoice } from "./auth-choice.js";
 import {
   createAuthTestLifecycle,
@@ -10,6 +9,7 @@ import {
   requireApmClawAgentDir,
   setupAuthTestEnv,
 } from "./test-wizard-helpers.js";
+import type { WizardPrompter } from "./types.js";
 
 function createPrompter(overrides: Partial<WizardPrompter>): WizardPrompter {
   return createWizardPrompter(overrides, { defaultSelect: "" });

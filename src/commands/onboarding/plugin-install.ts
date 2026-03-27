@@ -15,5 +15,4 @@ export function reloadOnboardingPluginRegistry(_params: {
   cfg: ApmClawConfig;
   runtime: RuntimeEnv;
   workspaceDir?: string;
-}): void {
-}
+}): void {}

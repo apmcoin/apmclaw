@@ -599,9 +599,13 @@ export const buildTelegramMessageContext = async ({
     try {
       const member = await bot.api.getChatMember(chatId, Number(senderId));
       senderIsAdmin = member.status === "administrator" || member.status === "creator";
-      logVerbose(`telegram: resolved admin status for ${senderId} in ${chatId}: ${senderIsAdmin} (status: ${member.status})`);
+      logVerbose(
+        `telegram: resolved admin status for ${senderId} in ${chatId}: ${senderIsAdmin} (status: ${member.status})`,
+      );
     } catch (err) {
-      logVerbose(`telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`);
+      logVerbose(
+        `telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`,
+      );
     }
   }
 

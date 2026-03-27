@@ -1,9 +1,6 @@
 import type { ApmClawConfig } from "../config/config.js";
 
-export function applyAuthProfileConfig(
-  cfg: ApmClawConfig,
-  _profile?: unknown,
-): ApmClawConfig {
+export function applyAuthProfileConfig(cfg: ApmClawConfig, _profile?: unknown): ApmClawConfig {
   return cfg;
 }
 

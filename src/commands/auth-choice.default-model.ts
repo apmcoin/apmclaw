@@ -1,6 +1,6 @@
 import type { ApmClawConfig } from "../config/config.js";
-import type { WizardPrompter } from "./types.js";
 import { ensureModelAllowlistEntry } from "./model-allowlist.js";
+import type { WizardPrompter } from "./types.js";
 
 export async function applyDefaultModelChoice(params: {
   config: ApmClawConfig;

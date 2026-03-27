@@ -5,11 +5,11 @@ import {
   buildModelsProviderData,
   formatModelsAvailableHeader,
 } from "../auto-reply/reply/commands-models.js";
-import { registerProposalHandlers } from "../channels/telegram/proposal-handler.js";
 import { resolveStoredModelOverride } from "../auto-reply/reply/model-selection.js";
 import { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
 import { buildCommandsMessagePaginated } from "../auto-reply/status.js";
 import { resolveChannelConfigWrites } from "../channels/plugins/config-writes.js";
+import { registerProposalHandlers } from "../channels/telegram/proposal-handler.js";
 import { loadConfig } from "../config/config.js";
 import { writeConfigFile } from "../config/io.js";
 import { loadSessionStore, resolveStorePath } from "../config/sessions.js";
@@ -144,15 +144,6 @@ export const registerTelegramHandlers = ({
   const textFragmentBuffer = new Map<string, TextFragmentEntry>();
   let textFragmentProcessing: Promise<void> = Promise.resolve();
 
-  // Batch processing: queue messages while Agent is processing
-  type TelegramMessageEntry = {
-    ctx: TelegramContext;
-    msg: Message;
-    allMedia: TelegramMediaRef[];
-    storeAllowFrom: string[];
-  };
-  const processingLocks = new Map<string, Promise<void>>();
-  const pendingQueues = new Map<string, TelegramMessageEntry[]>();
   const buildSyntheticTextMessage = (params: {
     base: Message;
     text: string;
@@ -176,76 +167,6 @@ export const registerTelegramHandlers = ({
         ? (ctx.getFile as TelegramContext["getFile"]).bind(ctx as object)
         : async () => ({});
     return { message, me: ctx.me, getFile };
-  };
-
-  const handleTelegramMessage = (entry: TelegramMessageEntry) => {
-    const chatId = entry.msg.chat.id;
-    const key = `telegram:${accountId ?? "default"}:${chatId}`;
-
-    // Check if already processing (synchronous check)
-    if (processingLocks.has(key)) {
-      // Agent is processing → queue this message
-      if (!pendingQueues.has(key)) {
-        pendingQueues.set(key, []);
-      }
-      pendingQueues.get(key)!.push(entry);
-      return;
-    }
-
-    // Agent is idle → start processing (create and set lock synchronously)
-    const lock = (async () => {
-      try {
-        const replyMedia = await resolveReplyMediaForMessage(entry.ctx, entry.msg);
-        const messages = [
-          {
-            sender: buildSenderLabel(entry.msg, entry.msg.from?.id ?? entry.msg.chat.id),
-            body: entry.msg.text ?? entry.msg.caption ?? "",
-            timestamp: entry.msg.date ? entry.msg.date * 1000 : undefined,
-            messageId: entry.msg.message_id,
-            chatId: entry.msg.chat.id,
-          },
-        ];
-        await processMessage(
-          entry.ctx,
-          entry.allMedia,
-          entry.storeAllowFrom,
-          undefined,
-          replyMedia,
-          messages,
-        );
-
-        // Check for queued messages
-        while (pendingQueues.get(key)?.length ?? 0 > 0) {
-          const batch = pendingQueues.get(key)!;
-          pendingQueues.delete(key);
-
-          const messages = batch.map((e) => ({
-            sender: buildSenderLabel(e.msg, e.msg.from?.id ?? e.msg.chat.id),
-            body: e.msg.text ?? e.msg.caption ?? "",
-            timestamp: e.msg.date ? e.msg.date * 1000 : undefined,
-            messageId: e.msg.message_id,
-            chatId: e.msg.chat.id,
-          }));
-
-          const combinedMedia = batch.flatMap((e) => e.allMedia);
-          const first = batch[0];
-          const firstReplyMedia = await resolveReplyMediaForMessage(first.ctx, first.msg);
-
-          await processMessage(
-            first.ctx,
-            combinedMedia,
-            first.storeAllowFrom,
-            undefined,
-            firstReplyMedia,
-            messages,
-          );
-        }
-      } finally {
-        processingLocks.delete(key);
-      }
-    })();
-
-    processingLocks.set(key, lock);
   };
 
   const resolveTelegramSessionState = (params: {
@@ -368,7 +289,14 @@ export const registerTelegramHandlers = ({
           chatId: primaryEntry.msg.chat.id,
         },
       ];
-      await processMessage(primaryEntry.ctx, allMedia, storeAllowFrom, undefined, replyMedia, messages);
+      await processMessage(
+        primaryEntry.ctx,
+        allMedia,
+        storeAllowFrom,
+        undefined,
+        replyMedia,
+        messages,
+      );
     } catch (err) {
       runtime.error?.(danger(`media group handler failed: ${String(err)}`));
     }
@@ -1003,12 +931,18 @@ export const registerTelegramHandlers = ({
           },
         ]
       : [];
-    void handleTelegramMessage({
-      ctx,
-      msg,
-      allMedia,
-      storeAllowFrom,
-    });
+
+    const replyMedia = await resolveReplyMediaForMessage(ctx, msg);
+    const messages = [
+      {
+        sender: buildSenderLabel(msg, msg.from?.id ?? msg.chat.id),
+        body: msg.text ?? msg.caption ?? "",
+        timestamp: msg.date ? msg.date * 1000 : undefined,
+        messageId: msg.message_id,
+        chatId: msg.chat.id,
+      },
+    ];
+    await processMessage(ctx, allMedia, storeAllowFrom, undefined, replyMedia, messages);
   };
   bot.on("callback_query", async (ctx) => {
     const callback = ctx.callbackQuery;
@@ -1414,11 +1348,13 @@ export const registerTelegramHandlers = ({
 
       if (isServiceMessage) {
         const currentConfig = loadConfig();
-        const account = currentConfig.channels?.telegram?.accounts?.[accountId] ?? currentConfig.channels?.telegram;
+        const account =
+          currentConfig.channels?.telegram?.accounts?.[accountId] ??
+          currentConfig.channels?.telegram;
         const groupCfg = account?.groups?.[String(event.chatId)];
-        
+
         const autoDelete = groupCfg?.autoDeleteSystemMessages ?? account?.autoDeleteSystemMessages;
-        
+
         if (autoDelete) {
           withTelegramApiErrorLogging({
             operation: "deleteMessage (service message)",

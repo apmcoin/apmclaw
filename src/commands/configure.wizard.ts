@@ -9,7 +9,6 @@ import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { resolveUserPath } from "../utils.js";
-import type { WizardPrompter } from "./types.js";
 import { removeChannelConfigWizard } from "./configure.channels.js";
 import { maybeInstallDaemon } from "./configure.daemon.js";
 import { promptAuthConfig } from "./configure.gateway-auth.js";
@@ -43,6 +42,7 @@ import {
 } from "./onboard-helpers.js";
 import { promptRemoteGatewayConfig } from "./onboard-remote.js";
 import { setupSkills } from "./onboard-skills.js";
+import type { WizardPrompter } from "./types.js";
 
 type ConfigureSectionChoice = WizardSection | "__continue";
 

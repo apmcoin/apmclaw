@@ -33,7 +33,10 @@ export function extractDirectiveTags(text: string): {
   };
 }
 
-export function stripInlineDirectiveTagsForDisplay(text: string): { text: string; changed: boolean } {
+export function stripInlineDirectiveTagsForDisplay(text: string): {
+  text: string;
+  changed: boolean;
+} {
   const clean = text.replace(REPLY_TO_RE, "").replace(REPLY_CURRENT_RE, "");
   return {
     text: clean,
@@ -58,7 +61,12 @@ export function stripInlineDirectiveTagsFromMessageForDisplay<T extends { conten
     return {
       ...message,
       content: content.map((part) => {
-        if (typeof part === "object" && part !== null && "text" in part && typeof part.text === "string") {
+        if (
+          typeof part === "object" &&
+          part !== null &&
+          "text" in part &&
+          typeof part.text === "string"
+        ) {
           return { ...part, text: stripInlineDirectiveTagsForDisplay(part.text).text };
         }
         return part;

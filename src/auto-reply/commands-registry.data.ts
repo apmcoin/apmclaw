@@ -1,7 +1,5 @@
 import { getActivePluginRegistry } from "../plugins/runtime.js";
-import {
-  ChatCommandDefinition,
-} from "./commands-registry.types.js";
+import { ChatCommandDefinition } from "./commands-registry.types.js";
 
 /**
  * apM Claw Zero-Command Policy:

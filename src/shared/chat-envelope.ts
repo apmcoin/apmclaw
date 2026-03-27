@@ -1,7 +1,5 @@
 const ENVELOPE_PREFIX = /^\[([^\]]+)\]\s*/;
-const ENVELOPE_CHANNELS = [
-  "Telegram",
-];
+const ENVELOPE_CHANNELS = ["Telegram"];
 
 const MESSAGE_ID_LINE = /^\s*\[message_id:\s*[^\]]+\]\s*$/i;
 function looksLikeEnvelopeHeader(header: string): boolean {

@@ -1,9 +1,13 @@
 // Node-host removed (device control deleted) - inline timeout helper
-const withTimeout = async <T>(fn: () => Promise<T>, timeoutMs: number, label: string): Promise<T> => {
+const withTimeout = async <T>(
+  fn: () => Promise<T>,
+  timeoutMs: number,
+  label: string,
+): Promise<T> => {
   return await Promise.race([
     fn(),
     new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs)
+      setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs),
     ),
   ]);
 };

@@ -1,7 +1,7 @@
 import type { AuthProfileStore } from "../agents/auth-profiles.js";
-import type { WizardPrompter } from "./types.js";
 import { buildAuthChoiceGroups } from "./auth-choice-options.js";
 import type { AuthChoice } from "./onboard-types.js";
+import type { WizardPrompter } from "./types.js";
 
 const BACK_VALUE = "__back";
 

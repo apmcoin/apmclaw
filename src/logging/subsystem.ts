@@ -98,10 +98,7 @@ const SUBSYSTEM_COLOR_OVERRIDES: Record<string, (typeof SUBSYSTEM_COLORS)[number
 const SUBSYSTEM_PREFIXES_TO_DROP = ["gateway", "channels", "providers"] as const;
 const SUBSYSTEM_MAX_SEGMENTS = 2;
 // Keep local to avoid importing channel registry into hot logging paths.
-const CHANNEL_SUBSYSTEM_PREFIXES = new Set<string>([
-  "telegram",
-  "tui",
-]);
+const CHANNEL_SUBSYSTEM_PREFIXES = new Set<string>(["telegram", "tui"]);
 
 function pickSubsystemColor(color: ChalkInstance, subsystem: string): ChalkInstance {
   const override = SUBSYSTEM_COLOR_OVERRIDES[subsystem];

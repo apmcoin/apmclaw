@@ -53,7 +53,7 @@ export async function resolveTelegramGroupAllowFromContext(params: {
   const threadIdForConfig = resolvedThreadId ?? dmThreadId;
   // Pairing removed (companion apps deleted) - pairing store always empty
   const storeAllowFrom: string[] = [];
-  const { groupConfig, topicConfig} = params.resolveTelegramGroupConfig(
+  const { groupConfig, topicConfig } = params.resolveTelegramGroupConfig(
     params.chatId,
     threadIdForConfig,
   );

@@ -167,9 +167,7 @@ export {
   resolveOpenProviderRuntimeGroupPolicy,
   resolveRuntimeGroupPolicy,
 } from "../config/runtime-group-policy.js";
-export {
-  TelegramConfigSchema,
-} from "../config/zod-schema.providers-core.js";
+export { TelegramConfigSchema } from "../config/zod-schema.providers-core.js";
 export {
   BlockStreamingCoalesceSchema,
   GroupPolicySchema,
@@ -240,10 +238,7 @@ export { chunkTextForOutbound } from "./text-chunking.js";
 export { readBooleanParam } from "./boolean-param.js";
 export { readJsonFileWithFallback, writeJsonFileAtomically } from "./json-store.js";
 export { buildRandomTempFilePath, withTempDownloadPath } from "./temp-path.js";
-export {
-  applyWindowsSpawnProgramPolicy,
-  resolveWindowsSpawnProgram,
-} from "./windows-spawn.js";
+export { applyWindowsSpawnProgramPolicy, resolveWindowsSpawnProgram } from "./windows-spawn.js";
 export { resolvePreferredApmClawTmpDir } from "../infra/tmp-openclaw-dir.js";
 export {
   runPluginCommandWithTimeout,
@@ -255,9 +250,7 @@ export type { ReplyPayload } from "../auto-reply/types.js";
 export type { ChunkMode } from "../auto-reply/chunk.js";
 export { SILENT_REPLY_TOKEN, isSilentReplyText } from "../auto-reply/tokens.js";
 export { formatInboundFromLabel } from "../auto-reply/envelope.js";
-export {
-  formatTrimmedAllowFromEntries,
-} from "./channel-config-helpers.js";
+export { formatTrimmedAllowFromEntries } from "./channel-config-helpers.js";
 export { createDedupeCache } from "../infra/dedupe.js";
 export type { DedupeCache } from "../infra/dedupe.js";
 export { createPersistentDedupe } from "./persistent-dedupe.js";
@@ -322,14 +315,8 @@ export {
   resolveMentionGating,
   resolveMentionGatingWithBypass,
 } from "../channels/mention-gating.js";
-export type {
-  AckReactionGateParams,
-  AckReactionScope,
-} from "../channels/ack-reactions.js";
-export {
-  removeAckReactionAfterReply,
-  shouldAckReaction,
-} from "../channels/ack-reactions.js";
+export type { AckReactionGateParams, AckReactionScope } from "../channels/ack-reactions.js";
+export { removeAckReactionAfterReply, shouldAckReaction } from "../channels/ack-reactions.js";
 export { createTypingCallbacks } from "../channels/typing.js";
 export { createReplyPrefixContext, createReplyPrefixOptions } from "../channels/reply-prefix.js";
 export { logAckFailure, logInboundDrop, logTypingFailure } from "../channels/logging.js";
@@ -378,13 +365,7 @@ export {
   readReactionParams,
   readStringParam,
 } from "../agents/tools/common.js";
-export {
-  clamp,
-  escapeRegExp,
-  normalizeE164,
-  safeParseJson,
-  sleep,
-} from "../utils.js";
+export { clamp, escapeRegExp, normalizeE164, safeParseJson, sleep } from "../utils.js";
 export { redactSensitiveText } from "../logging/redact.js";
 
 // Channel: Telegram

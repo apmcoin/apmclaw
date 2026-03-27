@@ -46,7 +46,11 @@ import { resolveAgentRoute } from "../routing/resolve-route.js";
 import { resolveThreadSessionKeys } from "../routing/session-key.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
-import { isSenderAllowed, normalizeAllowFrom, normalizeDmAllowFromWithStore } from "./bot-access.js";
+import {
+  isSenderAllowed,
+  normalizeAllowFrom,
+  normalizeDmAllowFromWithStore,
+} from "./bot-access.js";
 import type { TelegramMediaRef } from "./bot-message-context.js";
 import {
   buildCappedTelegramMenuCommands,
@@ -221,7 +225,9 @@ async function resolveTelegramCommandAuth(params: {
       const member = await bot.api.getChatMember(chatId, Number(senderId));
       senderIsAdmin = member.status === "administrator" || member.status === "creator";
     } catch (err) {
-      logVerbose(`telegram: failed to resolve admin status for command from ${senderId} in ${chatId}: ${String(err)}`);
+      logVerbose(
+        `telegram: failed to resolve admin status for command from ${senderId} in ${chatId}: ${String(err)}`,
+      );
     }
   }
 
@@ -291,7 +297,9 @@ async function resolveTelegramCommandAuth(params: {
     }
   }
 
-  const normalizedGroupAllowOverride = groupAllowOverride ? normalizeAllowFrom(groupAllowOverride) : undefined;
+  const normalizedGroupAllowOverride = groupAllowOverride
+    ? normalizeAllowFrom(groupAllowOverride)
+    : undefined;
   const effectiveAllow = normalizedGroupAllowOverride ?? allowFrom;
 
   const senderAllowed = isSenderAllowed({
@@ -301,11 +309,13 @@ async function resolveTelegramCommandAuth(params: {
   });
 
   // Physical bypass: Real administrators are always authorized
-  const commandAuthorized = senderIsAdmin || resolveCommandAuthorizedFromAuthorizers({
-    useAccessGroups,
-    authorizers: [{ configured: effectiveAllow.hasEntries, allowed: senderAllowed }],
-    modeWhenAccessGroupsOff: "configured",
-  });
+  const commandAuthorized =
+    senderIsAdmin ||
+    resolveCommandAuthorizedFromAuthorizers({
+      useAccessGroups,
+      authorizers: [{ configured: effectiveAllow.hasEntries, allowed: senderAllowed }],
+      modeWhenAccessGroupsOff: "configured",
+    });
 
   if (requireAuth && !commandAuthorized) {
     return await rejectNotAuthorized();

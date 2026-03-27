@@ -859,7 +859,9 @@ export async function isAdminTelegram(
     const member = await api.getChatMember(chatId, Number(userId));
     return member.status === "administrator" || member.status === "creator";
   } catch (err) {
-    logVerbose(`[telegram] Failed to verify admin status for user ${userId} in chat ${chatId}: ${String(err)}`);
+    logVerbose(
+      `[telegram] Failed to verify admin status for user ${userId} in chat ${chatId}: ${String(err)}`,
+    );
     return false;
   }
 }

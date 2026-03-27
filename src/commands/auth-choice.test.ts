@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import type { OAuthCredentials } from "@mariozechner/pi-ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { WizardPrompter } from "./types.js";
 import { applyAuthChoice, resolvePreferredProviderForAuthChoice } from "./auth-choice.js";
 import { GOOGLE_GEMINI_DEFAULT_MODEL } from "./google-gemini-model-default.js";
 import {
@@ -20,6 +19,7 @@ import {
   requireApmClawAgentDir,
   setupAuthTestEnv,
 } from "./test-wizard-helpers.js";
+import type { WizardPrompter } from "./types.js";
 
 type DetectZaiEndpoint = typeof import("./zai-endpoint-detect.js").detectZaiEndpoint;
 

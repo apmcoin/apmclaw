@@ -2,7 +2,6 @@ import { ensureAuthProfileStore } from "../agents/auth-profiles.js";
 import type { ApmClawConfig, GatewayAuthConfig } from "../config/config.js";
 import { isSecretRef, type SecretInput } from "../config/types.secrets.js";
 import type { RuntimeEnv } from "../runtime.js";
-import type { WizardPrompter } from "./types.js";
 import { promptAuthChoiceGrouped } from "./auth-choice-prompt.js";
 import { applyAuthChoice, resolvePreferredProviderForAuthChoice } from "./auth-choice.js";
 import {
@@ -13,6 +12,7 @@ import {
   promptModelAllowlist,
 } from "./model-picker.js";
 import { randomToken } from "./onboard-helpers.js";
+import type { WizardPrompter } from "./types.js";
 
 type GatewayAuthChoice = "token" | "password" | "trusted-proxy";
 
@@ -117,16 +117,16 @@ export async function promptAuthConfig(
     authChoice === "setup-token" || authChoice === "token" || authChoice === "oauth";
 
   const allowlistSelection = await promptModelAllowlist({
-      config: next,
-      prompter,
-      allowedKeys: anthropicOAuth ? ANTHROPIC_OAUTH_MODEL_KEYS : undefined,
-      initialSelections: anthropicOAuth ? ["anthropic/claude-sonnet-4-6"] : undefined,
-      message: anthropicOAuth ? "Anthropic OAuth models" : undefined,
-    });
-    if (allowlistSelection.models) {
-      next = applyModelAllowlist(next, allowlistSelection.models);
-      next = applyModelFallbacksFromSelection(next, allowlistSelection.models);
-    }
+    config: next,
+    prompter,
+    allowedKeys: anthropicOAuth ? ANTHROPIC_OAUTH_MODEL_KEYS : undefined,
+    initialSelections: anthropicOAuth ? ["anthropic/claude-sonnet-4-6"] : undefined,
+    message: anthropicOAuth ? "Anthropic OAuth models" : undefined,
+  });
+  if (allowlistSelection.models) {
+    next = applyModelAllowlist(next, allowlistSelection.models);
+    next = applyModelFallbacksFromSelection(next, allowlistSelection.models);
+  }
 
   return next;
 }

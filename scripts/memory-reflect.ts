@@ -42,17 +42,18 @@ async function runReflection() {
 
     // 3. Logic for Consolidation (Placeholder for LLM call)
     // For now, we perform a basic structural cleanup to demonstrate the flow.
-    let consolidated = rawMemory; 
-    
+    let consolidated = rawMemory;
+
     // [SIMULATION]: Imagine LLM returns a polished version here.
-    const header = "# MEMORY.md (PM-E Consolidated)\n\n_This file contains consolidated patterns and instructions learned through interaction._\n";
+    const header =
+      "# MEMORY.md (PM-E Consolidated)\n\n_This file contains consolidated patterns and instructions learned through interaction._\n";
     if (!consolidated.startsWith("# MEMORY.md")) {
-        consolidated = header + consolidated;
+      consolidated = header + consolidated;
     }
 
     // 4. Update MEMORY.md
     await fs.writeFile(memoryPath, consolidated, "utf-8");
-    
+
     console.log(">> SUCCESS: Memory consolidated and saved.");
   } catch (error) {
     console.error("Reflection failed:", error);

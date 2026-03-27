@@ -66,10 +66,7 @@ type SenderScopedToolsEntry = {
   toolsBySender?: GroupToolPolicyBySenderConfig;
 };
 
-type ChannelGroupPolicyChannel =
-  | "telegram"
-  | "googlechat"
-  | "bluebubbles";
+type ChannelGroupPolicyChannel = "telegram" | "googlechat" | "bluebubbles";
 
 function resolveChannelRequireMention(
   params: GroupMentionParams,

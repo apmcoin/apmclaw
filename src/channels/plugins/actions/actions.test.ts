@@ -140,9 +140,7 @@ function createSignalAccountOverrideCfg(): ApmClawConfig {
   } as ApmClawConfig;
 }
 
-function createDiscordModerationOverrideCfg(params?: {
-  channelsEnabled?: boolean;
-}): ApmClawConfig {
+function createDiscordModerationOverrideCfg(params?: { channelsEnabled?: boolean }): ApmClawConfig {
   const accountActions = params?.channelsEnabled
     ? { moderation: true, channels: true }
     : { moderation: true };

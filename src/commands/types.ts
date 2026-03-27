@@ -27,7 +27,10 @@ export type WizardPrompter = {
     defaultValue?: string;
   }) => Promise<string>;
   confirm: (params: { message: string; initialValue?: boolean }) => Promise<boolean>;
-  progress: (message: string) => { update: (message: string) => void; stop: (message?: string) => void };
+  progress: (message: string) => {
+    update: (message: string) => void;
+    stop: (message?: string) => void;
+  };
 };
 
 export class WizardCancelledError extends Error {

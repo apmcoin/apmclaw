@@ -88,9 +88,7 @@ export async function noteMacLaunchctlGatewayEnvOverrides(
     (deps?.noteFn ?? note)(lines.join("\n"), "Gateway (macOS)");
   }
 
-  const tokenEntries = [
-    ["APMCLAW_GATEWAY_TOKEN", await getenv("APMCLAW_GATEWAY_TOKEN")],
-  ] as const;
+  const tokenEntries = [["APMCLAW_GATEWAY_TOKEN", await getenv("APMCLAW_GATEWAY_TOKEN")]] as const;
   const passwordEntries = [
     ["APMCLAW_GATEWAY_PASSWORD", await getenv("APMCLAW_GATEWAY_PASSWORD")],
   ] as const;

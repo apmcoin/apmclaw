@@ -53,9 +53,7 @@ function normalizeSecretStringValue(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function hasConfiguredSecretInputValue(
-  value: unknown,
-): boolean {
+function hasConfiguredSecretInputValue(value: unknown): boolean {
   return normalizeSecretStringValue(value).length > 0;
 }
 
@@ -82,9 +80,7 @@ function collectTelegramAssignments(params: {
           if (!enabled || baseTokenFile.length > 0) {
             return false;
           }
-          const accountBotTokenConfigured = hasConfiguredSecretInputValue(
-            account.botToken,
-          );
+          const accountBotTokenConfigured = hasConfiguredSecretInputValue(account.botToken);
           const accountTokenFileConfigured =
             typeof account.tokenFile === "string" && account.tokenFile.trim().length > 0;
           return !accountBotTokenConfigured && !accountTokenFileConfigured;

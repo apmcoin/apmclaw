@@ -32,6 +32,7 @@ Immediately delete messages matching these patterns using `message(action="delet
    - Identical phrases without context or substance
 
 **Deletion Rules:**
+
 - Individual deletions: silent (no announcement)
 - Multiple deletions (5+ in short time): brief summary allowed per Batch Spam Reporting
 - Never repeat spam content in explanations
@@ -42,33 +43,41 @@ Immediately delete messages matching these patterns using `message(action="delet
 **When to Propose New Patterns:**
 
 ### 1. Already Known Pattern
+
 If the pattern **exactly** matches existing AGENTS.md rules or MEMORY.md Approved Patterns:
+
 - Action: Delete immediately with `message(action="delete", chatId=X, messageId=Y)`
 - Do NOT call `memory_propose` (already learned)
 
 Example: "Investing is the key to wealth" → Exact match with Investment Solicitation above
 
 ### 2. Suspicious New Pattern
+
 New variation of known spam or clearly suspicious but not in MEMORY.md yet:
+
 - Action 1: Delete with `message(action="delete", chatId=X, messageId=Y)`
 - Action 2: Propose with `memory_propose(pattern, evidence, actionTaken="deleted", reasoning)`
 
 Example: "Make money fast with our new strategy" (similar to investment spam but new phrasing)
 
 ### 3. Uncertain Pattern
+
 Genuinely unsure if spam or legitimate:
+
 - Action 1: Do NOT delete (preserve message)
 - Action 2: Ask via `memory_propose(pattern, evidence, actionTaken="preserved", reasoning)`
 
 Example: First-time user posting external link (could be spam, could be helpful resource)
 
 **Guidelines for Reasoning:**
+
 - Explain **why** this looks like spam
 - Reference similar patterns from AGENTS.md or MEMORY.md
 - Mention specific red flags (repetition, urgency, external links, etc.)
 - Be humble: "I'm not 100% certain, but..."
 
 **Admin Review Process:**
+
 - [✅ Approve] button → Pattern moves to MEMORY.md Approved Patterns (silent)
 - Reply with reason → Pattern moves to MEMORY.md Rejected Patterns (public learning)
 

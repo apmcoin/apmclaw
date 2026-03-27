@@ -11,5 +11,4 @@ export async function setupChannels(
   return config;
 }
 
-export function noteChannelStatus(_config: ApmClawConfig, _prompter: WizardPrompter): void {
-}
+export function noteChannelStatus(_config: ApmClawConfig, _prompter: WizardPrompter): void {}

@@ -32,7 +32,7 @@ async function runSimulation() {
       sender: { id: "user_789", name: "Helpful User", is_admin: false },
       text: "Check out the official site: https://apm.fashion",
       expected: "ALLOW (Official Domain)",
-    }
+    },
   ];
 
   console.log("Starting apM Claw Logic Simulation...\n");
@@ -40,7 +40,7 @@ async function runSimulation() {
   for (const scenario of SCENARIOS) {
     console.log(`[Testing: ${scenario.name}]`);
     console.log(`Sender: ${scenario.sender.name} (Admin: ${scenario.sender.is_admin})`);
-    
+
     // Logic Simulation
     let action = "CHECKING...";
     if (scenario.sender.is_admin) {

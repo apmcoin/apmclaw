@@ -1,4 +1,7 @@
-import { resolveInternalSessionKey, resolveMainSessionAlias } from "../../../agents/tools/sessions-helpers.js";
+import {
+  resolveInternalSessionKey,
+  resolveMainSessionAlias,
+} from "../../../agents/tools/sessions-helpers.js";
 import { callGateway } from "../../../gateway/call.js";
 import { resolveEffectiveResetTargetSessionKey } from "../acp-reset-target.js";
 // Removed: Subagents tool dependency

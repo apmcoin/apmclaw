@@ -90,7 +90,6 @@ function formatSupport(capabilities?: ChannelCapabilities) {
   return bits.length ? bits.join(" ") : "none";
 }
 
-
 function formatDiscordIntents(intents?: {
   messageContent?: string;
   guildMembers?: string;

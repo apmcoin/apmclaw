@@ -55,6 +55,7 @@ import { getChannelActivity, recordChannelActivity } from "../../infra/channel-a
 import { convertMarkdownTables } from "../../markdown/tables.js";
 import { fetchRemoteMedia } from "../../media/fetch.js";
 import { saveMediaBuffer } from "../../media/store.js";
+import { resolveAgentRoute } from "../../routing/resolve-route.js";
 // Pairing removed (companion apps deleted)
 import {
   auditTelegramGroupMembership,
@@ -65,7 +66,6 @@ import { probeTelegram } from "../../telegram/probe.js";
 import { sendMessageTelegram, sendPollTelegram } from "../../telegram/send.js";
 import { resolveTelegramToken } from "../../telegram/token.js";
 import type { PluginRuntime } from "./types.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
 
 export function createRuntimeChannel(): PluginRuntime["channel"] {
   return {

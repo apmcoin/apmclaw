@@ -1,14 +1,18 @@
-import { Type } from "@sinclair/typebox";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { Type } from "@sinclair/typebox";
 import { resolveAgentWorkspaceDir } from "../agent-scope.js";
 import { resolveWorkspaceRoot } from "../workspace-dir.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readStringParam } from "./common.js";
 
 const MemorySaveSchema = Type.Object({
-  content: Type.String({ description: "The new pattern, rule, or information to remember. Be concise." }),
-  category: Type.Optional(Type.String({ description: "Category like 'admin_instruction', 'spam_pattern', etc." }))
+  content: Type.String({
+    description: "The new pattern, rule, or information to remember. Be concise.",
+  }),
+  category: Type.Optional(
+    Type.String({ description: "Category like 'admin_instruction', 'spam_pattern', etc." }),
+  ),
 });
 
 /**
@@ -27,13 +31,15 @@ export function createMemorySaveTool(options: {
   return {
     label: "Memory Save",
     name: "memory_save",
-    description: "⚠️ DISABLED: This tool is temporarily unavailable during Memory Proposal System implementation. Memory writes now require admin approval to prevent poisoning attacks. You can still use memory_search and memory_get to read existing knowledge.",
+    description:
+      "⚠️ DISABLED: This tool is temporarily unavailable during Memory Proposal System implementation. Memory writes now require admin approval to prevent poisoning attacks. You can still use memory_search and memory_get to read existing knowledge.",
     parameters: MemorySaveSchema,
     execute: async (_toolCallId, params) => {
       // DISABLED: Return error message instead of writing
       return jsonResult({
         success: false,
-        error: "memory_save is temporarily disabled. Memory Proposal System under implementation. Use memory_search to access existing knowledge."
+        error:
+          "memory_save is temporarily disabled. Memory Proposal System under implementation. Use memory_search to access existing knowledge.",
       });
 
       /* ORIGINAL CODE (disabled):
@@ -54,6 +60,6 @@ export function createMemorySaveTool(options: {
         return jsonResult({ success: false, error: `Failed to save to memory: ${error}` });
       }
       */
-    }
+    },
   };
 }

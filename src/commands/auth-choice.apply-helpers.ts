@@ -12,11 +12,11 @@ import {
   resolveDefaultSecretProviderAlias,
 } from "../secrets/ref-contract.js";
 import { resolveSecretRefString } from "../secrets/resolve.js";
-import type { WizardPrompter } from "./types.js";
 import { formatApiKeyPreview } from "./auth-choice.api-key.js";
 import type { ApplyAuthChoiceParams } from "./auth-choice.apply.js";
 import { applyDefaultModelChoice } from "./auth-choice.default-model.js";
 import type { SecretInputMode } from "./onboard-types.js";
+import type { WizardPrompter } from "./types.js";
 
 const ENV_SOURCE_LABEL_RE = /(?:^|:\s)([A-Z][A-Z0-9_]*)$/;
 

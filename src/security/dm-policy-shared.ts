@@ -96,8 +96,7 @@ export async function readStoreAllowFromForDmPolicy(params: {
   // Pairing removed (companion apps deleted) - pairing store always empty
   const readStore =
     params.readStore ??
-    ((provider: ChannelId, accountId: string) =>
-      Promise.resolve([] as string[]));
+    ((provider: ChannelId, accountId: string) => Promise.resolve([] as string[]));
   return await readStore(params.provider, params.accountId).catch(() => []);
 }
 

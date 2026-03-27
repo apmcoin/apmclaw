@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { WizardPrompter } from "./types.js";
 import { applyAuthChoiceMiniMax } from "./auth-choice.apply.minimax.js";
 import {
   createAuthTestLifecycle,
@@ -9,6 +8,7 @@ import {
   readAuthProfilesForAgent,
   setupAuthTestEnv,
 } from "./test-wizard-helpers.js";
+import type { WizardPrompter } from "./types.js";
 
 function createMinimaxPrompter(
   params: {

@@ -7,14 +7,14 @@ import type { ToolFsPolicy } from "./tool-fs-policy.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createAgentsListTool } from "./tools/agents-list-tool.js";
 import type { AnyAgentTool } from "./tools/common.js";
+import { createMemoryProposeTool } from "./tools/memory-propose-tool.js";
+import { createMemorySaveTool } from "./tools/memory-save-tool.js";
+import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createCronTool } from "./tools/cron-tool.js";
 // import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";
-import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
-import { createMemorySaveTool } from "./tools/memory-save-tool.js";
-import { createMemoryProposeTool } from "./tools/memory-propose-tool.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createSessionStatusTool } from "./tools/session-status-tool.js";
 // import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
@@ -100,78 +100,80 @@ export function createApmClawTools(options?: {
         requesterSenderId: options?.requesterSenderId ?? undefined,
       });
 
-  const tools: AnyAgentTool[] = ([
-    // Removed: Lean Strong Claw - cron tool (ownerOnly, not usable in Telegram)
-    // createCronTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    // }),
-    messageTool,
-    // Removed: Lean Strong Claw - agents_list (requires sessions_spawn which was removed)
-    // createAgentsListTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   requesterAgentIdOverride: options?.requesterAgentIdOverride,
-    // }),
-    // Removed: Lean Strong Claw - sessions_* tools (no subagents, no use case)
-    // createSessionsListTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   sandboxed: options?.sandboxed,
-    // }),
-    // createSessionsHistoryTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   sandboxed: options?.sandboxed,
-    // }),
-    // createSessionsSendTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   agentChannel: options?.agentChannel,
-    //   sandboxed: options?.sandboxed,
-    // }),
-    // Removed: Subagents tool dependency
-    // createSessionsSpawnTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   agentChannel: options?.agentChannel,
-    //   agentAccountId: options?.agentAccountId,
-    //   agentTo: options?.agentTo,
-    //   agentThreadId: options?.agentThreadId,
-    //   agentGroupId: options?.agentGroupId,
-    //   agentGroupChannel: options?.agentGroupChannel,
-    //   agentGroupSpace: options?.agentGroupSpace,
-    //   sandboxed: options?.sandboxed,
-    //   requesterAgentIdOverride: options?.requesterAgentIdOverride,
-    // }),
-    createMemorySearchTool({
-      config: options?.config,
-      agentSessionKey: options?.agentSessionKey,
-    }),
-    createMemoryGetTool({
-      config: options?.config,
-      agentSessionKey: options?.agentSessionKey,
-    }),
-    createMemorySaveTool({
-      config: options?.config,
-      agentId: resolveSessionAgentId({
-        sessionKey: options?.agentSessionKey,
+  const tools: AnyAgentTool[] = (
+    [
+      // Removed: Lean Strong Claw - cron tool (ownerOnly, not usable in Telegram)
+      // createCronTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      // }),
+      messageTool,
+      // Removed: Lean Strong Claw - agents_list (requires sessions_spawn which was removed)
+      // createAgentsListTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   requesterAgentIdOverride: options?.requesterAgentIdOverride,
+      // }),
+      // Removed: Lean Strong Claw - sessions_* tools (no subagents, no use case)
+      // createSessionsListTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   sandboxed: options?.sandboxed,
+      // }),
+      // createSessionsHistoryTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   sandboxed: options?.sandboxed,
+      // }),
+      // createSessionsSendTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   agentChannel: options?.agentChannel,
+      //   sandboxed: options?.sandboxed,
+      // }),
+      // Removed: Subagents tool dependency
+      // createSessionsSpawnTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   agentChannel: options?.agentChannel,
+      //   agentAccountId: options?.agentAccountId,
+      //   agentTo: options?.agentTo,
+      //   agentThreadId: options?.agentThreadId,
+      //   agentGroupId: options?.agentGroupId,
+      //   agentGroupChannel: options?.agentGroupChannel,
+      //   agentGroupSpace: options?.agentGroupSpace,
+      //   sandboxed: options?.sandboxed,
+      //   requesterAgentIdOverride: options?.requesterAgentIdOverride,
+      // }),
+      createMemorySearchTool({
         config: options?.config,
+        agentSessionKey: options?.agentSessionKey,
       }),
-      workspaceDir: options?.workspaceDir,
-    }),
-    createMemoryProposeTool({
-      config: options?.config,
-      agentId: resolveSessionAgentId({
-        sessionKey: options?.agentSessionKey,
+      createMemoryGetTool({
         config: options?.config,
+        agentSessionKey: options?.agentSessionKey,
       }),
-      workspaceDir: options?.workspaceDir,
-    }),
-    // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
-    // createSessionStatusTool({
-    //   agentSessionKey: options?.agentSessionKey,
-    //   config: options?.config,
-    // }),
-    webSearchTool,
-    webFetchTool,
-    // Removed: Lean Strong Claw - image tool (modelHasVision=true makes this redundant)
-    // imageTool,
-  ] as Array<AnyAgentTool | null>).filter(Boolean) as AnyAgentTool[];
+      createMemorySaveTool({
+        config: options?.config,
+        agentId: resolveSessionAgentId({
+          sessionKey: options?.agentSessionKey,
+          config: options?.config,
+        }),
+        workspaceDir: options?.workspaceDir,
+      }),
+      createMemoryProposeTool({
+        config: options?.config,
+        agentId: resolveSessionAgentId({
+          sessionKey: options?.agentSessionKey,
+          config: options?.config,
+        }),
+        workspaceDir: options?.workspaceDir,
+      }),
+      // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
+      // createSessionStatusTool({
+      //   agentSessionKey: options?.agentSessionKey,
+      //   config: options?.config,
+      // }),
+      webSearchTool,
+      webFetchTool,
+      // Removed: Lean Strong Claw - image tool (modelHasVision=true makes this redundant)
+      // imageTool,
+    ] as Array<AnyAgentTool | null>
+  ).filter(Boolean) as AnyAgentTool[];
 
   const pluginTools = resolvePluginTools({
     context: {

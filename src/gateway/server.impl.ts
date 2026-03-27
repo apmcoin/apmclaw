@@ -734,29 +734,32 @@ export async function startGatewayServer(
       });
 
   if (!minimalTestGateway) {
-    void cron.start().then(async () => {
-      const allJobs = await cron.list({ includeDisabled: true });
-      const reflectionJobName = "Memory Reflection";
-      if (!allJobs.some((j) => j.name === reflectionJobName)) {
-        log.info("gateway: registering autonomous Memory Reflection job");
-        await cron.add({
-          name: reflectionJobName,
-          description: "Daily autonomous memory consolidation and cleanup",
-          agentId: defaultAgentId,
-          enabled: true,
-          schedule: { kind: "cron", expr: "0 4 * * *", tz: "UTC" },
-          sessionTarget: "isolated",
-          wakeMode: "next-heartbeat",
-          payload: {
-            kind: "agentTurn",
-            message:
-              "Reflect on your memory logs in MEMORY.md. Consolidate recent spam patterns, resolve conflicting admin instructions, and update the summary. Be professional and lean.",
-          },
-          delivery: { mode: "none" },
-          failureAlert: false,
-        });
-      }
-    }).catch((err) => logCron.error(`failed to start: ${String(err)}`));
+    void cron
+      .start()
+      .then(async () => {
+        const allJobs = await cron.list({ includeDisabled: true });
+        const reflectionJobName = "Memory Reflection";
+        if (!allJobs.some((j) => j.name === reflectionJobName)) {
+          log.info("gateway: registering autonomous Memory Reflection job");
+          await cron.add({
+            name: reflectionJobName,
+            description: "Daily autonomous memory consolidation and cleanup",
+            agentId: defaultAgentId,
+            enabled: true,
+            schedule: { kind: "cron", expr: "0 4 * * *", tz: "UTC" },
+            sessionTarget: "isolated",
+            wakeMode: "next-heartbeat",
+            payload: {
+              kind: "agentTurn",
+              message:
+                "Reflect on your memory logs in MEMORY.md. Consolidate recent spam patterns, resolve conflicting admin instructions, and update the summary. Be professional and lean.",
+            },
+            delivery: { mode: "none" },
+            failureAlert: false,
+          });
+        }
+      })
+      .catch((err) => logCron.error(`failed to start: ${String(err)}`));
   }
 
   // Recover pending outbound deliveries from previous crash/restart.

@@ -1,6 +1,6 @@
 /**
  * PM-E Security Audit & Attack Simulation
- * Tests for: 
+ * Tests for:
  * 1. Privilege Escalation (Non-admin calling admin tools)
  * 2. Information Disclosure (SSRF via web_fetch)
  * 3. Intelligence Poisoning (Unauthorized Memory Save)
@@ -35,7 +35,7 @@ async function runSecurityAudit() {
   console.log("\n[Test 2] Simulating non-admin user trying to call 'banChatMember'...");
   const fakeSender = { is_admin: false, name: "Attacker" };
   const adminOnlyTool = "banChatMember";
-  
+
   if (!fakeSender.is_admin) {
     console.log(`>> SUCCESS: System blocked ${adminOnlyTool} for non-admin user.`);
     results.privilegeEscalation = "PASSED";

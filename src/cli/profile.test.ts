@@ -94,9 +94,7 @@ describe("applyCliProfileEnv", () => {
 
     const resolvedHome = path.resolve("/srv/openclaw-home");
     expect(env.APMCLAW_STATE_DIR).toBe(path.join(resolvedHome, ".apmclaw-work"));
-    expect(env.APMCLAW_CONFIG_PATH).toBe(
-      path.join(resolvedHome, ".apmclaw-work", "apmclaw.json"),
-    );
+    expect(env.APMCLAW_CONFIG_PATH).toBe(path.join(resolvedHome, ".apmclaw-work", "apmclaw.json"));
   });
 });
 

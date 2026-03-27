@@ -62,14 +62,17 @@ docker compose down
 ## 주의사항
 
 **Windows Git Bash:**
+
 - `&&` 연산자 사용 가능
 - 경로는 `/c/Program Files/...` 형식 (Unix 스타일)
 
 **Windows PowerShell:**
+
 - `&&` 연산자 **사용 불가** (별도 명령어로 분리)
 - `Select-Object -First N` 또는 `-Last N` 사용
 - 공백 포함 경로는 `&` 연산자 + 따옴표 필수
 
 **Windows CMD:**
+
 - `&&` 연산자 사용 가능
 - 공백 포함 경로는 따옴표만 사용

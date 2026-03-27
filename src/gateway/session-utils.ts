@@ -404,10 +404,7 @@ function resolveDefaultStoreAgentId(cfg: ApmClawConfig): string {
   return normalizeAgentId(resolveDefaultAgentId(cfg));
 }
 
-export function resolveSessionStoreKey(params: {
-  cfg: ApmClawConfig;
-  sessionKey: string;
-}): string {
+export function resolveSessionStoreKey(params: { cfg: ApmClawConfig; sessionKey: string }): string {
   const raw = (params.sessionKey ?? "").trim();
   if (!raw) {
     return raw;

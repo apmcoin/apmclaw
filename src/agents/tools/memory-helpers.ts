@@ -13,11 +13,15 @@ interface ProposalMetadata {
 /**
  * Extract proposal content by ID from a specific section
  */
-function extractProposal(content: string, section: "Pending" | "Approved" | "Rejected", proposalId: string): string | null {
+function extractProposal(
+  content: string,
+  section: "Pending" | "Approved" | "Rejected",
+  proposalId: string,
+): string | null {
   const sectionMap = {
-    "Pending": "## 3. Pending Proposals",
-    "Approved": "## 1. Approved Patterns",
-    "Rejected": "## 4. Rejected Patterns"
+    Pending: "## 3. Pending Proposals",
+    Approved: "## 1. Approved Patterns",
+    Rejected: "## 4. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];
@@ -34,7 +38,7 @@ function extractProposal(content: string, section: "Pending" | "Approved" | "Rej
   const sectionContent = content.substring(sectionStart, sectionEnd);
 
   // Find the proposal
-  const proposalRegex = new RegExp(`### \\[${proposalId}\\].*?(?=\\n### |\\n## |$)`, 's');
+  const proposalRegex = new RegExp(`### \\[${proposalId}\\].*?(?=\\n### |\\n## |$)`, "s");
   const proposalMatch = sectionContent.match(proposalRegex);
 
   return proposalMatch ? proposalMatch[0] : null;
@@ -43,11 +47,15 @@ function extractProposal(content: string, section: "Pending" | "Approved" | "Rej
 /**
  * Remove proposal from a section
  */
-function removeProposal(content: string, section: "Pending" | "Approved" | "Rejected", proposalId: string): string {
+function removeProposal(
+  content: string,
+  section: "Pending" | "Approved" | "Rejected",
+  proposalId: string,
+): string {
   const sectionMap = {
-    "Pending": "## 3. Pending Proposals",
-    "Approved": "## 1. Approved Patterns",
-    "Rejected": "## 4. Rejected Patterns"
+    Pending: "## 3. Pending Proposals",
+    Approved: "## 1. Approved Patterns",
+    Rejected: "## 4. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];
@@ -66,8 +74,8 @@ function removeProposal(content: string, section: "Pending" | "Approved" | "Reje
   const afterSection = content.substring(sectionEnd);
 
   // Remove the proposal
-  const proposalRegex = new RegExp(`\n### \\[${proposalId}\\].*?(?=\\n### |\\n## |$)`, 's');
-  const updatedSection = sectionContent.replace(proposalRegex, '');
+  const proposalRegex = new RegExp(`\n### \\[${proposalId}\\].*?(?=\\n### |\\n## |$)`, "s");
+  const updatedSection = sectionContent.replace(proposalRegex, "");
 
   // Check if section is now empty (only header + empty placeholder)
   const hasProposals = /### \[/.test(updatedSection);
@@ -75,11 +83,12 @@ function removeProposal(content: string, section: "Pending" | "Approved" | "Reje
 
   if (!hasProposals) {
     // Add back empty placeholder if needed
-    const emptyPlaceholder = section === "Pending"
-      ? "\n_No pending proposals._\n"
-      : section === "Approved"
-      ? "\n_No patterns approved yet._\n"
-      : "\n_No rejected patterns yet._\n";
+    const emptyPlaceholder =
+      section === "Pending"
+        ? "\n_No pending proposals._\n"
+        : section === "Approved"
+          ? "\n_No patterns approved yet._\n"
+          : "\n_No rejected patterns yet._\n";
 
     // Insert placeholder before next section marker or end
     if (finalSection.endsWith("\n---\n")) {
@@ -97,14 +106,14 @@ function removeProposal(content: string, section: "Pending" | "Approved" | "Reje
  */
 function formatApprovedOrRejected(proposal: string, metadata: ProposalMetadata): string {
   // Parse the proposal
-  const lines = proposal.split('\n');
+  const lines = proposal.split("\n");
   const header = lines[0]; // ### [PENDING-123456] Pattern name
 
   // Extract pattern name and create new header
   const patternMatch = header.match(/### \[PENDING-\d+\] (.+)/);
   const patternName = patternMatch ? patternMatch[1] : "Unknown Pattern";
 
-  const timestamp = new Date().toISOString().split('.')[0].replace('T', ' ');
+  const timestamp = new Date().toISOString().split(".")[0].replace("T", " ");
 
   if (metadata.approvedBy) {
     // Approved format
@@ -121,7 +130,7 @@ function formatApprovedOrRejected(proposal: string, metadata: ProposalMetadata):
     if (reasoningMatch) formatted += `Reasoning: ${reasoningMatch[1]}\n`;
     if (evidenceMatch) formatted += `Evidence:\n${evidenceMatch[1]}\n`;
 
-    return formatted + '\n';
+    return formatted + "\n";
   } else if (metadata.rejectedBy) {
     // Rejected format
     let formatted = `### [${timestamp}] REJECTED: ${patternName}\n`;
@@ -135,7 +144,7 @@ function formatApprovedOrRejected(proposal: string, metadata: ProposalMetadata):
       formatted += `Original reasoning: ${reasoningMatch[1]}\n`;
     }
 
-    return formatted + '\n';
+    return formatted + "\n";
   }
 
   return proposal;
@@ -144,11 +153,15 @@ function formatApprovedOrRejected(proposal: string, metadata: ProposalMetadata):
 /**
  * Append formatted content to a section
  */
-function appendToSection(content: string, section: "Pending" | "Approved" | "Rejected", formattedProposal: string): string {
+function appendToSection(
+  content: string,
+  section: "Pending" | "Approved" | "Rejected",
+  formattedProposal: string,
+): string {
   const sectionMap = {
-    "Pending": "## 3. Pending Proposals",
-    "Approved": "## 1. Approved Patterns",
-    "Rejected": "## 4. Rejected Patterns"
+    Pending: "## 3. Pending Proposals",
+    Approved: "## 1. Approved Patterns",
+    Rejected: "## 4. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];
@@ -166,13 +179,14 @@ function appendToSection(content: string, section: "Pending" | "Approved" | "Rej
   const afterSection = content.substring(sectionEnd);
 
   // Remove empty placeholder if present
-  const placeholder = section === "Pending"
-    ? "_No pending proposals._"
-    : section === "Approved"
-    ? "_No patterns approved yet._"
-    : "_No rejected patterns yet._";
+  const placeholder =
+    section === "Pending"
+      ? "_No pending proposals._"
+      : section === "Approved"
+        ? "_No patterns approved yet._"
+        : "_No rejected patterns yet._";
 
-  const cleanedBefore = beforeSection.replace(new RegExp(`\n${placeholder}\\s*$`, 'm'), '\n');
+  const cleanedBefore = beforeSection.replace(new RegExp(`\n${placeholder}\\s*$`, "m"), "\n");
 
   return cleanedBefore + formattedProposal + afterSection;
 }
@@ -185,7 +199,7 @@ export async function moveMemorySection(
   fromSection: "Pending" | "Approved" | "Rejected",
   toSection: "Pending" | "Approved" | "Rejected",
   metadata?: ProposalMetadata,
-  workspaceDir?: string
+  workspaceDir?: string,
 ): Promise<void> {
   const wsDir = resolveWorkspaceRoot(workspaceDir);
   const memoryPath = path.join(wsDir, "MEMORY.md");

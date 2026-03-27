@@ -33,16 +33,22 @@ export function registerProposalHandlers(bot: Bot, workspaceDir?: string): void 
       if (!isAdmin) {
         await ctx.answerCallbackQuery({
           text: "❌ Admins only",
-          show_alert: true
+          show_alert: true,
         });
         return;
       }
 
       // Move from Pending → Approved
-      await moveMemorySection(proposalId, "Pending", "Approved", {
-        approvedBy: ctx.from.username || String(userId),
-        approvedAt: new Date().toISOString(),
-      }, workspaceDir);
+      await moveMemorySection(
+        proposalId,
+        "Pending",
+        "Approved",
+        {
+          approvedBy: ctx.from.username || String(userId),
+          approvedAt: new Date().toISOString(),
+        },
+        workspaceDir,
+      );
 
       // Update message (remove button + show approval)
       const originalText = ctx.callbackQuery.message?.text || "";
@@ -91,15 +97,21 @@ export function registerProposalHandlers(bot: Bot, workspaceDir?: string): void 
       }
 
       // Move from Pending → Rejected (with reason)
-      await moveMemorySection(proposalId, "Pending", "Rejected", {
-        rejectedBy: ctx.from.username || String(userId),
-        rejectedAt: new Date().toISOString(),
-        reason: ctx.message.text,
-      }, workspaceDir);
+      await moveMemorySection(
+        proposalId,
+        "Pending",
+        "Rejected",
+        {
+          rejectedBy: ctx.from.username || String(userId),
+          rejectedAt: new Date().toISOString(),
+          reason: ctx.message.text,
+        },
+        workspaceDir,
+      );
 
       await ctx.reply(
         `✅ Rejection recorded. Thank you, @${ctx.from.username || userId}!\n\nThis helps me learn what's not spam.`,
-        { reply_parameters: { message_id: ctx.message.message_id } }
+        { reply_parameters: { message_id: ctx.message.message_id } },
       );
 
       logVerbose(`[telegram] Proposal ${proposalId} rejected by ${ctx.from.username || userId}`);

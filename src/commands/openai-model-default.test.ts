@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ApmClawConfig } from "../config/config.js";
-import type { WizardPrompter } from "./types.js";
 import { applyDefaultModelChoice } from "./auth-choice.default-model.js";
 import {
   applyGoogleGeminiModelDefault,
@@ -19,6 +18,7 @@ import {
   applyOpencodeZenModelDefault,
   OPENCODE_ZEN_DEFAULT_MODEL,
 } from "./opencode-zen-model-default.js";
+import type { WizardPrompter } from "./types.js";
 
 function makePrompter(): WizardPrompter {
   return {

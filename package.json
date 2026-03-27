@@ -2,7 +2,14 @@
   "name": "apmclaw",
   "version": "2026.3.3",
   "description": "Your AI intern working from AM to PM. Protecting the community the apM way, powered by the claw.",
-  "keywords": ["telegram", "community-manager", "ai-bot", "anti-spam", "crypto", "apmclaw"],
+  "keywords": [
+    "ai-bot",
+    "anti-spam",
+    "apmclaw",
+    "community-manager",
+    "crypto",
+    "telegram"
+  ],
   "homepage": "https://github.com/apmcoin/apmclaw#readme",
   "bugs": {
     "url": "https://github.com/apmcoin/apmclaw/issues"
@@ -219,6 +226,8 @@
     "android:run": "cd apps/android && ./gradlew :app:installDebug && adb shell am start -n ai.openclaw.android/.MainActivity",
     "android:test": "cd apps/android && ./gradlew :app:testDebugUnitTest",
     "android:test:integration": "OPENCLAW_LIVE_TEST=1 OPENCLAW_LIVE_ANDROID_NODE=1 vitest run --config vitest.live.config.ts src/gateway/android-node.capabilities.live.test.ts",
+    "apmclaw": "node scripts/run-node.mjs",
+    "apmclaw:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
     "build": "tsdown && node scripts/copy-plugin-sdk-root-alias.mjs && pnpm build:plugin-sdk:dts && node --import tsx scripts/write-plugin-sdk-entry-dts.ts && node --import tsx scripts/copy-hook-metadata.ts && node --import tsx scripts/copy-export-html-templates.ts && node --import tsx scripts/write-build-info.ts && node --import tsx scripts/write-cli-startup-metadata.ts",
     "build:plugin-sdk:dts": "tsc -p tsconfig.plugin-sdk.dts.json",
     "build:strict-smoke": "tsdown && node scripts/copy-plugin-sdk-root-alias.mjs && pnpm build:plugin-sdk:dts",
@@ -278,8 +287,6 @@
     "mac:package": "bash scripts/package-mac-app.sh",
     "mac:restart": "bash scripts/restart-mac.sh",
     "moltbot:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
-    "apmclaw": "node scripts/run-node.mjs",
-    "apmclaw:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
     "plugins:sync": "node --import tsx scripts/sync-plugin-versions.ts",
     "prepack": "pnpm build && pnpm ui:build",
     "prepare": "command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git config core.hooksPath git-hooks || exit 0",

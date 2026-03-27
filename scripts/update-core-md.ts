@@ -39,11 +39,11 @@ async function updateCoreMd() {
     `;
 
     // 3. (Optional) Call LLM to generate content
-    // const content = await callLLM(prompt); 
-    
-    // For now, we manually unified CORE.md. 
+    // const content = await callLLM(prompt);
+
+    // For now, we manually unified CORE.md.
     // This script will serve as the foundation for the automated "Init" process.
-    
+
     console.log("CORE.md update logic ready for integration.");
   } catch (error) {
     console.error("Failed to gather config for CORE.md update:", error);

@@ -49,11 +49,7 @@ function createExpiredOauthStore(params: {
 }
 
 describe("resolveApiKeyForProfile openai-codex refresh fallback", () => {
-  const envSnapshot = captureEnv([
-    "APMCLAW_STATE_DIR",
-    "APMCLAW_AGENT_DIR",
-    "PI_CODING_AGENT_DIR",
-  ]);
+  const envSnapshot = captureEnv(["APMCLAW_STATE_DIR", "APMCLAW_AGENT_DIR", "PI_CODING_AGENT_DIR"]);
   let tempRoot = "";
   let agentDir = "";
 

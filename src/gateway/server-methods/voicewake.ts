@@ -1,4 +1,7 @@
-const loadVoiceWakeConfig = async () => ({ triggers: [] });const setVoiceWakeTriggers = async (triggers: string[]) => ({ triggers });const normalizeVoiceWakeTriggers = (triggers: unknown) => (Array.isArray(triggers) ? triggers : []);import { ErrorCodes, errorShape } from "../protocol/index.js";
+const loadVoiceWakeConfig = async () => ({ triggers: [] });
+const setVoiceWakeTriggers = async (triggers: string[]) => ({ triggers });
+const normalizeVoiceWakeTriggers = (triggers: unknown) => (Array.isArray(triggers) ? triggers : []);
+import { ErrorCodes, errorShape } from "../protocol/index.js";
 import { formatForLog } from "../ws-log.js";
 import type { GatewayRequestHandlers } from "./types.js";
 

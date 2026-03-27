@@ -23,8 +23,14 @@ const createClackPrompter = (): WizardPrompter => {
 import { validateAnthropicSetupToken } from "../auth-token.js";
 import { isRemoteEnvironment } from "../oauth-env.js";
 import { createVpsAwareOAuthHandlers } from "../oauth-flow.js";
-import { applyAuthProfileConfig, writeOAuthCredentials } from "../onboard-auth.js";
-import { openUrl } from "../onboard-helpers.js";
+import type { ApmClawConfig } from "../../config/config.js";
+// Onboarding removed: inline stubs
+const applyAuthProfileConfig = (cfg: ApmClawConfig, _profile?: unknown): ApmClawConfig => cfg;
+const writeOAuthCredentials = async (_provider: string, _creds: unknown, _agentDir?: string, _opts?: unknown): Promise<string> => "default-profile";
+const openUrl = async (url: string): Promise<void> => {
+  const { default: open } = await import("open");
+  await open(url);
+};
 import {
   applyOpenAICodexModelDefault,
   OPENAI_CODEX_DEFAULT_MODEL,

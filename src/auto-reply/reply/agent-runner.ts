@@ -512,13 +512,8 @@ export async function runReplyAgent(params: {
     );
     // Suppress the guard note when an existing cron job (created in a prior
     // turn) already covers the commitment — avoids false positives (#32228).
-    const coveredByExistingCron =
-      hasReminderCommitment && successfulCronAdds === 0
-        ? await hasSessionRelatedCronJobs({
-            cronStorePath: cfg.cron?.store,
-            sessionKey,
-          })
-        : false;
+    // Cron subsystem removed (commit 7b0f434b35)
+    const coveredByExistingCron = false;
     const guardedReplyPayloads =
       hasReminderCommitment && successfulCronAdds === 0 && !coveredByExistingCron
         ? appendUnscheduledReminderNote(replyPayloads)

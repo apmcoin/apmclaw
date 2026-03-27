@@ -2,15 +2,25 @@ import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import type { ApmClawConfig } from "../../config/config.js";
 import { loadSessionStore, resolveStorePath, type SessionEntry } from "../../config/sessions.js";
 import { logVerbose } from "../../globals.js";
-import { fireAndForgetHook } from "../../hooks/fire-and-forget.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
-import {
-  deriveInboundMessageHookContext,
-  toInternalMessageReceivedContext,
-  toPluginMessageContext,
-  toPluginMessageReceivedEvent,
-} from "../../hooks/message-hook-mappers.js";
 import { isDiagnosticsEnabled } from "../../infra/diagnostic-events.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const fireAndForgetHook = (_promise: Promise<any>, _label?: string) => {
+  // No-op: hooks subsystem removed for security
+};
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed for security
+};
+const deriveInboundMessageHookContext = (..._args: any[]) => ({
+  isGroup: false,
+  groupId: undefined,
+  from: "",
+  content: "",
+});
+const toInternalMessageReceivedContext = (..._args: any[]) => ({});
+const toPluginMessageContext = (..._args: any[]) => ({ from: "", content: "", channelId: "" });
+const toPluginMessageReceivedEvent = (..._args: any[]) => ({ from: "", content: "" });
 import {
   logMessageProcessed,
   logMessageQueued,

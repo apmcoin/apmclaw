@@ -280,7 +280,8 @@ function collectCronAssignments(params: {
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {
-  const cron = params.config.cron as Record<string, unknown> | undefined;
+  // Cron subsystem removed (commit 7b0f434b35)
+  const cron = (params.config as any).cron as Record<string, unknown> | undefined;
   if (!isRecord(cron)) {
     return;
   }

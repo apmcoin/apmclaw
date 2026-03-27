@@ -1,8 +1,14 @@
 import fs from "node:fs/promises";
 import { resetAcpSessionInPlace } from "../../acp/persistent-bindings.js";
 import { logVerbose } from "../../globals.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
 import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const createInternalHookEvent = (..._args: any[]) => ({ messages: [] });
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed for security
+  return { messages: [] };
+};
 import { isAcpSessionKey } from "../../routing/session-key.js";
 import { resolveSendPolicy } from "../../sessions/send-policy.js";
 import { shouldHandleTextCommands } from "../commands-registry.js";

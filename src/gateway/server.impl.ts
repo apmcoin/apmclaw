@@ -80,8 +80,17 @@ import { NodeRegistry } from "./node-registry.js";
 import { createChannelManager } from "./server-channels.js";
 import { createAgentEventHandler } from "./server-chat.js";
 import { createGatewayCloseHandler } from "./server-close.js";
-import { buildGatewayCronService } from "./server-cron.js";
 import { startGatewayDiscovery } from "./server-discovery-runtime.js";
+
+// Cron subsystem removed (commit 7b0f434b35)
+const buildGatewayCronService = (_params: any) => ({
+  start: async () => {
+    // No-op: cron subsystem removed
+  },
+  stop: async () => {
+    // No-op: cron subsystem removed
+  },
+});
 import { applyGatewayLaneConcurrency } from "./server-lanes.js";
 import { startGatewayMaintenanceTimers } from "./server-maintenance.js";
 import { GATEWAY_EVENTS, listGatewayMethods } from "./server-methods-list.js";

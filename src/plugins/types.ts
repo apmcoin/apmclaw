@@ -11,9 +11,11 @@ import type { WizardPrompter } from "../commands/types.js";
 import type { ApmClawConfig } from "../config/config.js";
 import type { ModelProviderConfig } from "../config/types.js";
 import type { GatewayRequestHandler } from "../gateway/server-methods/types.js";
-import type { InternalHookHandler } from "../hooks/internal-hooks.js";
-import type { HookEntry } from "../hooks/types.js";
 import type { RuntimeEnv } from "../runtime.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+type InternalHookHandler = any;
+type HookEntry = any;
 import type { PluginRuntime } from "./runtime/types.js";
 
 export type { PluginRuntime } from "./runtime/types.js";

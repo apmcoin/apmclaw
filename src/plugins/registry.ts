@@ -7,9 +7,13 @@ import type {
   GatewayRequestHandler,
   GatewayRequestHandlers,
 } from "../gateway/server-methods/types.js";
-import { registerInternalHook } from "../hooks/internal-hooks.js";
-import type { HookEntry } from "../hooks/types.js";
 import { resolveUserPath } from "../utils.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+type HookEntry = any;
+const registerInternalHook = (_event: string, _handler: any) => {
+  // No-op: hooks subsystem removed for security
+};
 import { registerPluginCommand } from "./commands.js";
 import { normalizePluginHttpPath } from "./http-path.js";
 import type { PluginRuntime } from "./runtime/types.js";

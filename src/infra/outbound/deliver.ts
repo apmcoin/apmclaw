@@ -17,15 +17,28 @@ import {
   appendAssistantMessageToSessionTranscript,
   resolveMirroredTranscriptText,
 } from "../../config/sessions.js";
-import { fireAndForgetHook } from "../../hooks/fire-and-forget.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
-import {
-  buildCanonicalSentMessageHookContext,
-  toInternalMessageSentContext,
-  toPluginMessageContext,
-  toPluginMessageSentEvent,
-} from "../../hooks/message-hook-mappers.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const fireAndForgetHook = (
+  _promise: Promise<any>,
+  _label?: string,
+  _errorHandler?: (message: string) => void,
+) => {
+  // No-op: hooks subsystem removed for security
+};
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed for security
+};
+const buildCanonicalSentMessageHookContext = (..._args: any[]) => ({
+  to: "",
+  content: "",
+  success: true,
+});
+const toInternalMessageSentContext = (..._args: any[]) => ({});
+const toPluginMessageContext = (..._args: any[]) => ({ to: "", content: "", channelId: "" });
+const toPluginMessageSentEvent = (..._args: any[]) => ({ to: "", content: "", success: true });
 import { getAgentScopedMediaLocalRoots } from "../../media/local-roots.js";
 import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 // Signal removed (Telegram-only)

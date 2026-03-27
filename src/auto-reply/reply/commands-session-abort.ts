@@ -1,7 +1,13 @@
 import { abortEmbeddedPiRun } from "../../agents/pi-embedded.js";
 import type { SessionEntry } from "../../config/sessions.js";
 import { logVerbose } from "../../globals.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed for security
+};
+
 import {
   resolveAbortCutoffFromContext,
   shouldPersistAbortCutoff,

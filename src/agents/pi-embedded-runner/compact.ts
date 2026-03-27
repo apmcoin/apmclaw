@@ -15,8 +15,13 @@ import {
   ensureContextEnginesInitialized,
   resolveContextEngine,
 } from "../../context-engine/index.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
 import { getMachineDisplayName } from "../../infra/machine-name.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed for security
+};
 import { generateSecureToken } from "../../infra/secure-random.js";
 import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 import { type enqueueCommand, enqueueCommandInLane } from "../../process/command-queue.js";

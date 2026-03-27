@@ -77,16 +77,17 @@ export function createGatewayReloadHandlers(params: {
       await startGmailWatcherWithLogs({
         cfg: nextConfig,
         log: params.logHooks,
-        );
-      } else {
-        const restartChannel = async (name: ChannelKind) => {
-          params.logChannels.info(`restarting ${name} channel`);
-          await params.stopChannel(name);
-          await params.startChannel(name);
-        };
-        for (const channel of plan.restartChannels) {
-          await restartChannel(channel);
-        }
+      });
+    }
+
+    if (plan.restartChannels && plan.restartChannels.length > 0) {
+      const restartChannel = async (name: ChannelKind) => {
+        params.logChannels.info(`restarting ${name} channel`);
+        await params.stopChannel(name);
+        await params.startChannel(name);
+      };
+      for (const channel of plan.restartChannels) {
+        await restartChannel(channel);
       }
     }
 
@@ -191,4 +192,6 @@ export function createGatewayReloadHandlers(params: {
   };
 
   return { applyHotReload, requestGatewayRestart };
+}
+}
 }

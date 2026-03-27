@@ -1,4 +1,3 @@
-import { loadAndMaybeMigrateDoctorConfig } from "../../commands/doctor-config-flow.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
 import { formatConfigIssueLines } from "../../config/issue-format.js";
 import type { RuntimeEnv } from "../../runtime.js";
@@ -7,7 +6,7 @@ import { shortenHomePath } from "../../utils.js";
 import { shouldMigrateStateFromPath } from "../argv.js";
 import { formatCliCommand } from "../command-format.js";
 
-const ALLOWED_INVALID_COMMANDS = new Set(["doctor", "logs", "health", "help", "status"]);
+const ALLOWED_INVALID_COMMANDS = new Set(["logs", "health", "help", "status"]);
 const ALLOWED_INVALID_GATEWAY_SUBCOMMANDS = new Set([
   "status",
   "probe",
@@ -20,12 +19,10 @@ const ALLOWED_INVALID_GATEWAY_SUBCOMMANDS = new Set([
   "stop",
   "restart",
 ]);
-let didRunDoctorConfigFlow = false;
 let configSnapshotPromise: Promise<Awaited<ReturnType<typeof readConfigFileSnapshot>>> | null =
   null;
 
 function resetConfigGuardStateForTests() {
-  didRunDoctorConfigFlow = false;
   configSnapshotPromise = null;
 }
 
@@ -43,34 +40,6 @@ export async function ensureConfigReady(params: {
   commandPath?: string[];
   suppressDoctorStdout?: boolean;
 }): Promise<void> {
-  const commandPath = params.commandPath ?? [];
-  if (!didRunDoctorConfigFlow && shouldMigrateStateFromPath(commandPath)) {
-    didRunDoctorConfigFlow = true;
-    const runDoctorConfigFlow = async () =>
-      loadAndMaybeMigrateDoctorConfig({
-        options: { nonInteractive: true },
-        confirm: async () => false,
-      });
-    if (!params.suppressDoctorStdout) {
-      await runDoctorConfigFlow();
-    } else {
-      const originalStdoutWrite = process.stdout.write.bind(process.stdout);
-      const originalSuppressNotes = process.env.APMCLAW_SUPPRESS_NOTES;
-      process.stdout.write = (() => true) as unknown as typeof process.stdout.write;
-      process.env.APMCLAW_SUPPRESS_NOTES = "1";
-      try {
-        await runDoctorConfigFlow();
-      } finally {
-        process.stdout.write = originalStdoutWrite;
-        if (originalSuppressNotes === undefined) {
-          delete process.env.APMCLAW_SUPPRESS_NOTES;
-        } else {
-          process.env.APMCLAW_SUPPRESS_NOTES = originalSuppressNotes;
-        }
-      }
-    }
-  }
-
   const snapshot = await getConfigSnapshot();
   const commandName = commandPath[0];
   const subcommandName = commandPath[1];
@@ -110,7 +79,7 @@ export async function ensureConfigReady(params: {
   }
   params.runtime.error("");
   params.runtime.error(
-    `${muted("Run:")} ${commandText(formatCliCommand("openclaw doctor --fix"))}`,
+    `${muted("Fix:")} Manually edit ${muted(shortenHomePath(snapshot.path))} or run ${commandText(formatCliCommand("openclaw config validate"))}`,
   );
   if (!allowInvalid) {
     params.runtime.exit(1);

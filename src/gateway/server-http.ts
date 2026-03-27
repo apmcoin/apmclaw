@@ -24,24 +24,13 @@ import {
   handleControlUiHttpRequest,
   type ControlUiRootState,
 } from "./control-ui.js";
-import { applyHookMappings } from "./hooks-mapping.js";
-import {
-  extractHookToken,
-  getHookAgentPolicyError,
-  getHookChannelError,
-  type HookAgentDispatchPayload,
-  type HooksConfigResolved,
-  isHookAgentAllowed,
-  normalizeAgentPayload,
-  normalizeHookHeaders,
-  normalizeWakePayload,
-  readJsonBody,
-  normalizeHookDispatchSessionKey,
-  resolveHookSessionKey,
-  resolveHookTargetAgentId,
-  resolveHookChannel,
-  resolveHookDeliver,
-} from "./hooks.js";
+// Hooks subsystem removed (commit f423142e3a)
+const applyHookMappings = (_app: any) => {
+  // No-op: hooks subsystem removed
+};
+// Hooks subsystem removed (commit f423142e3a)
+type HooksConfigResolved = any;
+const createHandleGatewayHooks = () => () => {};
 import { sendGatewayAuthFailure, setDefaultSecurityHeaders } from "./http-common.js";
 import { handleOpenAiHttpRequest } from "./openai-http.js";
 import { handleOpenResponsesHttpRequest } from "./openresponses-http.js";

@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { GatewayAuthResult } from "./auth.js";
-import { readJsonBody } from "./hooks.js";
+// Hooks subsystem removed (commit f423142e3a)
+const readJsonBody = async (_req: any) => ({});
 
 /**
  * Apply baseline security headers that are safe for all response types (API JSON,

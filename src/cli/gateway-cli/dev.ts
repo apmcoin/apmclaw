@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { resolveWorkspaceTemplateDir } from "../../agents/workspace-templates.js";
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
-import { handleReset } from "../../commands/onboard-helpers.js";
+import { resetCommand } from "../../commands/reset.js";
 import { createConfigIO, writeConfigFile } from "../../config/config.js";
 import { defaultRuntime } from "../../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../../utils.js";
@@ -90,7 +90,8 @@ async function ensureDevWorkspace(dir: string) {
 export async function ensureDevGatewayConfig(opts: { reset?: boolean }) {
   const workspace = resolveDevWorkspaceDir();
   if (opts.reset) {
-    await handleReset("full", workspace, defaultRuntime);
+    // Onboarding removed: handleReset replaced with resetCommand
+    await resetCommand(defaultRuntime, { scope: "full", yes: true, nonInteractive: true });
   }
 
   const io = createConfigIO();

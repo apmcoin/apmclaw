@@ -6,7 +6,7 @@ import { hasAmbiguousGatewayAuthModeConfig } from "../gateway/auth-mode-policy.j
 import { resolveGatewayAuth } from "../gateway/auth.js";
 import { secretRefKey } from "../secrets/ref-contract.js";
 import { resolveSecretRefValues } from "../secrets/resolve.js";
-import { randomToken } from "./onboard-helpers.js";
+import { randomToken } from "../utils/crypto.js";
 
 type GatewayInstallTokenOptions = {
   config: ApmClawConfig;

@@ -5,21 +5,27 @@ import { loadModelCatalog } from "../agents/model-catalog.js";
 import {
   getModelRefStatus,
   resolveConfiguredModelRef,
-  resolveHooksGmailModel,
 } from "../agents/model-selection.js";
 import { resolveAgentSessionDirs } from "../agents/session-dirs.js";
 import { cleanStaleLockFiles } from "../agents/session-write-lock.js";
 import type { CliDeps } from "../cli/deps.js";
 import type { loadConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
-import { startGmailWatcherWithLogs } from "../hooks/gmail-watcher-lifecycle.js";
-import {
-  clearInternalHooks,
-  createInternalHookEvent,
-  triggerInternalHook,
-} from "../hooks/internal-hooks.js";
-import { loadInternalHooks } from "../hooks/loader.js";
 import { isTruthyEnvValue } from "../infra/env.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const startGmailWatcherWithLogs = async (_params: any) => {
+  // No-op: Gmail watcher removed with hooks subsystem
+};
+const resolveHooksGmailModel = (_params: any) => null;
+const clearInternalHooks = () => {
+  // No-op: hooks subsystem removed
+};
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed
+};
+const loadInternalHooks = async (_cfg: any, _workspaceDir: string) => 0;
 import type { loadApmClawPlugins } from "../plugins/loader.js";
 import { type PluginServicesHandle, startPluginServices } from "../plugins/services.js";
 // Removed: Browser tool dependency

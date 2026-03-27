@@ -6,7 +6,24 @@ import {
   promptDefaultModel,
   promptModelAllowlist,
 } from "./model-picker.js";
-import { makePrompter } from "./onboarding/__tests__/test-utils.js";
+import type { WizardPrompter } from "./types.js";
+
+// Inline test prompter stub (onboarding removed)
+function makePrompter(overrides?: Partial<WizardPrompter>): WizardPrompter {
+  return {
+    intro: vi.fn(),
+    outro: vi.fn(),
+    text: vi.fn(),
+    password: vi.fn(),
+    confirm: vi.fn(),
+    select: vi.fn(),
+    multiselect: vi.fn(),
+    note: vi.fn(),
+    cancel: vi.fn(),
+    log: { message: vi.fn(), warn: vi.fn(), error: vi.fn(), info: vi.fn(), success: vi.fn() },
+    ...overrides,
+  };
+}
 
 const loadModelCatalog = vi.hoisted(() => vi.fn());
 vi.mock("../agents/model-catalog.js", () => ({

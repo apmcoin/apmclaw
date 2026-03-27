@@ -114,7 +114,12 @@ export function scheduleFollowupDrain(
             title: "[Queued messages while agent was busy]",
             items,
             summary,
-            renderItem: (item, idx) => `---\nQueued #${idx + 1}\n${item.prompt}`.trim(),
+            renderItem: (item, idx) => {
+              const sender = item.run.senderName || item.run.senderUsername || item.run.senderId || "User";
+              const messageId = item.messageId || "unknown";
+              const chatId = item.originatingTo || "unknown";
+              return `---\n[Message ${idx + 1}] messageId=${messageId} chatId=${chatId}\nFrom: ${sender}\n${item.prompt}`.trim();
+            },
           });
           await runFollowup({
             prompt,

@@ -1,7 +1,19 @@
 import type { ApmClawConfig } from "../config/config.js";
 import { getOrLoadBootstrapFiles } from "./bootstrap-cache.js";
-import { applyBootstrapHookOverrides } from "./bootstrap-hooks.js";
 import type { EmbeddedContextFile } from "./pi-embedded-helpers.js";
+
+// Hooks subsystem removed (commit f423142e3a)
+const applyBootstrapHookOverrides = async (params: {
+  files: WorkspaceBootstrapFile[];
+  workspaceDir: string;
+  config?: ApmClawConfig;
+  sessionKey?: string;
+  sessionId?: string;
+  [key: string]: any;
+}): Promise<WorkspaceBootstrapFile[]> => {
+  // No-op: hooks subsystem removed for security
+  return params.files;
+};
 import {
   buildBootstrapContextFiles,
   resolveBootstrapMaxChars,

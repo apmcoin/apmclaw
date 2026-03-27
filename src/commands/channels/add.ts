@@ -15,8 +15,9 @@ const createClackPrompter = (): WizardPrompter => {
 };
 import { applyAgentBindings, describeBinding } from "../agents.bindings.js";
 import { buildAgentSummaries } from "../agents.config.js";
-import { setupChannels } from "../onboard-channels.js";
 import type { ChannelChoice } from "../onboard-types.js";
+// Onboarding removed: setupChannels was a no-op stub
+const setupChannels = async (config: ApmClawConfig, _runtime: RuntimeEnv, _prompter: WizardPrompter, _options?: unknown): Promise<ApmClawConfig> => config;
 import { applyAccountName, applyChannelAccountConfig } from "./add-mutators.js";
 import { channelLabel, requireValidConfig, shouldUseWizard } from "./shared.js";
 

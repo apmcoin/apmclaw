@@ -25,7 +25,7 @@ import { checkUpdateStatus, formatGitInstallLabel } from "../infra/update-check.
 import { runExec } from "../process/exec.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { VERSION } from "../version.js";
-import { resolveControlUiLinks } from "./onboard-helpers.js";
+import { resolveControlUiLinks } from "../gateway/urls.js";
 import { getAgentLocalStatuses } from "./status-all/agents.js";
 import { buildChannelsTable } from "./status-all/channels.js";
 import { formatDurationPrecise, formatGatewayAuthUsed } from "./status-all/format.js";

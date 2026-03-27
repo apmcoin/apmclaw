@@ -147,24 +147,7 @@ const entries: SubCliEntry[] = [
       mod.registerDocsCli(program);
     },
   },
-  {
-    name: "hooks",
-    description: "Manage internal agent hooks",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../hooks-cli.js");
-      mod.registerHooksCli(program);
-    },
-  },
-  {
-    name: "webhooks",
-    description: "Webhook helpers and integrations",
-    hasSubcommands: true,
-    register: async (program) => {
-      const mod = await import("../webhooks-cli.js");
-      mod.registerWebhooksCli(program);
-    },
-  },
+  // Hooks and webhooks CLI removed (commit f423142e3a)
   {
     name: "qr",
     description: "Generate iOS pairing QR/setup code",

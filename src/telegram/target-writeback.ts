@@ -1,7 +1,13 @@
 import type { ApmClawConfig } from "../config/config.js";
 import { readConfigFileSnapshotForWrite, writeConfigFile } from "../config/config.js";
-import { loadCronStore, resolveCronStorePath, saveCronStore } from "../cron/store.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
+
+// Cron subsystem removed (commit 7b0f434b35)
+const loadCronStore = async (_storePath: string): Promise<{ jobs: any[] }> => ({ jobs: [] });
+const resolveCronStorePath = (_store?: any) => "";
+const saveCronStore = async (_storePath: string, _store: any) => {
+  // No-op: cron subsystem removed
+};
 import {
   normalizeTelegramChatId,
   normalizeTelegramLookupTarget,
@@ -169,7 +175,8 @@ export async function maybePersistResolvedTelegramTarget(params: {
   }
 
   try {
-    const storePath = resolveCronStorePath(params.cfg.cron?.store);
+    // Cron subsystem removed (commit 7b0f434b35)
+    const storePath = resolveCronStorePath((params.cfg as any).cron?.store);
     const store = await loadCronStore(storePath);
     let cronChanged = false;
     for (const job of store.jobs) {

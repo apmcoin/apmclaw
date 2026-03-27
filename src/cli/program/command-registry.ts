@@ -123,26 +123,6 @@ const coreEntries: CoreCliEntry[] = [
   {
     commands: [
       {
-        name: "agent",
-        description: "Run one agent turn via the Gateway",
-        hasSubcommands: false,
-      },
-      {
-        name: "agents",
-        description: "Manage isolated agents (workspaces, auth, routing)",
-        hasSubcommands: true,
-      },
-    ],
-    register: async ({ program, ctx }) => {
-      const mod = await import("./register.agent.js");
-      mod.registerAgentCommands(program, {
-        agentChannelOptions: ctx.agentChannelOptions,
-      });
-    },
-  },
-  {
-    commands: [
-      {
         name: "status",
         description: "Show channel health and recent session recipients",
         hasSubcommands: false,

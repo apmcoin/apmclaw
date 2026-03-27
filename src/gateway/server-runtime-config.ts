@@ -10,7 +10,8 @@ import {
   resolveGatewayAuth,
 } from "./auth.js";
 import { normalizeControlUiBasePath } from "./control-ui-shared.js";
-import { resolveHooksConfig } from "./hooks.js";
+// Hooks subsystem removed (commit f423142e3a)
+const resolveHooksConfig = () => null;
 import {
   isLoopbackHost,
   isTrustedProxyAddress,

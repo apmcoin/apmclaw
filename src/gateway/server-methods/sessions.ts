@@ -18,7 +18,11 @@ import {
 } from "../../config/sessions.js";
 const unbindThreadBindingsBySessionKey = (_params: unknown) => {};
 import { logVerbose } from "../../globals.js";
-import { createInternalHookEvent, triggerInternalHook } from "../../hooks/internal-hooks.js";
+// Hooks subsystem removed (commit f423142e3a)
+const createInternalHookEvent = (..._args: any[]) => ({});
+const triggerInternalHook = async (_event: any) => {
+  // No-op: hooks subsystem removed
+};
 import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 import {
   isSubagentSessionKey,

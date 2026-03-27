@@ -78,17 +78,6 @@ const routeSessions: RouteSpec = {
   },
 };
 
-const routeAgentsList: RouteSpec = {
-  match: (path) => path[0] === "agents" && path[1] === "list",
-  run: async (argv) => {
-    const json = hasFlag(argv, "--json");
-    const bindings = hasFlag(argv, "--bindings");
-    const { agentsListCommand } = await import("../../commands/agents.js");
-    await agentsListCommand({ json, bindings }, defaultRuntime);
-    return true;
-  },
-};
-
 const routeMemoryStatus: RouteSpec = {
   match: (path) => path[0] === "memory" && path[1] === "status",
   run: async (argv) => {
@@ -252,7 +241,6 @@ const routes: RouteSpec[] = [
   routeHealth,
   routeStatus,
   routeSessions,
-  routeAgentsList,
   routeMemoryStatus,
   routeConfigGet,
   routeConfigUnset,

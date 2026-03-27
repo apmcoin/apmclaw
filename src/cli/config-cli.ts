@@ -396,23 +396,13 @@ export function registerConfigCli(program: Command) {
   const cmd = program
     .command("config")
     .description(
-      "Non-interactive config helpers (get/set/unset/file/validate). Run without subcommand for the setup wizard.",
+      "Non-interactive config helpers (get/set/unset/file/validate).",
     )
     .addHelpText(
       "after",
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/config", "docs.apmclaw.ai/cli/config")}\n`,
-    )
-    .option(
-      "--section <section>",
-      "Configure wizard sections (repeatable). Use with no subcommand.",
-      (value: string, previous: string[]) => [...previous, value],
-      [] as string[],
-    )
-    .action(async (opts) => {
-      const { configureCommandFromSectionsArg } = await import("../commands/configure.js");
-      await configureCommandFromSectionsArg(opts.section, defaultRuntime);
-    });
+    );
 
   cmd
     .command("get")

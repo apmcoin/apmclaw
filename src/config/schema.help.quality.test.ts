@@ -508,8 +508,6 @@ const CHANNELS_AGENTS_TARGET_KEYS = [
   "channels.irc",
   "channels.mattermost",
   "channels.msteams",
-  "channels.signal",
-  "channels.signal.account",
   "channels.slack",
   "channels.slack.appToken",
   "channels.slack.botToken",

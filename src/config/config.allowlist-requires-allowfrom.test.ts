@@ -12,16 +12,6 @@ describe('dmPolicy="allowlist" requires non-empty effective allowFrom', () => {
     }
   });
 
-  it('rejects signal dmPolicy="allowlist" without allowFrom', () => {
-    const res = validateConfigObject({
-      channels: { signal: { dmPolicy: "allowlist" } },
-    });
-    expect(res.ok).toBe(false);
-    if (!res.ok) {
-      expect(res.issues.some((i) => i.path.includes("channels.signal.allowFrom"))).toBe(true);
-    }
-  });
-
   it('rejects discord dmPolicy="allowlist" without allowFrom', () => {
     const res = validateConfigObject({
       channels: { discord: { dmPolicy: "allowlist" } },
@@ -75,15 +65,6 @@ describe('account dmPolicy="allowlist" uses inherited allowFrom', () => {
         res.issues.some((i) => i.path.includes("channels.telegram.accounts.bot1.allowFrom")),
       ).toBe(true);
     }
-  });
-
-  it("accepts signal account allowlist when parent allowFrom exists", () => {
-    const res = validateConfigObject({
-      channels: {
-        signal: { allowFrom: ["+15550001111"], accounts: { work: { dmPolicy: "allowlist" } } },
-      },
-    });
-    expect(res.ok).toBe(true);
   });
 
   it("accepts discord account allowlist when parent allowFrom exists", () => {

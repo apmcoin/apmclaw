@@ -1334,8 +1334,6 @@ export const FIELD_HELP: Record<string, string> = {
     "Discord channel provider configuration for bot auth, retry policy, streaming, thread bindings, and optional voice capabilities. Keep privileged intents and advanced features disabled unless needed.",
   "channels.whatsapp":
     "WhatsApp channel provider configuration for access policy and message batching behavior. Use this section to tune responsiveness and direct-message routing safety for WhatsApp chats.",
-  "channels.signal":
-    "Signal channel provider configuration including account identity and DM policy behavior. Keep account mapping explicit so routing remains stable across multi-device setups.",
   "channels.imessage":
     "iMessage channel provider configuration for CLI integration and DM access policy handling. Use explicit CLI paths when runtime environments have non-standard binary locations.",
   "channels.bluebubbles":
@@ -1390,10 +1388,6 @@ export const FIELD_HELP: Record<string, string> = {
     "Proxy URL for Discord gateway + API requests (app-id lookup and allowlist resolution). Set per account via channels.discord.accounts.<id>.proxy.",
   "channels.whatsapp.configWrites":
     "Allow WhatsApp to write config in response to channel events/commands (default: true).",
-  "channels.signal.configWrites":
-    "Allow Signal to write config in response to channel events/commands (default: true).",
-  "channels.signal.account":
-    "Signal account identifier (phone/number handle) used to bind this channel config to a specific Signal identity. Keep this aligned with your linked device/session state.",
   "channels.imessage.configWrites":
     "Allow iMessage to write config in response to channel events/commands (default: true).",
   "channels.imessage.cliPath":
@@ -1474,8 +1468,6 @@ export const FIELD_HELP: Record<string, string> = {
   "channels.whatsapp.selfChatMode": "Same-phone setup (bot uses your personal WhatsApp number).",
   "channels.whatsapp.debounceMs":
     "Debounce window (ms) for batching rapid consecutive messages from the same sender (0 to disable).",
-  "channels.signal.dmPolicy":
-    'Direct message access control ("pairing" recommended). "open" requires channels.signal.allowFrom=["*"].',
   "channels.imessage.dmPolicy":
     'Direct message access control ("pairing" recommended). "open" requires channels.imessage.allowFrom=["*"].',
   "channels.bluebubbles.dmPolicy":

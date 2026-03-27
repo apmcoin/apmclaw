@@ -64,10 +64,6 @@ export const LEGACY_CONFIG_RULES: LegacyConfigRule[] = [
     message: "slack config moved to channels.slack (auto-migrated on load).",
   },
   {
-    path: ["signal"],
-    message: "signal config moved to channels.signal (auto-migrated on load).",
-  },
-  {
     path: ["imessage"],
     message: "imessage config moved to channels.imessage (auto-migrated on load).",
   },

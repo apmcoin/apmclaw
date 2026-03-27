@@ -8,4 +8,4 @@
 
 ---
 
-_apM Claw Engine - Telegram-only fork of OpenClaw_
+_Built on OpenClaw, rebuilt for crypto communities_

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
-import { dashboardCommand } from "../../commands/dashboard.js";
-import { doctorCommand } from "../../commands/doctor.js";
+// Onboarding removed (commit 65478e9a0f + c06d6f116a)
+// import { dashboardCommand } from "../../commands/dashboard.js";
+// import { doctorCommand } from "../../commands/doctor.js";
 import { resetCommand } from "../../commands/reset.js";
 import { uninstallCommand } from "../../commands/uninstall.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -9,54 +10,7 @@ import { theme } from "../../terminal/theme.js";
 import { runCommandWithRuntime } from "../cli-utils.js";
 
 export function registerMaintenanceCommands(program: Command) {
-  program
-    .command("doctor")
-    .description("Health checks + quick fixes for the gateway and channels")
-    .addHelpText(
-      "after",
-      () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/doctor", "docs.apmclaw.ai/cli/doctor")}\n`,
-    )
-    .option("--no-workspace-suggestions", "Disable workspace memory system suggestions", false)
-    .option("--yes", "Accept defaults without prompting", false)
-    .option("--repair", "Apply recommended repairs without prompting", false)
-    .option("--fix", "Apply recommended repairs (alias for --repair)", false)
-    .option("--force", "Apply aggressive repairs (overwrites custom service config)", false)
-    .option("--non-interactive", "Run without prompts (safe migrations only)", false)
-    .option("--generate-gateway-token", "Generate and configure a gateway token", false)
-    .option("--deep", "Scan system services for extra gateway installs", false)
-    .action(async (opts) => {
-      await runCommandWithRuntime(defaultRuntime, async () => {
-        await doctorCommand(defaultRuntime, {
-          workspaceSuggestions: opts.workspaceSuggestions,
-          yes: Boolean(opts.yes),
-          repair: Boolean(opts.repair) || Boolean(opts.fix),
-          force: Boolean(opts.force),
-          nonInteractive: Boolean(opts.nonInteractive),
-          generateGatewayToken: Boolean(opts.generateGatewayToken),
-          deep: Boolean(opts.deep),
-        });
-        defaultRuntime.exit(0);
-      });
-    });
-
-  program
-    .command("dashboard")
-    .description("Open the Control UI with your current token")
-    .addHelpText(
-      "after",
-      () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dashboard", "docs.apmclaw.ai/cli/dashboard")}\n`,
-    )
-    .option("--no-open", "Print URL but do not launch a browser")
-    .action(async (opts) => {
-      await runCommandWithRuntime(defaultRuntime, async () => {
-        await dashboardCommand(defaultRuntime, {
-          noOpen: opts.open === false,
-        });
-      });
-    });
-
+  // Onboarding removed: doctor, dashboard commands deleted
   program
     .command("reset")
     .description("Reset local config/state (keeps the CLI installed)")

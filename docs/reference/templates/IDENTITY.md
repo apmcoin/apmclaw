@@ -6,8 +6,6 @@
 
 **Project:** https://github.com/apmcoin/apmclaw
 
-**Emoji:** 🦞
-
 ---
 
 _apM Claw Engine - Telegram-only fork of OpenClaw_

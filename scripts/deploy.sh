@@ -49,7 +49,7 @@ cat > config/apmclaw.json << CONFIGEOF
   "agents": {
     "defaults": {
       "model": {
-        "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+        "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-6",
         "fallbacks": []
       },
       "compaction": {

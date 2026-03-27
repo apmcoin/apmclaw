@@ -10,8 +10,8 @@ const MemoryProposeSchema = Type.Object({
     description: "Brief description of the spam pattern (e.g., 'Investment solicitation spam')",
   }),
   evidence: Type.Array(Type.String(), {
-    description: "Actual message contents (2-5 examples)",
-    minItems: 2,
+    description: "Actual message contents (1-5 examples, use 1 for uncertain single messages)",
+    minItems: 1,
     maxItems: 5,
   }),
   actionTaken: Type.Union([Type.Literal("deleted"), Type.Literal("preserved")], {
@@ -38,7 +38,7 @@ export function createMemoryProposeTool(options: {
     label: "Memory Propose",
     name: "memory_propose",
     description:
-      "Propose a new spam pattern for admin approval. Use when you detect suspicious patterns not yet in MEMORY.md. Admins review via Telegram (button=approve, reply=reject). Do NOT use for patterns already in AGENTS.md or MEMORY.md Approved Patterns - just delete those immediately.",
+      "Propose a single message or spam pattern for admin approval. MANDATORY for uncertain messages (apM meme vs spam, partner content vs promotion). Use actionTaken='preserved' when uncertain, 'deleted' when confirming new spam. Admins review via Telegram (button=approve, reply=reject). Do NOT use for patterns already in AGENTS.md or MEMORY.md Approved Patterns - just delete those immediately.",
     parameters: MemoryProposeSchema,
     execute: async (_toolCallId, params) => {
       const pattern = readStringParam(params, "pattern", { required: true });
@@ -49,10 +49,10 @@ export function createMemoryProposeTool(options: {
       const reasoning = readStringParam(params, "reasoning", { required: true });
 
       // Validate evidence array
-      if (!Array.isArray(evidence) || evidence.length < 2 || evidence.length > 5) {
+      if (!Array.isArray(evidence) || evidence.length < 1 || evidence.length > 5) {
         return jsonResult({
           success: false,
-          error: "Evidence must be an array of 2-5 message examples",
+          error: "Evidence must be an array of 1-5 message examples",
         });
       }
 

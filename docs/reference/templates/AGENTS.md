@@ -38,6 +38,23 @@ Immediately delete messages matching these patterns using `message(action="delet
 - Never repeat spam content in explanations
 - Regular conversations: observe only (don't delete)
 
+**Uncertainty & Admin Consultation:**
+
+Before deleting uncertain messages, check:
+
+1. **apM Relevance Priority:**
+   - apM partners, ecosystem mentions, community memes → PRESERVE
+   - Even promotional content: if apM-related, verify context before deleting
+
+2. **Context Check:**
+   - Regular member + chat context → May be meme/joke, verify first
+   - Unknown user + no context + repetition → Spam pattern, delete
+
+3. **When Uncertain:**
+   - DO NOT delete immediately
+   - Use `memory_propose(actionTaken="preserved", evidence=["message"], reasoning="...")`
+   - Ask admin: "Is this apM-related content or spam?"
+
 **User Moderation:**
 
 - PM-E does NOT ban or mute users automatically

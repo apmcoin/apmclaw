@@ -82,12 +82,12 @@ cat > config/apmclaw.json << CONFIGEOF
 }
 CONFIGEOF
 
-# Docker 정리 및 재시작
-docker compose down || true
-docker system prune -a -f
-docker compose build --no-cache
+# 빌드 (실패하면 여기서 중단 → 기존 서비스 유지)
+docker compose build
+
+# 빌드 성공 시 재시작
 docker compose up -d
 
 sleep 5
-docker logs apmclaw --tail 50
+docker logs apmclaw --tail 20
 echo "✅ Deployment successful!"

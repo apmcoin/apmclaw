@@ -84,12 +84,17 @@ import { startGatewayDiscovery } from "./server-discovery-runtime.js";
 
 // Cron subsystem removed (commit 7b0f434b35)
 const buildGatewayCronService = (_params: any) => ({
-  start: async () => {
-    // No-op: cron subsystem removed
+  cron: {
+    start: async () => {
+      // No-op: cron subsystem removed
+    },
+    stop: async () => {
+      // No-op: cron subsystem removed
+    },
+    list: async () => [],
+    add: async () => {},
   },
-  stop: async () => {
-    // No-op: cron subsystem removed
-  },
+  storePath: null,
 });
 import { applyGatewayLaneConcurrency } from "./server-lanes.js";
 import { startGatewayMaintenanceTimers } from "./server-maintenance.js";

@@ -45,9 +45,8 @@ export function createGatewayReloadHandlers(params: {
     const nextState = { ...state };
 
     if (plan.reloadHooks) {
-      try {
-        nextState.hooksConfig = resolveHooksConfig(nextConfig);
-      } catch (err) {
+      // Hooks subsystem removed - no-op
+    }
 
     resetDirectoryCache();
 
@@ -73,11 +72,7 @@ export function createGatewayReloadHandlers(params: {
     }
 
     if (plan.restartGmailWatcher) {
-      await stopGmailWatcher().catch(() => {});
-      await startGmailWatcherWithLogs({
-        cfg: nextConfig,
-        log: params.logHooks,
-      });
+      // Gmail watcher removed with hooks subsystem
     }
 
     if (plan.restartChannels && plan.restartChannels.length > 0) {
@@ -192,6 +187,4 @@ export function createGatewayReloadHandlers(params: {
   };
 
   return { applyHotReload, requestGatewayRestart };
-}
-}
 }

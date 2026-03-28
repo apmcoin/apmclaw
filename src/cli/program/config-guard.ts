@@ -41,8 +41,8 @@ export async function ensureConfigReady(params: {
   suppressDoctorStdout?: boolean;
 }): Promise<void> {
   const snapshot = await getConfigSnapshot();
-  const commandName = commandPath[0];
-  const subcommandName = commandPath[1];
+  const commandName = params.commandPath?.[0];
+  const subcommandName = params.commandPath?.[1];
   const allowInvalid = commandName
     ? ALLOWED_INVALID_COMMANDS.has(commandName) ||
       (commandName === "gateway" &&

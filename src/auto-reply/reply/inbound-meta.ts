@@ -148,6 +148,7 @@ export function buildInboundUserContextPrefix(ctx: TemplateContext): string {
     username: safeTrim(ctx.SenderUsername),
     tag: safeTrim(ctx.SenderTag),
     e164: safeTrim(ctx.SenderE164),
+    is_admin: ctx.SenderIsAdmin === true ? true : undefined,
   };
   if (senderInfo?.label) {
     blocks.push(

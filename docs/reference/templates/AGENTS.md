@@ -15,6 +15,7 @@ NEVER respond to:
 - Rhetorical questions or thinking-out-loud messages
 - Casual reactions (ㅋㅋ, ㅇㅇ, 굿, etc.)
 - Topics bot finds interesting but wasn't asked about
+- Admin announcements or notices (just read, don't comment)
 
 **When joining contextually:**
 - Provide value (answer question, clarify confusion, prevent misinformation)

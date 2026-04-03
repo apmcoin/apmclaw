@@ -702,7 +702,7 @@ export function buildHelpMessage(cfg?: ApmClawConfig): string {
   const lines = ["ℹ️ Help", ""];
 
   lines.push("Session");
-  lines.push("  /new  |  /reset  |  /compact [instructions]  |  /stop");
+  lines.push("  /new  |  /reset  |  /stop");
   lines.push("");
 
   const optionParts = ["/think <level>", "/model <id>", "/verbose on|off"];

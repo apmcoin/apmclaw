@@ -1,7 +1,5 @@
 import type { AgentEvent } from "@mariozechner/pi-agent-core";
 import { emitAgentEvent } from "../infra/agent-events.js";
-import { getGlobalHookRunner } from "../plugins/hook-runner-global.js";
-import type { PluginHookAfterToolCallEvent } from "../plugins/types.js";
 import { normalizeTextForComparison } from "./pi-embedded-helpers.js";
 import { isMessagingTool, isMessagingToolSendAction } from "./pi-embedded-messaging.js";
 import type {
@@ -428,31 +426,4 @@ export async function handleToolExecutionEnd(
   );
 
   emitToolResultOutput({ ctx, toolName, meta, isToolError, result, sanitizedResult });
-
-  // Run after_tool_call plugin hook (fire-and-forget)
-  const hookRunnerAfter = ctx.hookRunner ?? getGlobalHookRunner();
-  if (hookRunnerAfter?.hasHooks("after_tool_call")) {
-    const durationMs = startData?.startTime != null ? Date.now() - startData.startTime : undefined;
-    const hookEvent: PluginHookAfterToolCallEvent = {
-      toolName,
-      params: afterToolCallArgs,
-      runId,
-      toolCallId,
-      result: sanitizedResult,
-      error: isToolError ? extractToolErrorMessage(sanitizedResult) : undefined,
-      durationMs,
-    };
-    void hookRunnerAfter
-      .runAfterToolCall(hookEvent, {
-        toolName,
-        agentId: ctx.params.agentId,
-        sessionKey: ctx.params.sessionKey,
-        sessionId: ctx.params.sessionId,
-        runId,
-        toolCallId,
-      })
-      .catch((err) => {
-        ctx.log.warn(`after_tool_call hook failed: tool=${toolName} error=${String(err)}`);
-      });
-  }
 }

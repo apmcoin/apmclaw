@@ -7,7 +7,6 @@ import { danger } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { buildOutboundMediaLoadOptions } from "../../media/load-options.js";
 import { isGifMedia, kindFromMime } from "../../media/mime.js";
-import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import { loadWebMedia } from "../../web/media.js";
 import type { TelegramInlineButtons } from "../button-types.js";
@@ -362,9 +361,7 @@ export async function deliverReplies(params: {
     hasDelivered: false,
     deliveredCount: 0,
   };
-  const hookRunner = getGlobalHookRunner();
-  const hasMessageSendingHooks = hookRunner?.hasHooks("message_sending") ?? false;
-  const hasMessageSentHooks = hookRunner?.hasHooks("message_sent") ?? false;
+  // Hooks subsystem removed (commit f423142e3a)
   const chunkText = buildChunkTextResolver({
     textLimit: params.textLimit,
     chunkMode: params.chunkMode ?? "length",
@@ -382,34 +379,6 @@ export async function deliverReplies(params: {
       params.runtime.error?.(danger("reply missing text/media"));
       continue;
     }
-
-    const rawContent = reply.text || "";
-    if (hasMessageSendingHooks) {
-      const hookResult = await hookRunner?.runMessageSending(
-        {
-          to: params.chatId,
-          content: rawContent,
-          metadata: {
-            channel: "telegram",
-            mediaUrls: mediaList,
-            threadId: params.thread?.id,
-          },
-        },
-        {
-          channelId: "telegram",
-          accountId: params.accountId,
-          conversationId: params.chatId,
-        },
-      );
-      if (hookResult?.cancel) {
-        continue;
-      }
-      if (typeof hookResult?.content === "string" && hookResult.content !== rawContent) {
-        reply = { ...reply, text: hookResult.content };
-      }
-    }
-
-    const contentForSentHook = reply.text || "";
 
     try {
       const deliveredCountBeforeReply = progress.deliveredCount;
@@ -460,38 +429,7 @@ export async function deliverReplies(params: {
         runtime: params.runtime,
         firstDeliveredMessageId,
       });
-
-      if (hasMessageSentHooks) {
-        const deliveredThisReply = progress.deliveredCount > deliveredCountBeforeReply;
-        void hookRunner?.runMessageSent(
-          {
-            to: params.chatId,
-            content: contentForSentHook,
-            success: deliveredThisReply,
-          },
-          {
-            channelId: "telegram",
-            accountId: params.accountId,
-            conversationId: params.chatId,
-          },
-        );
-      }
     } catch (error) {
-      if (hasMessageSentHooks) {
-        void hookRunner?.runMessageSent(
-          {
-            to: params.chatId,
-            content: contentForSentHook,
-            success: false,
-            error: error instanceof Error ? error.message : String(error),
-          },
-          {
-            channelId: "telegram",
-            accountId: params.accountId,
-            conversationId: params.chatId,
-          },
-        );
-      }
       throw error;
     }
   }

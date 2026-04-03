@@ -1,6 +1,5 @@
 import type { AgentEvent } from "@mariozechner/pi-agent-core";
 import { emitAgentEvent } from "../infra/agent-events.js";
-import { getGlobalHookRunner } from "../plugins/hook-runner-global.js";
 import type { EmbeddedPiSubscribeContext } from "./pi-embedded-subscribe.handlers.types.js";
 import { makeZeroUsageSnapshot } from "./usage.js";
 
@@ -17,25 +16,6 @@ export function handleAutoCompactionStart(ctx: EmbeddedPiSubscribeContext) {
     stream: "compaction",
     data: { phase: "start" },
   });
-
-  // Run before_compaction plugin hook (fire-and-forget)
-  const hookRunner = getGlobalHookRunner();
-  if (hookRunner?.hasHooks("before_compaction")) {
-    void hookRunner
-      .runBeforeCompaction(
-        {
-          messageCount: ctx.params.session.messages?.length ?? 0,
-          messages: ctx.params.session.messages,
-          sessionFile: ctx.params.session.sessionFile,
-        },
-        {
-          sessionKey: ctx.params.sessionKey,
-        },
-      )
-      .catch((err) => {
-        ctx.log.warn(`before_compaction hook failed: ${String(err)}`);
-      });
-  }
 }
 
 export function handleAutoCompactionEnd(
@@ -64,24 +44,6 @@ export function handleAutoCompactionEnd(
     stream: "compaction",
     data: { phase: "end", willRetry },
   });
-
-  // Run after_compaction plugin hook (fire-and-forget)
-  if (!willRetry) {
-    const hookRunnerEnd = getGlobalHookRunner();
-    if (hookRunnerEnd?.hasHooks("after_compaction")) {
-      void hookRunnerEnd
-        .runAfterCompaction(
-          {
-            messageCount: ctx.params.session.messages?.length ?? 0,
-            compactedCount: ctx.getCompactionCount(),
-          },
-          {},
-        )
-        .catch((err) => {
-          ctx.log.warn(`after_compaction hook failed: ${String(err)}`);
-        });
-    }
-  }
 }
 
 function clearStaleAssistantUsageOnSessionMessages(ctx: EmbeddedPiSubscribeContext): void {

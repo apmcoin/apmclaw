@@ -45,7 +45,7 @@ import { enqueueSystemEvent } from "../infra/system-events.js";
 import { scheduleGatewayUpdateCheck } from "../infra/update-startup.js";
 import { startDiagnosticHeartbeat, stopDiagnosticHeartbeat } from "../logging/diagnostic.js";
 import { createSubsystemLogger, runtimeForLogger } from "../logging/subsystem.js";
-import { getGlobalHookRunner, runGlobalGatewayStopSafely } from "../plugins/hook-runner-global.js";
+// Hooks subsystem removed (commit f423142e3a)
 import { createEmptyPluginRegistry } from "../plugins/registry.js";
 import { createPluginRuntime } from "../plugins/runtime/index.js";
 import type { PluginServicesHandle } from "../plugins/services.js";
@@ -945,16 +945,6 @@ export async function startGatewayServer(
     }));
   }
 
-  // Run gateway_start plugin hook (fire-and-forget)
-  if (!minimalTestGateway) {
-    const hookRunner = getGlobalHookRunner();
-    if (hookRunner?.hasHooks("gateway_start")) {
-      void hookRunner.runGatewayStart({ port }, { port }).catch((err) => {
-        log.warn(`gateway_start hook failed: ${String(err)}`);
-      });
-    }
-  }
-
   const configReloader = minimalTestGateway
     ? { stop: async () => {} }
     : (() => {
@@ -1049,12 +1039,6 @@ export async function startGatewayServer(
 
   return {
     close: async (opts) => {
-      // Run gateway_stop plugin hook before shutdown
-      await runGlobalGatewayStopSafely({
-        event: { reason: opts?.reason ?? "gateway stopping" },
-        ctx: { port },
-        onError: (err) => log.warn(`gateway_stop hook failed: ${String(err)}`),
-      });
       if (diagnosticsEnabled) {
         stopDiagnosticHeartbeat();
       }

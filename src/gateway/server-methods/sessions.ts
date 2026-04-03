@@ -18,12 +18,6 @@ import {
 } from "../../config/sessions.js";
 const unbindThreadBindingsBySessionKey = (_params: unknown) => {};
 import { logVerbose } from "../../globals.js";
-// Hooks subsystem removed (commit f423142e3a)
-const createInternalHookEvent = (..._args: any[]) => ({});
-const triggerInternalHook = async (_event: any) => {
-  // No-op: hooks subsystem removed
-};
-import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 import {
   isSubagentSessionKey,
   normalizeAgentId,
@@ -165,26 +159,7 @@ async function emitSessionUnboundLifecycleEvent(params: {
     sendFarewell: true,
   });
 
-  if (params.emitHooks === false) {
-    return;
-  }
-
-  const hookRunner = getGlobalHookRunner();
-  if (!hookRunner?.hasHooks("subagent_ended")) {
-    return;
-  }
-  await hookRunner.runSubagentEnded(
-    {
-      targetSessionKey: params.targetSessionKey,
-      targetKind,
-      reason: params.reason,
-      sendFarewell: true,
-      outcome: params.reason === "session-reset" ? "reset" : "deleted",
-    },
-    {
-      childSessionKey: params.targetSessionKey,
-    },
-  );
+  // Hooks subsystem removed (commit f423142e3a)
 }
 
 async function ensureSessionRuntimeCleanup(params: {
@@ -480,19 +455,7 @@ export const sessionsHandlers: GatewayRequestHandlers = {
     const { cfg, target, storePath } = resolveGatewaySessionTargetFromKey(key);
     const { entry, legacyKey, canonicalKey } = loadSessionEntry(key);
     const hadExistingEntry = Boolean(entry);
-    const commandReason = p.reason === "new" ? "new" : "reset";
-    const hookEvent = createInternalHookEvent(
-      "command",
-      commandReason,
-      target.canonicalKey ?? key,
-      {
-        sessionEntry: entry,
-        previousSessionEntry: entry,
-        commandSource: "gateway:sessions.reset",
-        cfg,
-      },
-    );
-    await triggerInternalHook(hookEvent);
+    // Hooks subsystem removed (commit f423142e3a)
     const mutationCleanupError = await cleanupSessionBeforeMutation({
       cfg,
       key,

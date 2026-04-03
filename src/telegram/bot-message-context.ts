@@ -454,6 +454,23 @@ export const buildTelegramMessageContext = async ({
   });
 
   const botUsername = primaryCtx.me?.username?.toLowerCase();
+
+  // Resolve admin status for group messages before command authorization
+  let senderIsAdmin = false;
+  if (isGroup && senderId) {
+    try {
+      const member = await bot.api.getChatMember(chatId, Number(senderId));
+      senderIsAdmin = member.status === "administrator" || member.status === "creator";
+      logVerbose(
+        `telegram: resolved admin status for ${senderId} in ${chatId}: ${senderIsAdmin} (status: ${member.status})`,
+      );
+    } catch (err) {
+      logVerbose(
+        `telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`,
+      );
+    }
+  }
+
   const allowForCommands = isGroup ? effectiveGroupAllow : effectiveDmAllow;
   const senderAllowedForCommands = isSenderAllowed({
     allow: allowForCommands,
@@ -466,7 +483,10 @@ export const buildTelegramMessageContext = async ({
   });
   const commandGate = resolveControlCommandGate({
     useAccessGroups,
-    authorizers: [{ configured: allowForCommands.hasEntries, allowed: senderAllowedForCommands }],
+    authorizers: [
+      { configured: allowForCommands.hasEntries, allowed: senderAllowedForCommands },
+      { configured: isGroup, allowed: senderIsAdmin },
+    ],
     allowTextCommands: true,
     hasControlCommand: hasControlCommandInMessage,
   });
@@ -592,22 +612,6 @@ export const buildTelegramMessageContext = async ({
   const botId = primaryCtx.me?.id;
   const replyFromId = msg.reply_to_message?.from?.id;
   const replyToBotMessage = botId != null && replyFromId === botId;
-
-  // Resolve admin status for group messages to empower moderation logic
-  let senderIsAdmin = false;
-  if (isGroup && senderId) {
-    try {
-      const member = await bot.api.getChatMember(chatId, Number(senderId));
-      senderIsAdmin = member.status === "administrator" || member.status === "creator";
-      logVerbose(
-        `telegram: resolved admin status for ${senderId} in ${chatId}: ${senderIsAdmin} (status: ${member.status})`,
-      );
-    } catch (err) {
-      logVerbose(
-        `telegram: failed to resolve admin status for ${senderId} in ${chatId}: ${String(err)}`,
-      );
-    }
-  }
 
   const isReplyToServiceMessage =
     replyToBotMessage && isTelegramForumServiceMessage(msg.reply_to_message);

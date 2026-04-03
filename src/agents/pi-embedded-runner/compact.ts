@@ -16,14 +16,7 @@ import {
   resolveContextEngine,
 } from "../../context-engine/index.js";
 import { getMachineDisplayName } from "../../infra/machine-name.js";
-
-// Hooks subsystem removed (commit f423142e3a)
-const createInternalHookEvent = (..._args: any[]) => ({});
-const triggerInternalHook = async (_event: any) => {
-  // No-op: hooks subsystem removed for security
-};
 import { generateSecureToken } from "../../infra/secure-random.js";
-import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 import { type enqueueCommand, enqueueCommandInLane } from "../../process/command-queue.js";
 import { isCronSessionKey, isSubagentSessionKey } from "../../routing/session-key.js";
 // Signal removed (Telegram-only)
@@ -632,69 +625,8 @@ export async function compactEmbeddedPiSessionDirect(
         if (limited.length > 0) {
           session.agent.replaceMessages(limited);
         }
-        const missingSessionKey = !params.sessionKey || !params.sessionKey.trim();
-        const hookSessionKey = params.sessionKey?.trim() || params.sessionId;
-        const hookRunner = getGlobalHookRunner();
+        // Hooks subsystem removed (commit f423142e3a)
         const messageCountOriginal = originalMessages.length;
-        let tokenCountOriginal: number | undefined;
-        try {
-          tokenCountOriginal = 0;
-          for (const message of originalMessages) {
-            tokenCountOriginal += estimateTokens(message);
-          }
-        } catch {
-          tokenCountOriginal = undefined;
-        }
-        const messageCountBefore = session.messages.length;
-        let tokenCountBefore: number | undefined;
-        try {
-          tokenCountBefore = 0;
-          for (const message of session.messages) {
-            tokenCountBefore += estimateTokens(message);
-          }
-        } catch {
-          tokenCountBefore = undefined;
-        }
-        // TODO(#7175): Consider exposing full message snapshots or pre-compaction injection
-        // hooks; current events only report counts/metadata.
-        try {
-          const hookEvent = createInternalHookEvent("session", "compact:before", hookSessionKey, {
-            sessionId: params.sessionId,
-            missingSessionKey,
-            messageCount: messageCountBefore,
-            tokenCount: tokenCountBefore,
-            messageCountOriginal,
-            tokenCountOriginal,
-          });
-          await triggerInternalHook(hookEvent);
-        } catch (err) {
-          log.warn("session:compact:before hook failed", {
-            errorMessage: err instanceof Error ? err.message : String(err),
-            errorStack: err instanceof Error ? err.stack : undefined,
-          });
-        }
-        if (hookRunner?.hasHooks("before_compaction")) {
-          try {
-            await hookRunner.runBeforeCompaction(
-              {
-                messageCount: messageCountBefore,
-                tokenCount: tokenCountBefore,
-              },
-              {
-                sessionId: params.sessionId,
-                agentId: sessionAgentId,
-                sessionKey: hookSessionKey,
-                workspaceDir: effectiveWorkspace,
-                messageProvider: resolvedMessageProvider,
-              },
-            );
-          } catch (err) {
-            log.warn("before_compaction hook failed", {
-              errorMessage: err instanceof Error ? err.message : String(err),
-              errorStack: err instanceof Error ? err.stack : undefined,
-            });
-          }
-        }
         const diagEnabled = log.isEnabled("debug");
         const preMetrics = diagEnabled ? summarizeCompactionMessages(session.messages) : undefined;
         if (diagEnabled && preMetrics) {
@@ -760,50 +692,7 @@ export async function compactEmbeddedPiSessionDirect(
               `delta.estTokens=${typeof preMetrics.estTokens === "number" && typeof postMetrics.estTokens === "number" ? postMetrics.estTokens - preMetrics.estTokens : "unknown"}`,
           );
         }
-        // TODO(#9611): Consider exposing compaction summaries or post-compaction injection;
-        // current events only report summary metadata.
-        try {
-          const hookEvent = createInternalHookEvent("session", "compact:after", hookSessionKey, {
-            sessionId: params.sessionId,
-            missingSessionKey,
-            messageCount: messageCountAfter,
-            tokenCount: tokensAfter,
-            compactedCount,
-            summaryLength: typeof result.summary === "string" ? result.summary.length : undefined,
-            tokensBefore: result.tokensBefore,
-            tokensAfter,
-            firstKeptEntryId: result.firstKeptEntryId,
-          });
-          await triggerInternalHook(hookEvent);
-        } catch (err) {
-          log.warn("session:compact:after hook failed", {
-            errorMessage: err instanceof Error ? err.message : String(err),
-            errorStack: err instanceof Error ? err.stack : undefined,
-          });
-        }
-        if (hookRunner?.hasHooks("after_compaction")) {
-          try {
-            await hookRunner.runAfterCompaction(
-              {
-                messageCount: messageCountAfter,
-                tokenCount: tokensAfter,
-                compactedCount,
-              },
-              {
-                sessionId: params.sessionId,
-                agentId: sessionAgentId,
-                sessionKey: hookSessionKey,
-                workspaceDir: effectiveWorkspace,
-                messageProvider: resolvedMessageProvider,
-              },
-            );
-          } catch (err) {
-            log.warn("after_compaction hook failed", {
-              errorMessage: err instanceof Error ? err.message : String(err),
-              errorStack: err instanceof Error ? err.stack : undefined,
-            });
-          }
-        }
+        // Hooks subsystem removed (commit f423142e3a)
         return {
           ok: true,
           compacted: true,

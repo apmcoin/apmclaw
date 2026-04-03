@@ -601,7 +601,6 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
     log,
     blockChunking,
     blockChunker,
-    hookRunner: params.hookRunner,
     noteLastAssistant,
     shouldEmitToolResult,
     shouldEmitToolOutput,

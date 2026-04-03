@@ -138,3 +138,6 @@ workspace/
 
 apmclaw-server.pem
 github-actions-key.pem
+
+# Deployment scripts (서버 로컬 관리)
+scripts/

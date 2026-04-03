@@ -21,10 +21,6 @@ const resolveHooksGmailModel = (_params: any) => null;
 const clearInternalHooks = () => {
   // No-op: hooks subsystem removed
 };
-const createInternalHookEvent = (..._args: any[]) => ({});
-const triggerInternalHook = async (_event: any) => {
-  // No-op: hooks subsystem removed
-};
 const loadInternalHooks = async (_cfg: any, _workspaceDir: string) => 0;
 import type { loadApmClawPlugins } from "../plugins/loader.js";
 import { type PluginServicesHandle, startPluginServices } from "../plugins/services.js";
@@ -148,16 +144,7 @@ export async function startGatewaySidecars(params: {
     );
   }
 
-  if (params.cfg.hooks?.internal?.enabled) {
-    setTimeout(() => {
-      const hookEvent = createInternalHookEvent("gateway", "startup", "gateway:startup", {
-        cfg: params.cfg,
-        deps: params.deps,
-        workspaceDir: params.defaultWorkspaceDir,
-      });
-      void triggerInternalHook(hookEvent);
-    }, 250);
-  }
+  // Hooks subsystem removed (commit f423142e3a)
 
   let pluginServices: PluginServicesHandle | null = null;
   try {

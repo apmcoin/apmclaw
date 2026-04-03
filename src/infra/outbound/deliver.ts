@@ -18,29 +18,7 @@ import {
   resolveMirroredTranscriptText,
 } from "../../config/sessions.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-
-// Hooks subsystem removed (commit f423142e3a)
-const fireAndForgetHook = (
-  _promise: Promise<any>,
-  _label?: string,
-  _errorHandler?: (message: string) => void,
-) => {
-  // No-op: hooks subsystem removed for security
-};
-const createInternalHookEvent = (..._args: any[]) => ({});
-const triggerInternalHook = async (_event: any) => {
-  // No-op: hooks subsystem removed for security
-};
-const buildCanonicalSentMessageHookContext = (..._args: any[]) => ({
-  to: "",
-  content: "",
-  success: true,
-});
-const toInternalMessageSentContext = (..._args: any[]) => ({});
-const toPluginMessageContext = (..._args: any[]) => ({ to: "", content: "", channelId: "" });
-const toPluginMessageSentEvent = (..._args: any[]) => ({ to: "", content: "", success: true });
 import { getAgentScopedMediaLocalRoots } from "../../media/local-roots.js";
-import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
 // Signal removed (Telegram-only)
 import type { sendMessageTelegram } from "../../telegram/send.js";
 import { throwIfAborted } from "./abort.js";
@@ -333,8 +311,7 @@ function buildPayloadSummary(payload: ReplyPayload): NormalizedOutboundPayload {
   };
 }
 
-function createMessageSentEmitter(params: {
-  hookRunner: ReturnType<typeof getGlobalHookRunner>;
+function createMessageSentEmitter(_params: {
   channel: Exclude<OutboundChannel, "none">;
   to: string;
   accountId?: string;
@@ -342,127 +319,24 @@ function createMessageSentEmitter(params: {
   mirrorIsGroup?: boolean;
   mirrorGroupId?: string;
 }): { emitMessageSent: (event: MessageSentEvent) => void; hasMessageSentHooks: boolean } {
-  const hasMessageSentHooks = params.hookRunner?.hasHooks("message_sent") ?? false;
-  const canEmitInternalHook = Boolean(params.sessionKeyForInternalHooks);
-  const emitMessageSent = (event: MessageSentEvent) => {
-    if (!hasMessageSentHooks && !canEmitInternalHook) {
-      return;
-    }
-    const canonical = buildCanonicalSentMessageHookContext({
-      to: params.to,
-      content: event.content,
-      success: event.success,
-      error: event.error,
-      channelId: params.channel,
-      accountId: params.accountId ?? undefined,
-      conversationId: params.to,
-      messageId: event.messageId,
-      isGroup: params.mirrorIsGroup,
-      groupId: params.mirrorGroupId,
-    });
-    if (hasMessageSentHooks) {
-      fireAndForgetHook(
-        params.hookRunner!.runMessageSent(
-          toPluginMessageSentEvent(canonical),
-          toPluginMessageContext(canonical),
-        ),
-        "deliverOutboundPayloads: message_sent plugin hook failed",
-        (message) => {
-          log.warn(message);
-        },
-      );
-    }
-    if (!canEmitInternalHook) {
-      return;
-    }
-    fireAndForgetHook(
-      triggerInternalHook(
-        createInternalHookEvent(
-          "message",
-          "sent",
-          params.sessionKeyForInternalHooks!,
-          toInternalMessageSentContext(canonical),
-        ),
-      ),
-      "deliverOutboundPayloads: message:sent internal hook failed",
-      (message) => {
-        log.warn(message);
-      },
-    );
+  const emitMessageSent = (_event: MessageSentEvent) => {
+    // Hooks subsystem removed (commit f423142e3a)
   };
-  return { emitMessageSent, hasMessageSentHooks };
+  return { emitMessageSent, hasMessageSentHooks: false };
 }
 
 async function applyMessageSendingHook(params: {
-  hookRunner: ReturnType<typeof getGlobalHookRunner>;
-  enabled: boolean;
   payload: ReplyPayload;
   payloadSummary: NormalizedOutboundPayload;
-  to: string;
-  channel: Exclude<OutboundChannel, "none">;
-  accountId?: string;
 }): Promise<{
-  cancelled: boolean;
   payload: ReplyPayload;
   payloadSummary: NormalizedOutboundPayload;
 }> {
-  if (!params.enabled) {
-    return {
-      cancelled: false,
-      payload: params.payload,
-      payloadSummary: params.payloadSummary,
-    };
-  }
-  try {
-    const sendingResult = await params.hookRunner!.runMessageSending(
-      {
-        to: params.to,
-        content: params.payloadSummary.text,
-        metadata: {
-          channel: params.channel,
-          accountId: params.accountId,
-          mediaUrls: params.payloadSummary.mediaUrls,
-        },
-      },
-      {
-        channelId: params.channel,
-        accountId: params.accountId ?? undefined,
-      },
-    );
-    if (sendingResult?.cancel) {
-      return {
-        cancelled: true,
-        payload: params.payload,
-        payloadSummary: params.payloadSummary,
-      };
-    }
-    if (sendingResult?.content == null) {
-      return {
-        cancelled: false,
-        payload: params.payload,
-        payloadSummary: params.payloadSummary,
-      };
-    }
-    const payload = {
-      ...params.payload,
-      text: sendingResult.content,
-    };
-    return {
-      cancelled: false,
-      payload,
-      payloadSummary: {
-        ...params.payloadSummary,
-        text: sendingResult.content,
-      },
-    };
-  } catch {
-    // Don't block delivery on hook failure.
-    return {
-      cancelled: false,
-      payload: params.payload,
-      payloadSummary: params.payloadSummary,
-    };
-  }
+  // Hooks subsystem removed (commit f423142e3a)
+  return {
+    payload: params.payload,
+    payloadSummary: params.payloadSummary,
+  };
 }
 
 export async function deliverOutboundPayloads(
@@ -605,12 +479,10 @@ async function deliverOutboundPayloadsCore(
   // Signal send functions removed (Telegram-only)
 
   const normalizedPayloads = normalizePayloadsForChannelDelivery(payloads, channel);
-  const hookRunner = getGlobalHookRunner();
   const sessionKeyForInternalHooks = params.mirror?.sessionKey ?? params.session?.key;
   const mirrorIsGroup = params.mirror?.isGroup;
   const mirrorGroupId = params.mirror?.groupId;
-  const { emitMessageSent, hasMessageSentHooks } = createMessageSentEmitter({
-    hookRunner,
+  const { emitMessageSent } = createMessageSentEmitter({
     channel,
     to,
     accountId,
@@ -618,35 +490,16 @@ async function deliverOutboundPayloadsCore(
     mirrorIsGroup,
     mirrorGroupId,
   });
-  const hasMessageSendingHooks = hookRunner?.hasHooks("message_sending") ?? false;
-  if (hasMessageSentHooks && params.session?.agentId && !sessionKeyForInternalHooks) {
-    log.warn(
-      "deliverOutboundPayloads: session.agentId present without session key; internal message:sent hook will be skipped",
-      {
-        channel,
-        to,
-        agentId: params.session.agentId,
-      },
-    );
-  }
   for (const payload of normalizedPayloads) {
     let payloadSummary = buildPayloadSummary(payload);
     try {
       throwIfAborted(abortSignal);
 
-      // Run message_sending plugin hook (may modify content or cancel)
+      // Hooks subsystem removed (commit f423142e3a)
       const hookResult = await applyMessageSendingHook({
-        hookRunner,
-        enabled: hasMessageSendingHooks,
         payload,
         payloadSummary,
-        to,
-        channel,
-        accountId,
       });
-      if (hookResult.cancelled) {
-        continue;
-      }
       const effectivePayload = hookResult.payload;
       payloadSummary = hookResult.payloadSummary;
 

@@ -1,33 +1,19 @@
 import fs from "node:fs/promises";
 import { resetAcpSessionInPlace } from "../../acp/persistent-bindings.js";
 import { logVerbose } from "../../globals.js";
-import { getGlobalHookRunner } from "../../plugins/hook-runner-global.js";
-
-// Hooks subsystem removed (commit f423142e3a)
-const createInternalHookEvent = (..._args: any[]) => ({ messages: [] });
-const triggerInternalHook = async (_event: any) => {
-  // No-op: hooks subsystem removed for security
-  return { messages: [] };
-};
 import { isAcpSessionKey } from "../../routing/session-key.js";
 import { resolveSendPolicy } from "../../sessions/send-policy.js";
 import { shouldHandleTextCommands } from "../commands-registry.js";
-import { handleAcpCommand } from "./commands-acp.js";
-import { resolveBoundAcpThreadSessionKey } from "./commands-acp/targets.js";
 import { handleApproveCommand } from "./commands-approve.js";
-import { handleBashCommand } from "./commands-bash.js";
-import { handleCompactCommand } from "./commands-compact.js";
 import { handleConfigCommand, handleDebugCommand } from "./commands-config.js";
 import {
   handleCommandsListCommand,
   handleContextCommand,
-  handleExportSessionCommand,
   handleHelpCommand,
   handleStatusCommand,
   handleWhoamiCommand,
 } from "./commands-info.js";
 import { handleModelsCommand } from "./commands-models.js";
-import { handlePluginCommand } from "./commands-plugin.js";
 import {
   handleAbortTrigger,
   handleActivationCommand,
@@ -63,79 +49,7 @@ export async function emitResetCommandHooks(params: {
   previousSessionEntry?: HandleCommandsParams["previousSessionEntry"];
   workspaceDir: string;
 }): Promise<void> {
-  const hookEvent = createInternalHookEvent("command", params.action, params.sessionKey ?? "", {
-    sessionEntry: params.sessionEntry,
-    previousSessionEntry: params.previousSessionEntry,
-    commandSource: params.command.surface,
-    senderId: params.command.senderId,
-    cfg: params.cfg, // Pass config for LLM slug generation
-  });
-  await triggerInternalHook(hookEvent);
   params.command.resetHookTriggered = true;
-
-  // Send hook messages immediately if present
-  if (hookEvent.messages.length > 0) {
-    // Use OriginatingChannel/To if available, otherwise fall back to command channel/from
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const channel = params.ctx.OriginatingChannel || (params.command.channel as any);
-    // For replies, use 'from' (the sender) not 'to' (which might be the bot itself)
-    const to = params.ctx.OriginatingTo || params.command.from || params.command.to;
-
-    if (channel && to) {
-      const hookReply = { text: hookEvent.messages.join("\n\n") };
-      await routeReply({
-        payload: hookReply,
-        channel: channel,
-        to: to,
-        sessionKey: params.sessionKey,
-        accountId: params.ctx.AccountId,
-        threadId: params.ctx.MessageThreadId,
-        cfg: params.cfg,
-      });
-    }
-  }
-
-  // Fire before_reset plugin hook — extract memories before session history is lost
-  const hookRunner = getGlobalHookRunner();
-  if (hookRunner?.hasHooks("before_reset")) {
-    const prevEntry = params.previousSessionEntry;
-    const sessionFile = prevEntry?.sessionFile;
-    // Fire-and-forget: read old session messages and run hook
-    void (async () => {
-      try {
-        const messages: unknown[] = [];
-        if (sessionFile) {
-          const content = await fs.readFile(sessionFile, "utf-8");
-          for (const line of content.split("\n")) {
-            if (!line.trim()) {
-              continue;
-            }
-            try {
-              const entry = JSON.parse(line);
-              if (entry.type === "message" && entry.message) {
-                messages.push(entry.message);
-              }
-            } catch {
-              // skip malformed lines
-            }
-          }
-        } else {
-          logVerbose("before_reset: no session file available, firing hook with empty messages");
-        }
-        await hookRunner.runBeforeReset(
-          { sessionFile, messages, reason: params.action },
-          {
-            agentId: params.sessionKey?.split(":")[0] ?? "main",
-            sessionKey: params.sessionKey,
-            sessionId: prevEntry?.sessionId,
-            workspaceDir: params.workspaceDir,
-          },
-        );
-      } catch (err: unknown) {
-        logVerbose(`before_reset hook failed: ${String(err)}`);
-      }
-    })();
-  }
 }
 
 function applyAcpResetTailContext(ctx: HandleCommandsParams["ctx"], resetTail: string): void {
@@ -175,9 +89,6 @@ function resolveSessionEntryForHookSessionKey(
 export async function handleCommands(params: HandleCommandsParams): Promise<CommandHandlerResult> {
   if (HANDLERS === null) {
     HANDLERS = [
-      // Plugin commands are processed first, before built-in commands
-      handlePluginCommand,
-      handleBashCommand,
       handleActivationCommand,
       handleSendPolicyCommand,
       handleUsageCommand,
@@ -188,15 +99,12 @@ export async function handleCommands(params: HandleCommandsParams): Promise<Comm
       handleStatusCommand,
       handleApproveCommand,
       handleContextCommand,
-      handleExportSessionCommand,
       handleWhoamiCommand,
-      // Removed: handleSubagentsCommand (Subagents tool removed)
-      handleAcpCommand,
+      // Removed: handlePluginCommand, handleSubagentsCommand, handleBashCommand, handleExportSessionCommand, handleAcpCommand, handleCompactCommand
       handleConfigCommand,
       handleDebugCommand,
       handleModelsCommand,
       handleStopCommand,
-      handleCompactCommand,
       handleAbortTrigger,
     ];
   }

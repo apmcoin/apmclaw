@@ -42,7 +42,6 @@ const RESERVED_COMMANDS = new Set([
   "restart",
   "reset",
   "new",
-  "compact",
   // Configuration
   "config",
   "debug",
@@ -50,7 +49,6 @@ const RESERVED_COMMANDS = new Set([
   "activation",
   // Agent control
   "skill",
-  "subagents",
   "kill",
   "steer",
   "tell",
@@ -60,7 +58,6 @@ const RESERVED_COMMANDS = new Set([
   // Messaging
   "send",
   // Execution
-  "bash",
   "exec",
   // Mode toggles
   "think",

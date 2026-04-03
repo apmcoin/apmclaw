@@ -15,7 +15,11 @@ const registerInternalHook = (_event: string, _handler: any) => {
   // No-op: hooks subsystem removed for security
 };
 import { registerPluginCommand } from "./commands.js";
-import { normalizePluginHttpPath } from "./http-path.js";
+// http-path.ts removed — inline minimal normalization
+const normalizePluginHttpPath = (p: string): string | null => {
+  const trimmed = p?.trim();
+  return trimmed?.startsWith("/") ? trimmed : null;
+};
 import type { PluginRuntime } from "./runtime/types.js";
 import {
   isPluginHookName,

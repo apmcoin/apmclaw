@@ -82,91 +82,95 @@ jobs:
           TELEGRAM_CHAT_IDS_DEV: ${{ secrets.TELEGRAM_CHAT_IDS_DEV }}
           TELEGRAM_CHAT_IDS_FORWARD_SPAM: ${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "export TELEGRAM_BOT_TOKEN='$TELEGRAM_BOT_TOKEN' && \
-             export AWS_BEARER_TOKEN_BEDROCK='$AWS_BEARER_TOKEN_BEDROCK' && \
-             export BRAVE_SEARCH_API_KEY='$BRAVE_SEARCH_API_KEY' && \
-             export TELEGRAM_CHAT_IDS_DEV='$TELEGRAM_CHAT_IDS_DEV' && \
-             export TELEGRAM_CHAT_IDS_FORWARD_SPAM='$TELEGRAM_CHAT_IDS_FORWARD_SPAM' && \
-             bash -c 'set -e && \
-             echo \"=== Starting deployment ===\" && \
-             cd ~/apmclaw-dev && \
-             git fetch origin dev && \
-             git reset --hard origin/dev && \
-             cat > .env << EOF
-TELEGRAM_BOT_TOKEN=\${TELEGRAM_BOT_TOKEN}
-AWS_BEARER_TOKEN_BEDROCK=\${AWS_BEARER_TOKEN_BEDROCK}
-AWS_REGION=us-east-1
-BRAVE_SEARCH_API_KEY=\${BRAVE_SEARCH_API_KEY}
-TELEGRAM_CHAT_IDS_FORWARD_SPAM=\${TELEGRAM_CHAT_IDS_FORWARD_SPAM}
-EOF
-mkdir -p config && \
-IFS=\"  ,\" read -ra CHAT_IDS <<< \"\${TELEGRAM_CHAT_IDS_DEV}\" && \
-GROUPS_JSON=\"\" && \
-for chat_id in \"\${CHAT_IDS[@]}\"; do \
-  chat_id=\$(echo \"\$chat_id\" | xargs) && \
-  if [ -n \"\$GROUPS_JSON\" ]; then \
-    GROUPS_JSON+=\",\" ; \
-  fi && \
-  GROUPS_JSON+=\"\\\"\$chat_id\\\": {\\\"requireMention\\\": false, \\\"enabled\\\": true}\" ; \
-done && \
-cat > config/apmclaw.json << CONFIGEOF
-{
-  \"meta\": {
-    \"lastTouchedVersion\": \"2026.3.3\",
-    \"lastTouchedAt\": \"2026-03-15T00:00:00.000Z\"
-  },
-  \"models\": {
-    \"mode\": \"replace\",
-    \"bedrockDiscovery\": {
-      \"enabled\": true,
-      \"region\": \"us-east-1\",
-      \"providerFilter\": [\"anthropic\"],
-      \"refreshInterval\": 3600,
-      \"defaultContextWindow\": 200000,
-      \"defaultMaxTokens\": 4096
-    }
-  },
-  \"agents\": {
-    \"defaults\": {
-      \"model\": {
-        \"primary\": \"amazon-bedrock/us.anthropic.claude-sonnet-4-6\",
-        \"fallbacks\": []
-      },
-      \"compaction\": {
-        \"mode\": \"safeguard\"
-      }
-    }
-  },
-  \"channels\": {
-    \"telegram\": {
-      \"enabled\": true,
-      \"botToken\": \"\${TELEGRAM_BOT_TOKEN}\",
-      \"groups\": {
-        \$GROUPS_JSON
-      },
-      \"groupPolicy\": \"open\",
-      \"streaming\": \"off\",
-      \"autoDeleteSystemMessages\": true,
-      \"forwardSpamChatId\": \"\${TELEGRAM_CHAT_IDS_FORWARD_SPAM}\"
-    }
-  },
-  \"gateway\": {
-    \"auth\": {
-      \"mode\": \"token\",
-      \"token\": \"7f1d4ffa9a239106a4ae4b74b77cacfdc5ddfcdfc29790d5\"
-    },
-    \"controlUi\": {
-      \"enabled\": false
-    }
-  }
-}
-CONFIGEOF
-docker compose build && \
-docker compose up -d && \
-sleep 5 && \
-docker logs apmclaw --tail 20 && \
-echo \"✅ Deployment successful!\"'"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash -s <<'DEPLOY_SCRIPT'
+            set -e
+            echo "=== Starting deployment ==="
+            cd ~/apmclaw-dev
+            git fetch origin dev
+            git reset --hard origin/dev
+
+            cat > .env <<'ENVEOF'
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_TOKEN_DEV }}
+          AWS_BEARER_TOKEN_BEDROCK=${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
+          AWS_REGION=us-east-1
+          BRAVE_SEARCH_API_KEY=${{ secrets.BRAVE_SEARCH_API_KEY }}
+          TELEGRAM_CHAT_IDS_FORWARD_SPAM=${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}
+          ENVEOF
+            # .env 줄 앞 공백 제거
+            sed -i 's/^[[:space:]]*//' .env
+
+            mkdir -p config
+            IFS="  ," read -ra CHAT_IDS <<< "${{ secrets.TELEGRAM_CHAT_IDS_DEV }}"
+            GROUPS_JSON=""
+            for chat_id in "${CHAT_IDS[@]}"; do
+              chat_id=$(echo "$chat_id" | xargs)
+              if [ -n "$GROUPS_JSON" ]; then
+                GROUPS_JSON+=","
+              fi
+              GROUPS_JSON+="\"$chat_id\": {\"requireMention\": false, \"enabled\": true}"
+            done
+
+            cat > config/apmclaw.json <<CONFIGEOF
+          {
+            "meta": {
+              "lastTouchedVersion": "2026.3.3",
+              "lastTouchedAt": "2026-03-15T00:00:00.000Z"
+            },
+            "models": {
+              "mode": "replace",
+              "bedrockDiscovery": {
+                "enabled": true,
+                "region": "us-east-1",
+                "providerFilter": ["anthropic"],
+                "refreshInterval": 3600,
+                "defaultContextWindow": 200000,
+                "defaultMaxTokens": 4096
+              }
+            },
+            "agents": {
+              "defaults": {
+                "model": {
+                  "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-6",
+                  "fallbacks": []
+                },
+                "compaction": {
+                  "mode": "safeguard"
+                }
+              }
+            },
+            "channels": {
+              "telegram": {
+                "enabled": true,
+                "botToken": "${{ secrets.TELEGRAM_TOKEN_DEV }}",
+                "groups": {
+                  $GROUPS_JSON
+                },
+                "groupPolicy": "open",
+                "streaming": "off",
+                "autoDeleteSystemMessages": true,
+                "forwardSpamChatId": "${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}"
+              }
+            },
+            "gateway": {
+              "auth": {
+                "mode": "token",
+                "token": "7f1d4ffa9a239106a4ae4b74b77cacfdc5ddfcdfc29790d5"
+              },
+              "controlUi": {
+                "enabled": false
+              }
+            }
+          }
+          CONFIGEOF
+            # config JSON 줄 앞 공백 제거
+            sed -i 's/^[[:space:]]*//' config/apmclaw.json
+
+            docker compose build
+            docker compose up -d
+            sleep 5
+            docker logs apmclaw --tail 20
+            echo "✅ Deployment successful!"
+          DEPLOY_SCRIPT
 
       - name: Notify Slack - Deployment Success
         if: success()

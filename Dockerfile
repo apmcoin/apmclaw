@@ -49,7 +49,6 @@ RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
 
 COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --chown=node:node patches ./patches
-COPY --chown=node:node scripts ./scripts
 
 COPY --from=ext-deps --chown=node:node /out/ ./extensions/
 

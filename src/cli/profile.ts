@@ -1,7 +1,10 @@
 import os from "node:os";
 import path from "node:path";
 import { resolveRequiredHomeDir } from "../infra/home-dir.js";
-import { isValidProfileName } from "./profile-utils.js";
+const PROFILE_NAME_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+function isValidProfileName(value: string): boolean {
+  return Boolean(value) && PROFILE_NAME_RE.test(value);
+}
 
 export type CliProfileParseResult =
   | { ok: true; profile: string | null; argv: string[] }

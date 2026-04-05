@@ -1,5 +1,4 @@
 import { VERSION } from "../../version.js";
-import { resolveCliChannelOptions } from "../channel-options.js";
 
 export type ProgramContext = {
   programVersion: string;
@@ -8,25 +7,17 @@ export type ProgramContext = {
   agentChannelOptions: string;
 };
 
+// Telegram 전용 — 채널 옵션 하드코딩
 export function createProgramContext(): ProgramContext {
-  let cachedChannelOptions: string[] | undefined;
-  const getChannelOptions = (): string[] => {
-    if (cachedChannelOptions === undefined) {
-      cachedChannelOptions = resolveCliChannelOptions();
-    }
-    return cachedChannelOptions;
-  };
-
+  const channelOptions = ["telegram"];
   return {
     programVersion: VERSION,
-    get channelOptions() {
-      return getChannelOptions();
-    },
+    channelOptions,
     get messageChannelOptions() {
-      return getChannelOptions().join("|");
+      return channelOptions.join("|");
     },
     get agentChannelOptions() {
-      return ["last", ...getChannelOptions()].join("|");
+      return ["last", ...channelOptions].join("|");
     },
   };
 }

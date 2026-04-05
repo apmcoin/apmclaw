@@ -1,33 +1,25 @@
+// CLI 의존성 — Telegram 전용 (outbound-send-mapping 인라인)
 import type { OutboundSendDeps } from "../infra/outbound/deliver.js";
-// Signal removed (Telegram-only)
 import type { sendMessageTelegram } from "../telegram/send.js";
-import { createOutboundSendDepsFromCliSource } from "./outbound-send-mapping.js";
 
 export type CliDeps = {
   sendMessageTelegram: typeof sendMessageTelegram;
-  // Signal removed (Telegram-only)
 };
 
-let telegramSenderRuntimePromise: Promise<typeof import("./deps-send-telegram.runtime.js")> | null =
-  null;
-
-function loadTelegramSenderRuntime() {
-  telegramSenderRuntimePromise ??= import("./deps-send-telegram.runtime.js");
-  return telegramSenderRuntimePromise;
-}
-
-// Signal loader removed (Telegram-only)
+let telegramSenderRuntimePromise: Promise<typeof import("../telegram/send.js")> | null = null;
 
 export function createDefaultDeps(): CliDeps {
   return {
     sendMessageTelegram: async (...args) => {
-      const { sendMessageTelegram } = await loadTelegramSenderRuntime();
-      return await sendMessageTelegram(...args);
+      telegramSenderRuntimePromise ??= import("../telegram/send.js");
+      const mod = await telegramSenderRuntimePromise;
+      return await mod.sendMessageTelegram(...args);
     },
-    // Signal removed (Telegram-only)
   };
 }
 
 export function createOutboundSendDeps(deps: CliDeps): OutboundSendDeps {
-  return createOutboundSendDepsFromCliSource(deps);
+  return {
+    sendTelegram: deps.sendMessageTelegram,
+  };
 }

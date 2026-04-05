@@ -28,20 +28,6 @@ export function shouldRegisterPrimarySubcommand(argv: string[]): boolean {
   return !hasHelpOrVersion(argv);
 }
 
-export function shouldSkipPluginCommandRegistration(params: {
-  argv: string[];
-  primary: string | null;
-  hasBuiltinPrimary: boolean;
-}): boolean {
-  if (params.hasBuiltinPrimary) {
-    return true;
-  }
-  if (!params.primary) {
-    return hasHelpOrVersion(params.argv);
-  }
-  return false;
-}
-
 export function shouldEnsureCliPath(argv: string[]): boolean {
   if (hasHelpOrVersion(argv)) {
     return false;
@@ -116,20 +102,7 @@ export async function runCli(argv: string[] = process.argv) {
     await registerSubCliByName(program, primary);
   }
 
-  const hasBuiltinPrimary =
-    primary !== null && program.commands.some((command) => command.name() === primary);
-  const shouldSkipPluginRegistration = shouldSkipPluginCommandRegistration({
-    argv: parseArgv,
-    primary,
-    hasBuiltinPrimary,
-  });
-  if (!shouldSkipPluginRegistration) {
-    // Register plugin CLI commands before parsing
-    const { registerPluginCliCommands } = await import("../plugins/cli.js");
-    const { loadConfig } = await import("../config/config.js");
-    registerPluginCliCommands(program, loadConfig());
-  }
-
+  // Plugin CLI 등록 제거 (OpenClaw 레거시)
   await program.parseAsync(parseArgv);
 }
 

@@ -1,6 +1,14 @@
 import type { Command } from "commander";
 import { buildParseArgv } from "../argv.js";
-import { resolveActionArgs } from "./helpers.js";
+
+// helpers.ts에서 인라인
+function resolveActionArgs(actionCommand?: Command): string[] {
+  if (!actionCommand) {
+    return [];
+  }
+  const args = (actionCommand as Command & { args?: string[] }).args;
+  return Array.isArray(args) ? args : [];
+}
 
 export async function reparseProgramFromActionArgs(
   program: Command,

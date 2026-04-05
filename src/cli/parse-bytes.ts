@@ -1,3 +1,5 @@
+// 바이트 크기 파싱 유틸 — config/ 등에서 사용
+
 export type BytesParseOptions = {
   defaultUnit?: "b" | "kb" | "mb" | "gb" | "tb";
 };

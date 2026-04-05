@@ -1,11 +1,13 @@
+// Stub: commands/ 제거 시 함께 삭제
 import type { OutboundSendDeps } from "../infra/outbound/deliver.js";
-import {
-  createOutboundSendDepsFromCliSource,
-  type CliOutboundSendSource,
-} from "./outbound-send-mapping.js";
+import type { sendMessageTelegram } from "../telegram/send.js";
 
-export type CliDeps = Required<CliOutboundSendSource>;
+export type CliDeps = {
+  sendMessageTelegram: typeof sendMessageTelegram;
+};
 
 export function createOutboundSendDeps(deps: CliDeps): OutboundSendDeps {
-  return createOutboundSendDepsFromCliSource(deps);
+  return {
+    sendTelegram: deps.sendMessageTelegram,
+  };
 }

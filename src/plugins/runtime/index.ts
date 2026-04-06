@@ -1,5 +1,7 @@
 import { createRequire } from "node:module";
 import { resolveStateDir } from "../../config/paths.js";
+import { shouldLogVerbose } from "../../globals.js";
+import { getChildLogger } from "../../logging.js";
 import { transcribeAudioFile } from "../../media-understanding/transcribe-audio.js";
 import { createRuntimeConfig } from "./runtime-config.js";
 import type { PluginRuntime } from "./types.js";
@@ -52,7 +54,7 @@ export function createPluginRuntime(_options: CreatePluginRuntimeOptions = {}): 
     tools: noop() as PluginRuntime["tools"],
     channel: noop() as PluginRuntime["channel"],
     events: noop() as PluginRuntime["events"],
-    logging: noop() as PluginRuntime["logging"],
+    logging: { shouldLogVerbose, getChildLogger },
     state: { resolveStateDir },
   } satisfies PluginRuntime;
 

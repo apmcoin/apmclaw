@@ -166,26 +166,32 @@ jobs:
           CONFIGEOF
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
-            # workspace 초기화 (템플릿 갱신 강제)
+            # workspace + 세션 초기화 (템플릿 갱신 + LLM 맥락 리셋)
             rm -rf workspace/
+            rm -rf config/agents/main/sessions/
 
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile
             pnpm build
 
-            # PM2로 실행 (재시작 또는 새로 시작)
+            # PM2로 실행 — 완전 정지 후 재시작 (orphan 프로세스 방지)
             export APMCLAW_STATE_DIR="$APP_DIR/config"
             export APMCLAW_LOG_LEVEL=debug
             export NODE_ENV=production
 
             if pm2 describe "$PM2_APP_NAME" > /dev/null 2>&1; then
-              pm2 restart "$PM2_APP_NAME" --update-env
-            else
-              pm2 start dist/entry.mjs \
-                --name "$PM2_APP_NAME" \
-                --node-args="--no-warnings" \
-                -- gateway --bind lan --allow-unconfigured
+              pm2 stop "$PM2_APP_NAME" 2>/dev/null || true
+              sleep 1
+              # 포트 점유 orphan 프로세스 정리
+              fuser -k 18789/tcp 2>/dev/null || true
+              sleep 1
+              pm2 delete "$PM2_APP_NAME" 2>/dev/null || true
             fi
+
+            pm2 start dist/entry.mjs \
+              --name "$PM2_APP_NAME" \
+              --node-args="--no-warnings" \
+              -- gateway --bind lan --allow-unconfigured
 
             pm2 save
             sleep 3

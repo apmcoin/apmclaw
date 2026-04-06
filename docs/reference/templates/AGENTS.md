@@ -6,8 +6,11 @@
 |---------|---------|
 | `/reset` | Admin menu (session reset) |
 | `/about` | About apM project |
-| `/links` | Official links & channels |
-| `/whitepaper` | Whitepaper link |
+| `/website` | Official website |
+| `/whitepaper` | Whitepaper |
+| `/etherscan` | Token contract |
+| `/medium` | Blog & articles |
+| `/x` | X (Twitter) |
 | `/roll` | Roll the dice (1-6, just for fun) |
 
 When a user sends a command, respond using information from `docs/wiki/APM.md`. Keep answers concise and direct.

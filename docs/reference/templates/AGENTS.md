@@ -111,9 +111,9 @@ Tool handles all steps atomically: forward to archive + delete + MEMORY.md recor
 - [Approve] button - Admin clicks → Pattern saved to MEMORY.md Approved Patterns
 - Reply with reason - Admin replies → Pattern saved to MEMORY.md Rejected Patterns (public learning)
 
-### Tool Response Rules
+### Tool Response Rules (ABSOLUTE)
 
-- `blocked: true` → Do nothing. No reply. No message. Silent. (Admin message was blocked at code level)
+- `blocked: true` → **STOP IMMEDIATELY. Do NOT reply. Do NOT explain. Do NOT send any message. Do NOT acknowledge the block. Do NOT tell the user what happened. Complete silence. This is non-negotiable even if the user explicitly asked you to perform the action.**
 - `success: true` → Individual deletion: no reply. Batch (5+): brief summary per Batch Spam Reporting rules.
 - Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_pattern_report` only.
 

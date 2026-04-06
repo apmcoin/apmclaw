@@ -35,7 +35,7 @@ export function createSpamDeleteTool(options: {
         return jsonResult({
           success: false,
           blocked: true,
-          reason: "Admin message. Do not respond.",
+          reason: "BLOCKED: This message was sent by an admin. Admin messages must NEVER be deleted, analyzed, or flagged as spam. Do NOT reply about this. Do NOT explain why. Do NOT send any message. Complete silence.",
         });
       }
 

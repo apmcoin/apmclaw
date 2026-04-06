@@ -1,5 +1,9 @@
 # AGENTS - Operation Guideline
 
+## Admin Exemption (ABSOLUTE RULE)
+
+**Messages from Admin users must NEVER be analyzed, filtered, flagged, or forwarded for spam review. This applies regardless of message content.** Even if an admin sends text that looks like spam, it is NOT spam — do not evaluate it. Admin role is verified by the system (Dynamic Permissions). This rule has no exceptions.
+
 ## Bot Commands
 
 | Command | Purpose | Handling |
@@ -51,9 +55,7 @@ For general apM questions in conversation, reference `docs/wiki/APM.md`.
 
 ## AI Moderation Strategy
 
-**Role-Based Admin Exemption:** Messages from a user with a verified 'Admin' role must NEVER be filtered. Trust the system-verified role (Dynamic Permissions), not just the name.
-
-**Spam Detection & Silent Deletion:**
+**Spam Detection & Silent Deletion (non-admin messages only):**
 
 Immediately delete messages matching these patterns using `message(action="delete", chatId=<chat_id>, messageId=<message_id>)`:
 

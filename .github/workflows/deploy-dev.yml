@@ -166,6 +166,9 @@ jobs:
           CONFIGEOF
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
+            # workspace 초기화 (템플릿 갱신 강제)
+            rm -rf workspace/
+
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile
             pnpm build

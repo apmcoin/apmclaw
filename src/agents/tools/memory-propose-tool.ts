@@ -5,6 +5,25 @@ import { resolveWorkspaceRoot } from "../workspace-dir.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readStringParam } from "./common.js";
 
+const MEMORY_MD_TEMPLATE = `# PM-E Memory System
+
+## 1. Approved Patterns
+
+_No approved patterns yet._
+
+## 2. Rejected Patterns
+
+_No rejected patterns yet._
+
+## 3. Pending Proposals
+
+_No pending proposals._
+
+## 4. User Preferences
+
+_No preferences set._
+`;
+
 const MemoryProposeSchema = Type.Object({
   pattern: Type.String({
     description: "Brief description of the spam pattern (e.g., 'Investment solicitation spam')",
@@ -48,7 +67,6 @@ export function createMemoryProposeTool(options: {
         | "preserved";
       const reasoning = readStringParam(params, "reasoning", { required: true });
 
-      // Validate evidence array
       if (!Array.isArray(evidence) || evidence.length < 1 || evidence.length > 5) {
         return jsonResult({
           success: false,
@@ -59,11 +77,9 @@ export function createMemoryProposeTool(options: {
       const workspaceDir = resolveWorkspaceRoot(options.workspaceDir);
       const memoryFilePath = path.join(workspaceDir, "MEMORY.md");
 
-      // Generate proposal ID (timestamp-based)
       const proposalId = `PENDING-${Date.now()}`;
       const timestamp = new Date().toISOString().split(".")[0].replace("T", " ");
 
-      // Format proposal for MEMORY.md
       const proposal = `
 ### [${proposalId}] ${pattern}
 Proposed: ${timestamp}
@@ -76,49 +92,52 @@ Status: Awaiting admin review
 `;
 
       try {
-        // Read current MEMORY.md content
+        // Read or auto-initialize MEMORY.md
         let content = "";
         try {
           content = await fs.readFile(memoryFilePath, "utf-8");
-        } catch (err) {
-          // File doesn't exist yet, will be created
-          content = "";
+        } catch {
+          // File doesn't exist — create with template
+          content = MEMORY_MD_TEMPLATE;
+          await fs.mkdir(path.dirname(memoryFilePath), { recursive: true });
+          await fs.writeFile(memoryFilePath, content, "utf-8");
         }
 
-        // Find the "Pending Proposals" section
+        // Auto-fix missing Pending Proposals section
         const pendingSection = "## 3. Pending Proposals";
-        const pendingSectionIndex = content.indexOf(pendingSection);
+        let pendingSectionIndex = content.indexOf(pendingSection);
 
         if (pendingSectionIndex === -1) {
-          return jsonResult({
-            success: false,
-            error: "MEMORY.md is missing '## 3. Pending Proposals' section. Initialize it first.",
-          });
+          // Section missing — append it
+          const section4 = content.indexOf("## 4.");
+          if (section4 !== -1) {
+            content =
+              content.substring(0, section4) +
+              pendingSection +
+              "\n\n_No pending proposals._\n\n" +
+              content.substring(section4);
+          } else {
+            content += "\n" + pendingSection + "\n\n_No pending proposals._\n";
+          }
+          pendingSectionIndex = content.indexOf(pendingSection);
         }
 
-        // Find the next section (## 4.) or end of file
+        // Find insertion point
         const nextSectionIndex = content.indexOf("\n## 4.", pendingSectionIndex);
         const insertPosition = nextSectionIndex === -1 ? content.length : nextSectionIndex;
 
-        // Remove "_No pending proposals._" if present
         const beforeInsert = content.substring(0, insertPosition);
         const afterInsert = content.substring(insertPosition);
         const cleanedBefore = beforeInsert.replace(/\n_No pending proposals\._\s*$/m, "\n");
 
-        // Insert proposal
         const updatedContent = cleanedBefore + proposal + afterInsert;
-
-        // Write back to MEMORY.md
         await fs.writeFile(memoryFilePath, updatedContent, "utf-8");
-
-        // TODO Phase 2: Send Telegram message with inline button
-        // await sendTelegramProposal(proposalId, pattern, actionTaken, reasoning, evidence);
 
         return jsonResult({
           success: true,
           proposalId,
           status: "pending",
-          message: `Proposal ${proposalId} saved to MEMORY.md Pending section. Telegram notification will be implemented in Phase 2.`,
+          message: `Proposal ${proposalId} saved. Admin review pending.`,
         });
       } catch (err) {
         const error = err instanceof Error ? err.message : String(err);

@@ -86,6 +86,12 @@ jobs:
             set -e
             echo "=== Starting deployment ==="
             cd ~/apmclaw-dev
+
+            # 빌드 전 Docker 정리 — 디스크 부족 방지
+            echo "=== Cleaning up old Docker images ==="
+            docker image prune -af --filter "until=24h" || true
+            docker builder prune -af --filter "until=24h" || true
+
             git fetch origin dev
             git reset --hard origin/dev
 

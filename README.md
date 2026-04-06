@@ -106,16 +106,22 @@ PM-E defends crypto communities against:
 
 ### 1. Environment Setup
 
-Create `.env`:
 ```bash
+# 의존성 설치
+pnpm install
+
+# .env 작성
+cat > .env <<EOF
 TELEGRAM_BOT_TOKEN=your_token
 BRAVE_SEARCH_API_KEY=your_key
-ANTHROPIC_API_KEY=your_key  # or BEDROCK_CONFIG
+AWS_BEARER_TOKEN_BEDROCK=your_bedrock_token  # 또는 ANTHROPIC_API_KEY
+AWS_REGION=us-east-1
+EOF
 ```
 
 ### 2. Configuration
 
-Create `~/.apmclaw/apmclaw.json`:
+Create `config/apmclaw.json`:
 ```json
 {
   "agents": {
@@ -140,7 +146,20 @@ Create `~/.apmclaw/apmclaw.json`:
 }
 ```
 
-### 3. Workspace Templates
+### 3. Run
+
+```bash
+# 빌드
+pnpm build
+
+# 직접 실행
+node dist/entry.mjs gateway --bind lan --allow-unconfigured
+
+# 또는 PM2로 프로덕션 실행
+pm2 start dist/entry.mjs --name apmclaw -- gateway --bind lan --allow-unconfigured
+```
+
+### 4. Workspace Templates
 
 PM-E's behavior is defined by templates in `docs/reference/templates/`:
 - `SOUL.md` - Identity and communication style

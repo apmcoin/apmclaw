@@ -176,9 +176,9 @@ jobs:
           CONFIGEOF
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
-            # workspace + 세션 초기화 (템플릿 갱신 + LLM 맥락 리셋)
+            # workspace 초기화 (템플릿 갱신)
             rm -rf workspace/
-            rm -rf config/agents/main/sessions/
+            # 세션은 유지 — 관리자가 /reset 명시할 때만 초기화
 
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile

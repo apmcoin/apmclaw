@@ -1,12 +1,15 @@
 import { createRequire } from "node:module";
+import { chunkMarkdownText } from "../../auto-reply/chunk.js";
 import { resolveStateDir } from "../../config/paths.js";
 import { shouldLogVerbose } from "../../globals.js";
 import { getChildLogger } from "../../logging.js";
 import { transcribeAudioFile } from "../../media-understanding/transcribe-audio.js";
+import { monitorTelegramProvider } from "../../telegram/monitor.js";
+import { probeTelegram } from "../../telegram/probe.js";
+import { sendMessageTelegram, sendPollTelegram } from "../../telegram/send.js";
+import { resolveTelegramToken } from "../../telegram/token.js";
 import { createRuntimeConfig } from "./runtime-config.js";
 import type { PluginRuntime } from "./types.js";
-
-// Plugin runtime subsystems removed — only config and version remain.
 
 let cachedVersion: string | null = null;
 
@@ -52,7 +55,22 @@ export function createPluginRuntime(_options: CreatePluginRuntimeOptions = {}): 
     media: noop() as PluginRuntime["media"],
     stt: { transcribeAudioFile },
     tools: noop() as PluginRuntime["tools"],
-    channel: noop() as PluginRuntime["channel"],
+    channel: {
+      telegram: {
+        probeTelegram,
+        monitorTelegramProvider,
+        sendMessageTelegram,
+        sendPollTelegram,
+        resolveTelegramToken,
+        // 삭제된 메서드 — 호출 시 안전하게 실패
+        collectUnmentionedGroupIds: () => [],
+        auditGroupMembership: async () => ({ ok: true, issues: [] }),
+        messageActions: null,
+      },
+      text: {
+        chunkMarkdownText,
+      },
+    },
     events: noop() as PluginRuntime["events"],
     logging: { shouldLogVerbose, getChildLogger },
     state: { resolveStateDir },

@@ -39,7 +39,6 @@ function defineChatCommand(command: DefineChatCommandInput): ChatCommandDefiniti
   };
 }
 
-// apM Claw — /reset 하나만 등록
 function buildChatCommands(): ChatCommandDefinition[] {
   return [
     defineChatCommand({
@@ -48,6 +47,34 @@ function buildChatCommands(): ChatCommandDefinition[] {
       description: "admin menu",
       textAliases: ["/reset"],
       category: "session",
+    }),
+    defineChatCommand({
+      key: "about",
+      nativeName: "about",
+      description: "about apM project",
+      textAliases: ["/about"],
+      category: "info",
+    }),
+    defineChatCommand({
+      key: "links",
+      nativeName: "links",
+      description: "official links & channels",
+      textAliases: ["/links"],
+      category: "info",
+    }),
+    defineChatCommand({
+      key: "whitepaper",
+      nativeName: "whitepaper",
+      description: "whitepaper link",
+      textAliases: ["/whitepaper"],
+      category: "info",
+    }),
+    defineChatCommand({
+      key: "roll",
+      nativeName: "roll",
+      description: "roll the dice",
+      textAliases: ["/roll"],
+      category: "fun",
     }),
   ];
 }

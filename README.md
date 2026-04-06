@@ -39,7 +39,7 @@ Real protection happens in TypeScript code (`method-scopes.ts`) and Telegram API
 **1. Attack Surface Reduction**
 - **13 tools → 7 tools** (46% reduction)
 - Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`
-- Kept: `message`, `spam_delete`, `spam_pattern_report`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
+- Kept: `message`, `spam_delete`, `spam_delete_and_pattern_report`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
 
 **2. Code-Level Authorization**
 ```typescript
@@ -54,7 +54,7 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 **How It Works:**
 1. Certain spam → `spam_delete` (forward to archive + delete, no memory write)
-2. Uncertain spam → `spam_pattern_report` (delete + MEMORY.md record + admin notification)
+2. Uncertain spam → `spam_delete_and_pattern_report` (delete + MEMORY.md record + admin notification)
 3. Admin clicks [Approve] button → Pattern saved to MEMORY.md Approved Patterns
 4. Admin replies with reason → Pattern rejected and recorded (public learning)
 
@@ -68,7 +68,7 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 **Implemented:**
 - Silent spam deletion via `spam_delete` (certain spam)
-- Spam pattern learning via `spam_pattern_report` (uncertain spam + admin review)
+- Spam pattern learning via `spam_delete_and_pattern_report` (uncertain spam + admin review)
 - Role-based admin exemption (code-level, not prompt-level)
 - Spam archive forwarding before deletion
 

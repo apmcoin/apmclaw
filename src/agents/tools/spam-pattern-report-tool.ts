@@ -22,7 +22,7 @@ const SpamPatternReportSchema = Type.Object({
 });
 
 /**
- * spam_pattern_report: 불확실한 스팸 삭제 + 패턴 학습 문의 도구
+ * spam_delete_and_pattern_report: 불확실한 스팸 삭제 + 패턴 학습 문의 도구
  *
  * 원자적 처리: 삭제 → MEMORY.md 기록 → 어드민 알림 전송
  * - 어드민 메시지는 코드 레벨에서 차단 (senderIsOwner)
@@ -35,8 +35,8 @@ export function createSpamPatternReportTool(options: {
   memoryFilePath?: string;
 }): AnyAgentTool {
   return {
-    label: "Spam Pattern Report",
-    name: "spam_pattern_report",
+    label: "Spam Delete & Pattern Report",
+    name: "spam_delete_and_pattern_report",
     description:
       "Delete uncertain spam and ask admin for pattern learning review. Use when not 100% sure if message is spam (apM meme vs spam, partner content vs promotion). Handles: forward to archive + delete + MEMORY.md record + admin notification with approve/reject buttons. All atomic.",
     parameters: SpamPatternReportSchema,

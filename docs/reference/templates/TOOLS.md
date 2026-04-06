@@ -6,7 +6,7 @@
 
 Send, react, poll, pin messages in Telegram. General-purpose messaging tool.
 
-**Note:** Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_pattern_report` instead.
+**Note:** Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_delete_and_pattern_report` instead.
 
 ### 2. spam_delete
 
@@ -22,7 +22,7 @@ Admin messages are blocked at code level (no response needed).
 spam_delete(chatId=-1001597933348, messageId=12345)
 ```
 
-### 3. spam_pattern_report
+### 3. spam_delete_and_pattern_report
 
 Delete uncertain spam and ask admin for pattern learning review.
 Handles atomically: forward to archive + delete + MEMORY.md record + admin notification.
@@ -35,7 +35,7 @@ Handles atomically: forward to archive + delete + MEMORY.md record + admin notif
 
 **Example:**
 ```
-spam_pattern_report(
+spam_delete_and_pattern_report(
   chatId=-1001597933348,
   messageId=12345,
   messageText="Join our NFT drop now! Free NFTs for first 100 users",

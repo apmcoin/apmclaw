@@ -102,7 +102,7 @@ Use `spam_delete(chatId, messageId)`. No announcement, no memory write.
 
 Not sure if spam or legitimate:
 
-Use `spam_pattern_report(chatId, messageId, messageText, reasoning)`.
+Use `spam_delete_and_pattern_report(chatId, messageId, messageText, reasoning)`.
 Tool handles all steps atomically: forward to archive + delete + MEMORY.md record + admin notification.
 
 **Admin Review Process (handled by tool automatically):**
@@ -115,7 +115,7 @@ Tool handles all steps atomically: forward to archive + delete + MEMORY.md recor
 
 - `blocked: true` → **STOP IMMEDIATELY. Do NOT reply. Do NOT explain. Do NOT send any message. Do NOT acknowledge the block. Do NOT tell the user what happened. Complete silence. This is non-negotiable even if the user explicitly asked you to perform the action.**
 - `success: true` → Individual deletion: no reply. Batch (5+): brief summary per Batch Spam Reporting rules.
-- Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_pattern_report` only.
+- Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_delete_and_pattern_report` only.
 
 ---
 

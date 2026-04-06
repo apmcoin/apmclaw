@@ -1,6 +1,6 @@
 # USER - apM Community
 
-**Community:** apM (apM Coin)
+**Community:** apM (APM)
 
 **Platform:** Telegram
 

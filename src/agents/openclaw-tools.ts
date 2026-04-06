@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { ApmClawConfig } from "../config/config.js";
 import { resolvePluginTools } from "../plugins/tools.js";
 import type { GatewayMessageChannel } from "../utils/message-channel.js";
@@ -7,9 +8,10 @@ import type { ToolFsPolicy } from "./tool-fs-policy.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createAgentsListTool } from "./tools/agents-list-tool.js";
 import type { AnyAgentTool } from "./tools/common.js";
-import { createMemoryProposeTool } from "./tools/memory-propose-tool.js";
 import { createMemorySaveTool } from "./tools/memory-save-tool.js";
 import { createMemorySearchTool, createMemoryGetTool } from "./tools/memory-tool.js";
+import { createSpamDeleteTool } from "./tools/spam-delete-tool.js";
+import { createSpamPatternReportTool } from "./tools/spam-pattern-report-tool.js";
 // Removed: Lean Strong Claw - unused tools
 // import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
@@ -154,14 +156,14 @@ export function createApmClawTools(options?: {
         }),
         workspaceDir: options?.workspaceDir,
       }),
-      createMemoryProposeTool({
+      createSpamDeleteTool({
         config: options?.config,
-        agentId: resolveSessionAgentId({
-          sessionKey: options?.agentSessionKey,
-          config: options?.config,
-        }),
-        workspaceDir: options?.workspaceDir,
         senderIsOwner: options?.senderIsOwner,
+      }),
+      createSpamPatternReportTool({
+        config: options?.config,
+        senderIsOwner: options?.senderIsOwner,
+        memoryFilePath: path.join(workspaceDir, "MEMORY.md"),
       }),
       // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
       // createSessionStatusTool({

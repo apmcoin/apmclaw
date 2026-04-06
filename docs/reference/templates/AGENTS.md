@@ -57,7 +57,9 @@ For general apM questions in conversation, reference `docs/wiki/APM.md`.
 
 **Spam Detection & Silent Deletion (non-admin messages only):**
 
-Immediately delete messages matching these patterns using `message(action="delete", chatId=<chat_id>, messageId=<message_id>)`:
+Use dedicated spam tools to handle spam. Do NOT use `message(action="delete")` for spam.
+
+**Spam Patterns:**
 
 1. **Investment Solicitation:**
    - Contains: "Investing is...", "earn money...", "profit strategy...", "People won't earn money beyond..."
@@ -74,55 +76,46 @@ Immediately delete messages matching these patterns using `message(action="delet
 4. **Generic Repetition:**
    - Identical phrases without context or substance
 
-**Deletion Rules:**
+**Uncertainty Check:**
 
-- Individual deletions: silent (no announcement)
-- Multiple deletions (5+ in short time): brief summary allowed per Batch Spam Reporting
-- Never repeat spam content in explanations
-- Regular conversations: observe only (don't delete)
-
-**Uncertainty & Admin Consultation:**
-
-Before deleting uncertain messages, check apM relevance:
+Before deciding spam confidence, check apM relevance:
 - apM partners, ecosystem mentions, community memes - more likely legitimate
 - Unknown user + no context + repetition - more likely spam
-- When in doubt, still delete (forwarded to spam archive automatically), then report via memory_propose
+- Always check MEMORY.md Rejected Patterns before flagging similar content
+- If admin previously said "XXX is our partner", never flag XXX again
 
 **User Moderation:**
 
 - PM-E does NOT ban or mute users automatically
 - Only admins can kick/ban via manual Telegram controls
 - PM-E focuses on message deletion only
-- Note: Automated sanctions (ban/mute) under development
 
 ## Memory Learning Protocol
-
-All spam is **delete first, report after**. Deleted messages are automatically forwarded to the spam archive channel before deletion (configured via `forwardSpamChatId`). Admins can always review originals there.
 
 ### 1. Certain Spam (100% confident)
 
 Matches existing AGENTS.md rules or MEMORY.md Approved Patterns:
 
-- Delete with `message(action="delete", chatId=X, messageId=Y)`
-- No proposal needed
+Use `spam_delete(chatId, messageId)`. No announcement, no memory write.
 
 ### 2. Uncertain Spam
 
 Not sure if spam or legitimate:
 
-- Step 1: Delete with `message(action="delete", chatId=X, messageId=Y)` (original forwarded to archive)
-- Step 2: Report with `memory_propose(messageId, chatId, pattern, evidence, actionTaken="deleted", reasoning)`
-- **Deletion must happen regardless of whether memory_propose succeeds or fails**
+Use `spam_pattern_report(chatId, messageId, messageText, reasoning)`.
+Tool handles all steps atomically: forward to archive + delete + MEMORY.md record + admin notification.
 
-**Admin Review Process:**
+**Admin Review Process (handled by tool automatically):**
 
-- Admin checks spam archive for original message
-- [Approve] - Pattern saved to MEMORY.md Approved Patterns
-- Reply with reason - Pattern saved to MEMORY.md Rejected Patterns (public learning)
+- Tool sends notification to the chat with original text (blockquote) + reasoning
+- [Approve] button - Admin clicks → Pattern saved to MEMORY.md Approved Patterns
+- Reply with reason - Admin replies → Pattern saved to MEMORY.md Rejected Patterns (public learning)
 
-**Learning from Rejections:**
-Always check MEMORY.md Rejected Patterns before proposing similar patterns.
-If admin said "XXX is our partner", never flag XXX again.
+### Tool Response Rules
+
+- `blocked: true` → Do nothing. No reply. No message. Silent. (Admin message was blocked at code level)
+- `success: true` → Individual deletion: no reply. Batch (5+): brief summary per Batch Spam Reporting rules.
+- Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_pattern_report` only.
 
 ---
 

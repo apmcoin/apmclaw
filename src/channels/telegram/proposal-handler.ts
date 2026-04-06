@@ -16,7 +16,7 @@ export function registerProposalHandlers(bot: Bot, workspaceDir?: string): void 
       return; // Not a proposal approval
     }
 
-    const proposalId = callbackData.split("_")[1];
+    const proposalId = callbackData.substring("approve_".length);
     const chatId = ctx.chat?.id;
     const userId = ctx.from?.id;
 

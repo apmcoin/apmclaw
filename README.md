@@ -37,9 +37,9 @@ Real protection happens in TypeScript code (`method-scopes.ts`) and Telegram API
 ### Key Security Measures
 
 **1. Attack Surface Reduction**
-- **13 tools → 6 tools** (54% reduction)
+- **13 tools → 7 tools** (46% reduction)
 - Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`
-- Kept: `message`, `memory_*` (read-only), `web_search`, `web_fetch` (SSRF-protected)
+- Kept: `message`, `spam_delete`, `spam_pattern_report`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
 
 **2. Code-Level Authorization**
 ```typescript
@@ -48,20 +48,15 @@ const member = await telegram.getChatMember(chatId, userId);
 const isAdmin = ["administrator", "creator"].includes(member.status);
 ```
 
-**3. Memory Proposal System**
-- **Problem**: Memory injection attacks achieve 95% success
-- **Solution**: Human-in-the-loop approval for all memory updates
+**3. Spam Pattern Learning**
+- **Problem**: Memory injection attacks achieve 95% success with direct memory writes
+- **Solution**: Two atomic spam tools with human-in-the-loop approval
 
 **How It Works:**
-1. PM-E detects suspicious pattern
-2. Proposes new rule via `memory_propose` tool
-3. Telegram message with [✅ Approve] button sent to chat
-4. Admin clicks button → Pattern added to MEMORY.md
-5. Admin replies with reason → Pattern rejected (public learning)
-
-**4. Batch Processing**
-- Messages array with `messageId`/`chatId` for coordinated attack detection
-- 300 messages = 6 batches (42s) vs 300 individual calls (25 min)
+1. Certain spam → `spam_delete` (forward to archive + delete, no memory write)
+2. Uncertain spam → `spam_pattern_report` (delete + MEMORY.md record + admin notification)
+3. Admin clicks [Approve] button → Pattern saved to MEMORY.md Approved Patterns
+4. Admin replies with reason → Pattern rejected and recorded (public learning)
 
 **5. Network Security**
 - HTTPS-only, local network blocking (`127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`)
@@ -71,16 +66,15 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 ### Current Moderation Features
 
-✅ **Implemented:**
-- Silent spam deletion (message-level)
-- Memory learning via admin approval
-- Coordinated attack detection
-- Role-based admin exemption
+**Implemented:**
+- Silent spam deletion via `spam_delete` (certain spam)
+- Spam pattern learning via `spam_pattern_report` (uncertain spam + admin review)
+- Role-based admin exemption (code-level, not prompt-level)
+- Spam archive forwarding before deletion
 
-🚧 **In Development:**
+**In Development:**
 - User-level sanctions (ban/mute for repeat offenders)
 - Surge detection with auto "Slow Mode"
-- Hot-path filtering for known patterns
 
 ---
 
@@ -98,7 +92,7 @@ PM-E defends crypto communities against:
 
 - **Ambient Awareness**: Observes chat dynamics, stays silent when appropriate
 - **Contextual Moderation**: Intent-based spam detection (not keyword matching)
-- **Memory Learning**: Admin-approved pattern storage via `MEMORY.md`
+- **Spam Pattern Learning**: Admin-approved pattern storage via atomic spam tools
 - **Telegram Native**: Inline buttons for approvals, role-based exemptions
 - **Batch Processing**: Handles coordinated attacks efficiently
 

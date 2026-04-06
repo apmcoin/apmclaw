@@ -4,61 +4,63 @@
 
 ### 1. message
 
-Send, delete, react, poll, pin messages in Telegram.
+Send, react, poll, pin messages in Telegram. General-purpose messaging tool.
 
-**Delete Example:**
+**Note:** Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_pattern_report` instead.
 
-```
-message(action="delete", chatId=-1001597933348, messageId=12345)
-```
+### 2. spam_delete
 
-### 2. memory_propose (NEW)
-
-Propose a new spam pattern for admin approval.
+Delete messages that are 100% certain spam. Forwards to spam archive before deletion.
+Admin messages are blocked at code level (no response needed).
 
 **Parameters:**
-
-- `pattern` (string): Brief description (e.g., "Investment solicitation spam")
-- `evidence` (string[]): Actual message contents (2-5 examples)
-- `actionTaken` ("deleted" | "preserved"): Did you already delete the messages?
-- `reasoning` (string): Detailed explanation of why this is spam
+- `chatId` (string|number): Telegram chat ID
+- `messageId` (string|number): Telegram message ID
 
 **Example:**
-
 ```
-memory_propose(
-  pattern="NFT airdrop scam",
-  evidence=["Join our NFT drop now!", "Free NFTs for first 100 users"],
-  actionTaken="deleted",
-  reasoning="Repeated external links with urgency tactics ('now', 'first 100'), similar to the Promotional Content pattern in AGENTS.md. Domain is new and user has no history in the group."
+spam_delete(chatId=-1001597933348, messageId=12345)
+```
+
+### 3. spam_pattern_report
+
+Delete uncertain spam and ask admin for pattern learning review.
+Handles atomically: forward to archive + delete + MEMORY.md record + admin notification.
+
+**Parameters:**
+- `chatId` (string|number): Telegram chat ID
+- `messageId` (string|number): Telegram message ID
+- `messageText` (string): Original message text
+- `reasoning` (string): Why this was judged as spam
+
+**Example:**
+```
+spam_pattern_report(
+  chatId=-1001597933348,
+  messageId=12345,
+  messageText="Join our NFT drop now! Free NFTs for first 100 users",
+  reasoning="Repeated external links with urgency tactics, similar to Promotional Content pattern in AGENTS.md. User has no history in the group."
 )
 ```
 
-**When to Use:**
+**Admin Response (automatic):**
+- [Approve] button → Pattern saved to MEMORY.md Approved Patterns
+- Reply with reason → Pattern saved to MEMORY.md Rejected Patterns (public learning)
+- Always check MEMORY.md Rejected Patterns before reporting similar content
 
-- **Delete + Propose**: Suspicious pattern that looks like spam but not in MEMORY.md yet
-- **Preserve + Ask**: Genuinely uncertain, need admin guidance
-- **Just Delete**: Already matches AGENTS.md or MEMORY.md patterns (no proposal needed)
-
-**Admin Response:**
-
-- [✅ Approve] button → Pattern saved to MEMORY.md, use it from now on
-- Reply with reason → Pattern rejected, learn from the reason (public)
-- Always check MEMORY.md Rejected Patterns before proposing again
-
-### 3. memory_search
+### 4. memory_search
 
 Search existing patterns in MEMORY.md.
 
-### 4. memory_get
+### 5. memory_get
 
 Read entire MEMORY.md contents.
 
-### 5. web_search
+### 6. web_search
 
 Brave search for verification.
 
-### 6. web_fetch
+### 7. web_fetch
 
 Fetch URL content (HTTPS only).
 

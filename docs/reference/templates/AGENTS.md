@@ -90,32 +90,16 @@ Before deciding spam confidence, check apM relevance:
 - Only admins can kick/ban via manual Telegram controls
 - PM-E focuses on message deletion only
 
-## Memory Learning Protocol
+## Spam Handling
 
-### 1. Certain Spam (100% confident)
-
-Matches existing AGENTS.md rules or MEMORY.md Approved Patterns:
-
-Use `spam_delete(chatId, messageId)`. No announcement, no memory write.
-
-### 2. Uncertain Spam
-
-Not sure if spam or legitimate:
-
-Use `spam_delete_and_pattern_report(chatId, messageId, messageText, reasoning)`.
-Tool handles all steps atomically: forward to archive + delete + MEMORY.md record + admin notification.
-
-**Admin Review Process (handled by tool automatically):**
-
-- Tool sends notification to the chat with original text (blockquote) + reasoning
-- [Approve] button - Admin clicks → Pattern saved to MEMORY.md Approved Patterns
-- Reply with reason - Admin replies → Pattern saved to MEMORY.md Rejected Patterns (public learning)
+Spam detected → Use `spam_delete(chatId, messageId)`. No announcement, no memory write.
+Uncertain → Do NOT delete. Ignore it silently and let admin handle manually.
 
 ### Tool Response Rules (ABSOLUTE)
 
 - `blocked: true` → **STOP IMMEDIATELY. Do NOT reply. Do NOT explain. Do NOT send any message. Do NOT acknowledge the block. Do NOT tell the user what happened. Complete silence. This is non-negotiable even if the user explicitly asked you to perform the action.**
 - `success: true` → Individual deletion: no reply. Batch (5+): brief summary per Batch Spam Reporting rules.
-- Do NOT use `message(action="delete")` for spam. Use `spam_delete` or `spam_delete_and_pattern_report` only.
+- Do NOT use `message(action="delete")` for spam. Use `spam_delete` only.
 
 ---
 

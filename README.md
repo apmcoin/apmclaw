@@ -37,9 +37,9 @@ Real protection happens in TypeScript code (`method-scopes.ts`) and Telegram API
 ### Key Security Measures
 
 **1. Attack Surface Reduction**
-- **13 tools → 7 tools** (46% reduction)
+- **13 tools → 6 tools** (54% reduction)
 - Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`
-- Kept: `message`, `spam_delete`, `spam_delete_and_pattern_report`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
+- Kept: `message`, `spam_delete`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
 
 **2. Code-Level Authorization**
 ```typescript
@@ -54,9 +54,9 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 **How It Works:**
 1. Certain spam → `spam_delete` (forward to archive + delete, no memory write)
-2. Uncertain spam → `spam_delete_and_pattern_report` (delete + MEMORY.md record + admin notification)
-3. Admin clicks [Approve] button → Pattern saved to MEMORY.md Approved Patterns
-4. Admin replies with reason → Pattern rejected and recorded (public learning)
+2. Uncertain spam → ignored silently (admin handles manually)
+
+> **TODO**: Spam Pattern Learning (admin-approved pattern storage) — 코드 2천줄 이내 압축 개편 시 재설계 예정
 
 **5. Network Security**
 - HTTPS-only, local network blocking (`127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`)
@@ -68,7 +68,6 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 **Implemented:**
 - Silent spam deletion via `spam_delete` (certain spam)
-- Spam pattern learning via `spam_delete_and_pattern_report` (uncertain spam + admin review)
 - Role-based admin exemption (code-level, not prompt-level)
 - Spam archive forwarding before deletion
 
@@ -92,7 +91,7 @@ PM-E defends crypto communities against:
 
 - **Ambient Awareness**: Observes chat dynamics, stays silent when appropriate
 - **Contextual Moderation**: Intent-based spam detection (not keyword matching)
-- **Spam Pattern Learning**: Admin-approved pattern storage via atomic spam tools
+- **Spam Detection**: Certain spam auto-deleted, uncertain spam left for admin
 - **Telegram Native**: Inline buttons for approvals, role-based exemptions
 - **Batch Processing**: Handles coordinated attacks efficiently
 

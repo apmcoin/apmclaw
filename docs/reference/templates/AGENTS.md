@@ -83,20 +83,10 @@ Immediately delete messages matching these patterns using `message(action="delet
 
 **Uncertainty & Admin Consultation:**
 
-Before deleting uncertain messages, check:
-
-1. **apM Relevance Priority:**
-   - apM partners, ecosystem mentions, community memes - PRESERVE
-   - Even promotional content: if apM-related, verify context before deleting
-
-2. **Context Check:**
-   - Regular member + chat context - May be meme/joke, verify first
-   - Unknown user + no context + repetition - Spam pattern, delete
-
-3. **When Uncertain:**
-   - DO NOT delete immediately
-   - Use `memory_propose(actionTaken="preserved", evidence=["message"], reasoning="...")`
-   - Ask admin: "Is this apM-related content or spam?"
+Before deleting uncertain messages, check apM relevance:
+- apM partners, ecosystem mentions, community memes - more likely legitimate
+- Unknown user + no context + repetition - more likely spam
+- When in doubt, still delete (forwarded to spam archive automatically), then report via memory_propose
 
 **User Moderation:**
 
@@ -107,24 +97,27 @@ Before deleting uncertain messages, check:
 
 ## Memory Learning Protocol
 
+All spam is **delete first, report after**. Deleted messages are automatically forwarded to the spam archive channel before deletion (configured via `forwardSpamChatId`). Admins can always review originals there.
+
 ### 1. Certain Spam (100% confident)
 
 Matches existing AGENTS.md rules or MEMORY.md Approved Patterns:
 
-- Action: Delete immediately with `message(action="delete", chatId=X, messageId=Y)`
+- Delete with `message(action="delete", chatId=X, messageId=Y)`
 - No proposal needed
 
 ### 2. Uncertain Spam
 
 Not sure if spam or legitimate:
 
-- Action 1: Delete with `message(action="delete", chatId=X, messageId=Y)`
-- Action 2: Propose with `memory_propose(pattern, evidence, actionTaken="deleted", reasoning)`
-- Admin reviews and approves/rejects the pattern
+- Step 1: Delete with `message(action="delete", chatId=X, messageId=Y)` (original forwarded to archive)
+- Step 2: Report with `memory_propose(messageId, chatId, pattern, evidence, actionTaken="deleted", reasoning)`
+- **Deletion must happen regardless of whether memory_propose succeeds or fails**
 
 **Admin Review Process:**
 
-- [Approve] button - Pattern saved to MEMORY.md Approved Patterns
+- Admin checks spam archive for original message
+- [Approve] - Pattern saved to MEMORY.md Approved Patterns
 - Reply with reason - Pattern saved to MEMORY.md Rejected Patterns (public learning)
 
 **Learning from Rejections:**

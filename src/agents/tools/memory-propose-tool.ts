@@ -25,6 +25,12 @@ _No preferences set._
 `;
 
 const MemoryProposeSchema = Type.Object({
+  messageId: Type.Union([Type.String(), Type.Number()], {
+    description: "Telegram message ID of the suspected spam message",
+  }),
+  chatId: Type.Union([Type.String(), Type.Number()], {
+    description: "Telegram chat ID where the message was sent",
+  }),
   pattern: Type.String({
     description: "Brief description of the spam pattern (e.g., 'Investment solicitation spam')",
   }),
@@ -70,6 +76,8 @@ export function createMemoryProposeTool(options: {
         });
       }
 
+      const messageId = params.messageId as string | number;
+      const chatId = params.chatId as string | number;
       const pattern = readStringParam(params, "pattern", { required: true });
       const evidence = params.evidence as string[];
       const actionTaken = readStringParam(params, "actionTaken", { required: true }) as
@@ -93,6 +101,7 @@ export function createMemoryProposeTool(options: {
       const proposal = `
 ### [${proposalId}] ${pattern}
 Proposed: ${timestamp}
+Message: chatId=${chatId} messageId=${messageId}
 Action Taken: ${actionTaken}
 Reasoning: ${reasoning}
 Evidence:

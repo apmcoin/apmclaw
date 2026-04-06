@@ -554,7 +554,7 @@ export const registerTelegramNativeCommands = ({
         operation: "sendMessage",
         runtime,
         fn: () =>
-          bot.api.sendMessage(chatId, "apM Links", {
+          bot.api.sendMessage(chatId, "apM Official Links\nAI-Powered Innovation in the Fashion Industry", {
             ...threadParams,
             reply_markup: {
               inline_keyboard: [

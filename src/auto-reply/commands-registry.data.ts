@@ -44,7 +44,7 @@ function buildChatCommands(): ChatCommandDefinition[] {
     defineChatCommand({
       key: "menu",
       nativeName: "menu",
-      description: "apM official links",
+      description: "apM Official Links",
       textAliases: ["/menu"],
       category: "info",
     }),

@@ -140,5 +140,8 @@ workspace/
 apmclaw-server.pem
 github-actions-key.pem
 
-# Deployment scripts (서버 로컬 관리)
+# Deployment scripts (server local)
 scripts/
+
+# Korean translation copies (local reference only)
+docs/reference/templates/*.ko.md

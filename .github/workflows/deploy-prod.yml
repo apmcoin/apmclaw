@@ -156,7 +156,7 @@ jobs:
             "gateway": {
               "auth": {
                 "mode": "token",
-                "token": "7f1d4ffa9a239106a4ae4b74b77cacfdc5ddfcdfc29790d5"
+                "token": "${{ secrets.GATEWAY_TOKEN_PROD }}"
               },
               "controlUi": {
                 "enabled": false

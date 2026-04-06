@@ -161,6 +161,7 @@ export function createApmClawTools(options?: {
           config: options?.config,
         }),
         workspaceDir: options?.workspaceDir,
+        senderIsOwner: options?.senderIsOwner,
       }),
       // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
       // createSessionStatusTool({

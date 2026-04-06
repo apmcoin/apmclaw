@@ -25,9 +25,6 @@ _No preferences set._
 `;
 
 const MemoryProposeSchema = Type.Object({
-  senderRole: Type.Union([Type.Literal("admin"), Type.Literal("user")], {
-    description: "Role of the message sender. Check system context for admin status. MUST be accurate.",
-  }),
   pattern: Type.String({
     description: "Brief description of the spam pattern (e.g., 'Investment solicitation spam')",
   }),
@@ -55,6 +52,7 @@ export function createMemoryProposeTool(options: {
   config?: any;
   agentId?: string;
   workspaceDir?: string;
+  senderIsOwner?: boolean;
 }): AnyAgentTool {
   return {
     label: "Memory Propose",
@@ -63,10 +61,8 @@ export function createMemoryProposeTool(options: {
       "Propose a single message or spam pattern for admin approval. MANDATORY for uncertain messages (apM meme vs spam, partner content vs promotion). Use actionTaken='preserved' when uncertain, 'deleted' when confirming new spam. Admins review via Telegram (button=approve, reply=reject). Do NOT use for patterns already in AGENTS.md or MEMORY.md Approved Patterns - just delete those immediately.",
     parameters: MemoryProposeSchema,
     execute: async (_toolCallId, params) => {
-      const senderRole = readStringParam(params, "senderRole", { required: true });
-
-      // 2nd defense: admin messages must never be proposed, regardless of LLM judgment
-      if (senderRole === "admin") {
+      // 2nd defense: admin/owner messages must never be proposed
+      if (options.senderIsOwner) {
         return jsonResult({
           success: false,
           blocked: true,

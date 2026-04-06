@@ -156,7 +156,7 @@ jobs:
             "gateway": {
               "auth": {
                 "mode": "token",
-                "token": "${{ secrets.GATEWAY_TOKEN_DEV }}"
+                "token": "$(openssl rand -hex 24)"
               },
               "controlUi": {
                 "enabled": false

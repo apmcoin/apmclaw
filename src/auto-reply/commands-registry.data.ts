@@ -42,60 +42,20 @@ function defineChatCommand(command: DefineChatCommandInput): ChatCommandDefiniti
 function buildChatCommands(): ChatCommandDefinition[] {
   return [
     defineChatCommand({
+      key: "menu",
+      nativeName: "menu",
+      description: "apM official links",
+      textAliases: ["/menu"],
+      category: "info",
+    }),
+    // /reset: admin-only, not registered in Telegram menu.
+    // Handled as text command only.
+    defineChatCommand({
       key: "reset",
-      nativeName: "reset",
       description: "admin menu",
       textAliases: ["/reset"],
+      scope: "text",
       category: "session",
-    }),
-    defineChatCommand({
-      key: "about",
-      nativeName: "about",
-      description: "about apM project",
-      textAliases: ["/about"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "website",
-      nativeName: "website",
-      description: "official website",
-      textAliases: ["/website"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "whitepaper",
-      nativeName: "whitepaper",
-      description: "whitepaper",
-      textAliases: ["/whitepaper"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "etherscan",
-      nativeName: "etherscan",
-      description: "token contract",
-      textAliases: ["/etherscan"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "medium",
-      nativeName: "medium",
-      description: "blog & articles",
-      textAliases: ["/medium"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "x",
-      nativeName: "x",
-      description: "X (Twitter)",
-      textAliases: ["/x"],
-      category: "info",
-    }),
-    defineChatCommand({
-      key: "roll",
-      nativeName: "roll",
-      description: "roll the dice",
-      textAliases: ["/roll"],
-      category: "fun",
     }),
   ];
 }

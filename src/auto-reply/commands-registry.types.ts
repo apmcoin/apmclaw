@@ -9,7 +9,8 @@ export type CommandCategory =
   | "management"
   | "media"
   | "tools"
-  | "docks";
+  | "docks"
+  | "info";
 
 export type CommandArgType = "string" | "number" | "boolean";
 

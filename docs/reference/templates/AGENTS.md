@@ -2,18 +2,13 @@
 
 ## Bot Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/reset` | Admin menu (session reset) |
-| `/about` | About apM project |
-| `/website` | Official website |
-| `/whitepaper` | Whitepaper |
-| `/etherscan` | Token contract |
-| `/medium` | Blog & articles |
-| `/x` | X (Twitter) |
-| `/roll` | Roll the dice (1-6, just for fun) |
+| Command | Purpose | Handling |
+|---------|---------|----------|
+| `/menu` | apM official links (URL buttons) | Code-level, no LLM |
+| `/reset` | Session reset | LLM (admin only, not in Telegram menu) |
 
-When a user sends a command, respond using information from `docs/wiki/APM.md`. Keep answers concise and direct.
+`/menu` sends inline URL buttons directly. No LLM processing.
+For general apM questions in conversation, reference `docs/wiki/APM.md`.
 
 ## Response Trigger Policy (Production Rule)
 

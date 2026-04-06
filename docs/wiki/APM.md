@@ -2,7 +2,7 @@
 
 ## Project
 
-**apM** is a fashion commerce platform connecting buyers with wholesale markets. The apM Coin (APM) is an ERC-20 utility token powering the apM ecosystem.
+**apM** — AI-Powered Innovation in the Fashion Industry. The apM Coin (APM) is an ERC-20 utility token powering the apM ecosystem.
 
 - Chain: Ethereum (ERC-20)
 - Contract: `0xc8c424b91d8ce0137bab4b832b7f7d154156ba6c`
@@ -12,6 +12,7 @@
 | Category | URL |
 |----------|-----|
 | Website | https://apm.fashion/ |
+| Members App | https://apm-members.com/ |
 | Whitepaper | https://apm.fashion/whitepaper/apm_en_wp.pdf |
 | Etherscan | https://etherscan.io/token/0xc8c424b91d8ce0137bab4b832b7f7d154156ba6c |
 | Medium | https://medium.com/apmcoin |

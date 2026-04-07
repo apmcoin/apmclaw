@@ -173,6 +173,19 @@ export function createTelegramBot(opts: TelegramBotOptions) {
     return skipped;
   };
 
+  // 스팸 전달방에서 오는 메시지 무시 (봇이 전달방에 참여해 있으면 포워딩된 스팸을 재감지하는 루프 방지)
+  const forwardSpamChatId = telegramCfg.forwardSpamChatId
+    ? String(telegramCfg.forwardSpamChatId)
+    : null;
+  bot.use(async (ctx, next) => {
+    const chatId = ctx.chat?.id;
+    if (forwardSpamChatId && chatId != null && String(chatId) === forwardSpamChatId) {
+      logVerbose(`telegram: skipping message from spam archive chat (${chatId})`);
+      return;
+    }
+    await next();
+  });
+
   // 프로세스 시작 이전 메시지 무시 (다운타임 중 밀린 메시지 대응)
   const processStartEpoch = Math.floor(Date.now() / 1000);
   bot.use(async (ctx, next) => {

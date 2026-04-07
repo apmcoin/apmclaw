@@ -320,6 +320,31 @@ export async function monitorTelegramProvider(opts: MonitorTelegramOpts = {}) {
       }
     };
 
+    // 시작 시 설정된 채팅방 제목 로깅 (첫 사이클에서 한 번만)
+    let chatTitlesLogged = false;
+    const logChatTitles = async (bot: TelegramBot) => {
+      if (chatTitlesLogged) return;
+      chatTitlesLogged = true;
+      const telegramCfg = account.config;
+      const chatIds: string[] = [];
+      if (telegramCfg.groups) {
+        chatIds.push(...Object.keys(telegramCfg.groups));
+      }
+      if (telegramCfg.forwardSpamChatId) {
+        chatIds.push(String(telegramCfg.forwardSpamChatId));
+      }
+      for (const chatId of chatIds) {
+        try {
+          const chat = await bot.api.getChat(chatId);
+          const title = "title" in chat ? chat.title : ("first_name" in chat ? chat.first_name : chatId);
+          const isForward = String(telegramCfg.forwardSpamChatId) === chatId;
+          log(`[telegram] 채팅방: ${title} (${chatId})${isForward ? " [스팸 전달방]" : ""}`);
+        } catch (err) {
+          log(`[telegram] 채팅방 조회 실패: ${chatId} — ${formatErrorMessage(err)}`);
+        }
+      }
+    };
+
     while (!opts.abortSignal?.aborted) {
       const bot = await createPollingBot();
       if (!bot) {
@@ -333,6 +358,8 @@ export async function monitorTelegramProvider(opts: MonitorTelegramOpts = {}) {
       if (cleanupState === "exit") {
         return;
       }
+
+      await logChatTitles(bot);
 
       const state = await runPollingCycle(bot);
       if (state === "exit") {

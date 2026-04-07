@@ -157,7 +157,7 @@ jobs:
                 "groups": {
                   $GROUPS_JSON
                 },
-                "groupPolicy": "open",
+                "groupPolicy": "allowlist",
                 "streaming": "off",
                 "autoDeleteSystemMessages": true,
                 "forwardSpamChatId": "${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}"

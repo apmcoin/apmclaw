@@ -51,12 +51,12 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 - Certain spam → `spam_delete` (forward to archive + delete, no memory write)
 - Uncertain spam → ignored silently (admin handles manually)
 
-> **TODO**: Spam Pattern Learning (admin-approved pattern storage) — 코드 2천줄 이내 압축 개편 시 재설계 예정
+> **TODO**: Spam Pattern Learning (admin-approved pattern storage) — to be redesigned during codebase compression phase
 
 **4. Group Access Control**
-- `groupPolicy: "allowlist"` — config에 등록된 그룹만 응답
-- 스팸 전달방 미들웨어 차단 — 포워딩된 스팸 재감지 루프 방지
-- 프로세스 시작 이전 메시지 무시 — 다운타임 중 밀린 메시지 대응
+- `groupPolicy: "allowlist"` — only responds in registered groups
+- Spam archive chat middleware filter — prevents re-detection loop of forwarded spam
+- Pre-startup message filter — ignores messages queued during downtime
 
 **5. Network Security**
 - HTTPS-only, local network blocking (`127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`)
@@ -99,26 +99,26 @@ pnpm build
 
 ### Configuration
 
-GitHub Secrets로 관리 (`.env` + `config/apmclaw.json` 자동 생성):
+Managed via GitHub Secrets (`.env` + `config/apmclaw.json` auto-generated on deploy):
 
-| Secret | 용도 |
-|--------|------|
-| `TELEGRAM_TOKEN_*` | 봇 토큰 (dev/prod 분리) |
-| `TELEGRAM_CHAT_IDS_*` | 모니터링 대상 그룹 ID (쉼표 구분) |
-| `TELEGRAM_CHAT_IDS_FORWARD_SPAM_*` | 스팸 아카이브 전달방 ID |
-| `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API 인증 |
-| `BRAVE_SEARCH_API_KEY` | 웹 검색 |
+| Secret | Purpose |
+|--------|---------|
+| `TELEGRAM_TOKEN_*` | Bot token (separate for dev/prod) |
+| `TELEGRAM_CHAT_IDS_*` | Monitored group IDs (comma-separated) |
+| `TELEGRAM_CHAT_IDS_FORWARD_SPAM_*` | Spam archive chat ID |
+| `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API auth |
+| `BRAVE_SEARCH_API_KEY` | Web search |
 
 ### Run
 
 ```bash
-# PM2로 실행
+# Run with PM2
 pm2 start dist/entry.mjs --name apmclaw -- gateway --bind lan --allow-unconfigured --port 18790
 ```
 
-dev/prod는 GitHub Actions (`deploy-dev.yml`, `deploy-prod.yml`)로 자동 배포.
-- dev: `dev` 브랜치 push → 포트 18789
-- prod: `main` 브랜치 push → 포트 18790
+Auto-deployed via GitHub Actions (`deploy-dev.yml`, `deploy-prod.yml`):
+- dev: push to `dev` branch → port 18789
+- prod: push to `main` branch → port 18790
 
 ### Workspace Templates
 

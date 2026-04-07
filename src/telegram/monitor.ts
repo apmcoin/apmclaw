@@ -333,12 +333,18 @@ export async function monitorTelegramProvider(opts: MonitorTelegramOpts = {}) {
       if (telegramCfg.forwardSpamChatId) {
         chatIds.push(String(telegramCfg.forwardSpamChatId));
       }
+      const botInfo = await bot.api.getMe();
       for (const chatId of chatIds) {
         try {
           const chat = await bot.api.getChat(chatId);
           const title = "title" in chat ? chat.title : ("first_name" in chat ? chat.first_name : chatId);
           const isForward = String(telegramCfg.forwardSpamChatId) === chatId;
-          log(`[telegram] 채팅방: ${title} (${chatId})${isForward ? " [스팸 전달방]" : ""}`);
+          let role = "";
+          try {
+            const member = await bot.api.getChatMember(chatId, botInfo.id);
+            role = ` [${member.status}]`;
+          } catch { /* 권한 조회 실패 시 무시 */ }
+          log(`[telegram] 채팅방: ${title} (${chatId})${role}${isForward ? " [스팸 전달방]" : ""}`);
         } catch (err) {
           log(`[telegram] 채팅방 조회 실패: ${chatId} — ${formatErrorMessage(err)}`);
         }

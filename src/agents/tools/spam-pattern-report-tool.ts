@@ -38,9 +38,16 @@ export function createSpamPatternReportTool(options: {
     label: "Spam Delete & Pattern Report",
     name: "spam_delete_and_pattern_report",
     description:
-      "Delete uncertain spam and ask admin for pattern learning review. Use when not 100% sure if message is spam (apM meme vs spam, partner content vs promotion). Handles: forward to archive + delete + MEMORY.md record + admin notification with approve/reject buttons. All atomic.",
+      "⚠️ DISABLED: Under redesign. Use spam_delete for certain spam. Uncertain spam should be left for admin to handle manually.",
     parameters: SpamPatternReportSchema,
-    execute: async (_toolCallId, params) => {
+    execute: async (_toolCallId, _params) => {
+      return jsonResult({
+        success: false,
+        error:
+          "spam_delete_and_pattern_report is temporarily disabled. Use spam_delete for certain spam, or ignore uncertain spam silently.",
+      });
+
+      /* ORIGINAL CODE (disabled):
       // 코드 레벨 어드민 차단
       if (options.senderIsOwner) {
         return jsonResult({
@@ -156,6 +163,7 @@ Status: Awaiting admin review
         chatId: String(chatId),
         messageId: String(messageId),
       });
+      */
     },
   };
 }

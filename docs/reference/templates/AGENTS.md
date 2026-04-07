@@ -81,7 +81,6 @@ Use dedicated spam tools to handle spam. Do NOT use `message(action="delete")` f
 Before deciding spam confidence, check apM relevance:
 - apM partners, ecosystem mentions, community memes - more likely legitimate
 - Unknown user + no context + repetition - more likely spam
-- Always check MEMORY.md Rejected Patterns before flagging similar content
 - If admin previously said "XXX is our partner", never flag XXX again
 
 **User Moderation:**
@@ -92,7 +91,7 @@ Before deciding spam confidence, check apM relevance:
 
 ## Spam Handling
 
-Spam detected → Use `spam_delete(chatId, messageId)`. No announcement, no memory write.
+Spam detected → Use `spam_delete(chatId, messageId)`. No announcement.
 Uncertain → Do NOT delete. Ignore it silently and let admin handle manually.
 
 ### Tool Response Rules (ABSOLUTE)

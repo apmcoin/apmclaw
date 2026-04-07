@@ -175,14 +175,13 @@ jobs:
           CONFIGEOF
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
-            # workspace 초기화 (템플릿 갱신)
-            # workspace 초기화 (템플릿 갱신, MEMORY.md 보존)
-            if [ -f workspace/MEMORY.md ]; then cp workspace/MEMORY.md /tmp/_memory_backup.md; fi
+            # workspace 전체 초기화 (봇 시작 시 템플릿에서 자동 복사됨)
+            rm -rf "$HOME/.apmclaw/workspace"
             rm -rf workspace/
-            mkdir -p workspace
-            if [ -f /tmp/_memory_backup.md ]; then mv /tmp/_memory_backup.md workspace/MEMORY.md; fi
-            # 메모리 인덱스 삭제 (MEMORY.md 변경 시 재인덱싱 강제)
+
+            # 메모리 인덱스 삭제 (재인덱싱 강제)
             rm -f config/memory/*.sqlite
+            rm -f "$HOME/.apmclaw/memory/"*.sqlite
 
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile

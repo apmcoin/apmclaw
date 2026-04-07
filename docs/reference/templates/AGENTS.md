@@ -12,7 +12,7 @@
 | `/reset` | Session reset | LLM (admin only, not in Telegram menu) |
 
 `/menu` sends inline URL buttons directly. No LLM processing.
-For general apM questions in conversation, reference `docs/wiki/APM.md`.
+For general apM questions in conversation, reference `MEMORY.md` (project info, links, recent news, listed exchanges).
 
 ## Response Trigger Policy (Production Rule)
 

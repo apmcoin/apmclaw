@@ -42,6 +42,15 @@ apM Members signed an e-voucher supply contract with SentBe (Singapore-based glo
 
 Source: https://n.news.naver.com/article/092/0002411958
 
+## Listed Exchanges
+
+| Exchange | Type |
+|----------|------|
+| LBank | CEX |
+| Uniswap | DEX (Ethereum) |
+| SushiSwap | DEX (Ethereum) |
+| PancakeSwap | DEX (BSC) |
+
 ## Notes
 
 - apM operates apM, apM PLACE, apM Luxe — major Dongdaemun fashion wholesale malls

@@ -130,9 +130,8 @@ dist/protocol.schema.json
 **/.stfolder/
 build.log
 
-# Runtime memory (auto-generated, workspace/ 내 런타임 파일 무시)
-MEMORY.md
-!docs/reference/templates/MEMORY.md
+# Runtime memory (workspace/ 내 런타임 파일은 배포 시 보존)
+# MEMORY.md 템플릿: docs/reference/templates/MEMORY.md
 
 # Sessions and dynamic data
 

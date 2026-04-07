@@ -26,7 +26,8 @@
 
 ### 2026-04-03 — B2EN MOU: AI + Stablecoin Payment Infra
 B2EN (KOSDAQ: 307870, AI/Big Data) × apM Members MOU. Stablecoin payment infra for Dongdaemun, AI payment data analytics, joint R&D. B2EN partnered with Binance Pay for inbound tourist digital payments. Dongdaemun (80%+ international visitors) as core hub.
-https://medium.com/p/1c69ee9060ff
+- Medium: https://medium.com/p/1c69ee9060ff
+- PR (edaily): https://n.news.naver.com/mnews/article/018/0006249193
 
 ### 2026-03-11 — 3rd Buyback Completed: 1.02B APM
 Foundation & strategic partners (Finnacle Inc.) completed 3rd buyback. Total: 1,021,948,812 APM (56.4% of total supply). Progress: 1st(Jan) 631M → 2nd(Feb) 991M → 3rd(Mar) 1.02B.
@@ -34,7 +35,8 @@ https://x.com/apmcoin/status/2031674032203198585
 
 ### 2026-02-27 — SentBe e-Voucher Supply Contract + apM 72P
 Signed e-voucher supply agreement with SentBe (Singapore fintech, MPI license). Overseas buyers can purchase apM e-vouchers via stablecoin off-ramp. PoC for overseas buyers in Q1. Also announced "apM 72P" protocol reserve framework — converting protocol fees into APM for future direct payment system.
-https://medium.com/apmcoin/ann-2026-q1-roadmap-implementation-status-building-stablecoin-infrastructure-via-sentbe-d56a6c2d7519
+- Medium: https://medium.com/apmcoin/ann-2026-q1-roadmap-implementation-status-building-stablecoin-infrastructure-via-sentbe-d56a6c2d7519
+- PR (ZDNet Korea): https://n.news.naver.com/article/092/0002411958
 
 ### 2026-02-21 — 2nd Buyback: Total ~991M APM (55%)
 Strategic partners completed additional buyback of 86,479,668 APM. Total managed: ~990,769,052 APM (~55% of supply). Long-term holding principle.

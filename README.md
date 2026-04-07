@@ -6,7 +6,7 @@
   Protecting crypto communities the apM way, powered by the apM Claw engine.
 </p>
 
-## 📜 Heritage
+## Heritage
 
 **Built on OpenClaw, Rebuilt for Crypto Security**
 
@@ -15,14 +15,14 @@ apM Claw is an independent project inspired by [OpenClaw](https://github.com/ste
 **What Changed:**
 - **OpenClaw**: General-purpose agent framework (Slack, Discord, Web UI, Telegram)
 - **apM Claw**: Telegram-only security appliance for crypto communities
-- **Removed**: 80% of features (cron, browser, sessions, subagents, image generation, multi-platform support)
-- **Added**: Memory Proposal System, spam forwarding, crypto-specific threat detection
+- **Removed**: 80% of features (cron, browser, sessions, subagents, image generation, multi-platform support, Docker)
+- **Added**: Spam forwarding, crypto-specific threat detection, code-level admin verification
 
 **PM-E's Journey:**
-- **Since 2023**: PM-E (피엠이) served as apM community's guardian
+- **Since 2023**: PM-E served as apM community's guardian
 - **2025**: Rebuilt from scratch as a specialized security tool
 
-## 🛡️ Security Architecture
+## Security Architecture
 
 ### Design Philosophy: "Lean & Strong Claw"
 
@@ -30,16 +30,15 @@ PM-E is a **purpose-built security appliance** for Telegram crypto communities. 
 
 > **LLMs cannot be trusted with authorization decisions.**
 
-Real protection happens in TypeScript code (`method-scopes.ts`) and Telegram API calls, not system prompts.
+Real protection happens in TypeScript code and Telegram API calls, not system prompts.
 
 ---
 
 ### Key Security Measures
 
 **1. Attack Surface Reduction**
-- **13 tools → 6 tools** (54% reduction)
-- Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`
-- Kept: `message`, `spam_delete`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
+- **6 tools only**: `message`, `spam_delete`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
+- Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`, Docker support
 
 **2. Code-Level Authorization**
 ```typescript
@@ -48,15 +47,16 @@ const member = await telegram.getChatMember(chatId, userId);
 const isAdmin = ["administrator", "creator"].includes(member.status);
 ```
 
-**3. Spam Pattern Learning**
-- **Problem**: Memory injection attacks achieve 95% success with direct memory writes
-- **Solution**: Two atomic spam tools with human-in-the-loop approval
-
-**How It Works:**
-1. Certain spam → `spam_delete` (forward to archive + delete, no memory write)
-2. Uncertain spam → ignored silently (admin handles manually)
+**3. Spam Handling**
+- Certain spam → `spam_delete` (forward to archive + delete, no memory write)
+- Uncertain spam → ignored silently (admin handles manually)
 
 > **TODO**: Spam Pattern Learning (admin-approved pattern storage) — 코드 2천줄 이내 압축 개편 시 재설계 예정
+
+**4. Group Access Control**
+- `groupPolicy: "allowlist"` — config에 등록된 그룹만 응답
+- 스팸 전달방 미들웨어 차단 — 포워딩된 스팸 재감지 루프 방지
+- 프로세스 시작 이전 메시지 무시 — 다운타임 중 밀린 메시지 대응
 
 **5. Network Security**
 - HTTPS-only, local network blocking (`127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`)
@@ -70,6 +70,7 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 - Silent spam deletion via `spam_delete` (certain spam)
 - Role-based admin exemption (code-level, not prompt-level)
 - Spam archive forwarding before deletion
+- Startup chat title + admin status logging
 
 **In Development:**
 - User-level sanctions (ban/mute for repeat offenders)
@@ -87,72 +88,39 @@ PM-E defends crypto communities against:
 
 ---
 
-## 🚀 Key Features
+## Deployment
 
-- **Ambient Awareness**: Observes chat dynamics, stays silent when appropriate
-- **Contextual Moderation**: Intent-based spam detection (not keyword matching)
-- **Spam Detection**: Certain spam auto-deleted, uncertain spam left for admin
-- **Telegram Native**: Inline buttons for approvals, role-based exemptions
-- **Batch Processing**: Handles coordinated attacks efficiently
-
-## 🛠️ Quick Start
-
-### 1. Environment Setup
+### Environment
 
 ```bash
-# 의존성 설치
 pnpm install
-
-# .env 작성
-cat > .env <<EOF
-TELEGRAM_BOT_TOKEN=your_token
-BRAVE_SEARCH_API_KEY=your_key
-AWS_BEARER_TOKEN_BEDROCK=your_bedrock_token  # 또는 ANTHROPIC_API_KEY
-AWS_REGION=us-east-1
-EOF
+pnpm build
 ```
 
-### 2. Configuration
+### Configuration
 
-Create `config/apmclaw.json`:
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "amazon-bedrock/us.anthropic.claude-sonnet-4-6"
-      }
-    }
-  },
-  "channels": {
-    "telegram": {
-      "enabled": true,
-      "botToken": "${TELEGRAM_BOT_TOKEN}",
-      "groups": {
-        "-1001234567890": {
-          "enabled": true,
-          "requireMention": false
-        }
-      }
-    }
-  }
-}
-```
+GitHub Secrets로 관리 (`.env` + `config/apmclaw.json` 자동 생성):
 
-### 3. Run
+| Secret | 용도 |
+|--------|------|
+| `TELEGRAM_TOKEN_*` | 봇 토큰 (dev/prod 분리) |
+| `TELEGRAM_CHAT_IDS_*` | 모니터링 대상 그룹 ID (쉼표 구분) |
+| `TELEGRAM_CHAT_IDS_FORWARD_SPAM_*` | 스팸 아카이브 전달방 ID |
+| `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API 인증 |
+| `BRAVE_SEARCH_API_KEY` | 웹 검색 |
+
+### Run
 
 ```bash
-# 빌드
-pnpm build
-
-# 직접 실행
-node dist/entry.mjs gateway --bind lan --allow-unconfigured
-
-# 또는 PM2로 프로덕션 실행
-pm2 start dist/entry.mjs --name apmclaw -- gateway --bind lan --allow-unconfigured
+# PM2로 실행
+pm2 start dist/entry.mjs --name apmclaw -- gateway --bind lan --allow-unconfigured --port 18790
 ```
 
-### 4. Workspace Templates
+dev/prod는 GitHub Actions (`deploy-dev.yml`, `deploy-prod.yml`)로 자동 배포.
+- dev: `dev` 브랜치 push → 포트 18789
+- prod: `main` 브랜치 push → 포트 18790
+
+### Workspace Templates
 
 PM-E's behavior is defined by templates in `docs/reference/templates/`:
 - `SOUL.md` - Identity and communication style
@@ -161,7 +129,7 @@ PM-E's behavior is defined by templates in `docs/reference/templates/`:
 
 These are auto-generated to `workspace/` on first run.
 
-## 🤝 Contribution
+## Contribution
 
 As an evolving project, PM-E grows through community interaction and open-source contributions.
 Check our repository: [https://github.com/apmcoin/apmclaw](https://github.com/apmcoin/apmclaw)

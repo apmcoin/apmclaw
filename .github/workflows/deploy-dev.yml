@@ -176,8 +176,11 @@ jobs:
           CONFIGEOF
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
-            # workspace 초기화 (템플릿 갱신)
+            # workspace 초기화 (템플릿 갱신, MEMORY.md 보존)
+            if [ -f workspace/MEMORY.md ]; then cp workspace/MEMORY.md /tmp/_memory_backup.md; fi
             rm -rf workspace/
+            mkdir -p workspace
+            if [ -f /tmp/_memory_backup.md ]; then mv /tmp/_memory_backup.md workspace/MEMORY.md; fi
             # 세션은 유지 — 관리자가 /reset 명시할 때만 초기화
 
             # 의존성 설치 & 빌드

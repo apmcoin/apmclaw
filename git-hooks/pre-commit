@@ -1,49 +1,70 @@
 #!/usr/bin/env bash
 
+# 민감정보 커밋 차단 pre-commit hook
+# 설정: git config core.hooksPath git-hooks
+
 set -euo pipefail
 
-ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-RUN_NODE_TOOL="$ROOT_DIR/scripts/pre-commit/run-node-tool.sh"
-FILTER_FILES="$ROOT_DIR/scripts/pre-commit/filter-staged-files.mjs"
+# 커밋 금지 파일 패턴
+BLOCKED_PATTERNS=(
+  '\.pem$'
+  '\.env$'
+  '\.env\.'
+  'CLAUDE\.md$'
+  'credentials'
+  'secret'
+)
 
-if [[ ! -x "$RUN_NODE_TOOL" ]]; then
-  echo "Missing helper: $RUN_NODE_TOOL" >&2
-  exit 1
-fi
+# 민감 콘텐츠 패턴 (파일 내용 검사)
+SENSITIVE_PATTERNS=(
+  'PRIVATE KEY'
+  'Bearer [A-Za-z0-9+/=]'
+  'ghp_[A-Za-z0-9]'
+  'github_pat_[A-Za-z0-9]'
+  'sk-[A-Za-z0-9]'
+  'AKIA[A-Z0-9]'
+)
 
-if [[ ! -f "$FILTER_FILES" ]]; then
-  echo "Missing helper: $FILTER_FILES" >&2
-  exit 1
-fi
-
-# Security: avoid option-injection from malicious file names (e.g. "--all", "--force").
-# Robustness: NUL-delimited file list handles spaces/newlines safely.
-# Compatibility: use read loops instead of `mapfile` so this runs on macOS Bash 3.x.
-files=()
+staged_files=()
 while IFS= read -r -d '' file; do
-  files+=("$file")
+  staged_files+=("$file")
 done < <(git diff --cached --name-only --diff-filter=ACMR -z)
 
-if [ "${#files[@]}" -eq 0 ]; then
+if [ "${#staged_files[@]}" -eq 0 ]; then
   exit 0
 fi
 
-lint_files=()
-while IFS= read -r -d '' file; do
-  lint_files+=("$file")
-done < <(node "$FILTER_FILES" lint -- "${files[@]}")
+blocked=0
 
-format_files=()
-while IFS= read -r -d '' file; do
-  format_files+=("$file")
-done < <(node "$FILTER_FILES" format -- "${files[@]}")
+# 1. 파일명 패턴 검사
+for file in "${staged_files[@]}"; do
+  for pattern in "${BLOCKED_PATTERNS[@]}"; do
+    if echo "$file" | grep -qE "$pattern"; then
+      echo "❌ BLOCKED: $file (패턴: $pattern)" >&2
+      blocked=1
+    fi
+  done
+done
 
-if [ "${#lint_files[@]}" -gt 0 ]; then
-  "$RUN_NODE_TOOL" oxlint --type-aware --fix -- "${lint_files[@]}"
+# 2. 파일 내용 검사 (텍스트 파일만, 훅 자기 자신 제외)
+for file in "${staged_files[@]}"; do
+  # 훅 파일은 패턴 정의 자체를 포함하므로 제외
+  if [[ "$file" == git-hooks/* ]]; then
+    continue
+  fi
+  if git show ":$file" 2>/dev/null | file - | grep -q text; then
+    for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+      if git show ":$file" 2>/dev/null | grep -qE "$pattern"; then
+        echo "❌ BLOCKED: $file (민감 콘텐츠: $pattern)" >&2
+        blocked=1
+      fi
+    done
+  fi
+done
+
+if [ "$blocked" -ne 0 ]; then
+  echo "" >&2
+  echo "민감정보가 포함된 파일이 감지되었습니다." >&2
+  echo "의도적이라면: git commit --no-verify" >&2
+  exit 1
 fi
-
-if [ "${#format_files[@]}" -gt 0 ]; then
-  "$RUN_NODE_TOOL" oxfmt --write -- "${format_files[@]}"
-fi
-
-git add -- "${files[@]}"

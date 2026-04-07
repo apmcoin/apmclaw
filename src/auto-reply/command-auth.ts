@@ -350,7 +350,9 @@ export function resolveCommandAuthorization(params: {
     isInternalMessageChannel(ctx.Provider) &&
     Array.isArray(ctx.GatewayClientScopes) &&
     ctx.GatewayClientScopes.includes("operator.admin");
-  const senderIsOwner = senderIsOwnerByIdentity || senderIsOwnerByScope;
+  // 텔레그램 그룹 어드민/생성자도 owner로 취급 (스팸 도구 코드 레벨 차단용)
+  const senderIsOwnerByAdmin = Boolean(ctx.SenderIsAdmin);
+  const senderIsOwner = senderIsOwnerByIdentity || senderIsOwnerByScope || senderIsOwnerByAdmin;
   const ownerAllowlistConfigured = ownerAllowAll || explicitOwners.length > 0;
   const requireOwner = enforceOwner || ownerAllowlistConfigured;
   const isOwnerForCommands = !requireOwner

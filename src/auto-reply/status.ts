@@ -670,6 +670,7 @@ const CATEGORY_LABELS: Record<CommandCategory, string> = {
   media: "Media",
   tools: "Tools",
   docks: "Docks",
+  info: "Info",
 };
 
 const CATEGORY_ORDER: CommandCategory[] = [

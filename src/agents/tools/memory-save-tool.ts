@@ -21,7 +21,7 @@ const MemorySaveSchema = Type.Object({
  * Security Issue: Direct memory writes allow memory poisoning attacks.
  * New Design: Memory Proposal System with admin approval (see README.md).
  *
- * TODO: Replace with memory_propose tool that creates admin-reviewed proposals.
+ * Spam patterns are handled by spam_delete / spam_delete_and_pattern_report tools instead.
  */
 export function createMemorySaveTool(options: {
   config?: any;

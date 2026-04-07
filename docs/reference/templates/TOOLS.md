@@ -4,47 +4,23 @@
 
 ### 1. message
 
-Send, delete, react, poll, pin messages in Telegram.
+Send, react, poll, pin messages in Telegram. General-purpose messaging tool.
 
-**Delete Example:**
+**Note:** Do NOT use `message(action="delete")` for spam. Use `spam_delete` only.
 
-```
-message(action="delete", chatId=-1001597933348, messageId=12345)
-```
+### 2. spam_delete
 
-### 2. memory_propose (NEW)
-
-Propose a new spam pattern for admin approval.
+Delete messages that are 100% certain spam. Forwards to spam archive before deletion.
+Admin messages are blocked at code level (no response needed).
 
 **Parameters:**
-
-- `pattern` (string): Brief description (e.g., "Investment solicitation spam")
-- `evidence` (string[]): Actual message contents (2-5 examples)
-- `actionTaken` ("deleted" | "preserved"): Did you already delete the messages?
-- `reasoning` (string): Detailed explanation of why this is spam
+- `chatId` (string|number): Telegram chat ID
+- `messageId` (string|number): Telegram message ID
 
 **Example:**
-
 ```
-memory_propose(
-  pattern="NFT airdrop scam",
-  evidence=["Join our NFT drop now!", "Free NFTs for first 100 users"],
-  actionTaken="deleted",
-  reasoning="Repeated external links with urgency tactics ('now', 'first 100'), similar to the Promotional Content pattern in AGENTS.md. Domain is new and user has no history in the group."
-)
+spam_delete(chatId=-1001597933348, messageId=12345)
 ```
-
-**When to Use:**
-
-- **Delete + Propose**: Suspicious pattern that looks like spam but not in MEMORY.md yet
-- **Preserve + Ask**: Genuinely uncertain, need admin guidance
-- **Just Delete**: Already matches AGENTS.md or MEMORY.md patterns (no proposal needed)
-
-**Admin Response:**
-
-- [✅ Approve] button → Pattern saved to MEMORY.md, use it from now on
-- Reply with reason → Pattern rejected, learn from the reason (public)
-- Always check MEMORY.md Rejected Patterns before proposing again
 
 ### 3. memory_search
 

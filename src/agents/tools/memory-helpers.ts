@@ -2,6 +2,44 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { resolveWorkspaceRoot } from "../workspace-dir.js";
 
+/**
+ * MEMORY.md 자동 생성 템플릿
+ * 섹션 번호: 1=Approved, 2=Rejected, 3=Pending
+ */
+export const MEMORY_MD_TEMPLATE = `# PM-E Memory System
+
+## 1. Approved Patterns
+
+_No approved patterns yet._
+
+## 2. Rejected Patterns
+
+_No rejected patterns yet._
+
+## 3. Pending Proposals
+
+_No pending proposals._
+`;
+
+/**
+ * MEMORY.md 필수 섹션 존재 여부 검증 및 보정
+ */
+export function ensureMemoryMdSections(content: string): string {
+  const sections = [
+    { header: "## 1. Approved Patterns", placeholder: "\n_No approved patterns yet._\n" },
+    { header: "## 2. Rejected Patterns", placeholder: "\n_No rejected patterns yet._\n" },
+    { header: "## 3. Pending Proposals", placeholder: "\n_No pending proposals._\n" },
+  ];
+
+  for (const { header, placeholder } of sections) {
+    if (!content.includes(header)) {
+      content = content.trimEnd() + "\n\n" + header + placeholder;
+    }
+  }
+
+  return content;
+}
+
 interface ProposalMetadata {
   approvedBy?: string;
   approvedAt?: string;
@@ -21,7 +59,7 @@ function extractProposal(
   const sectionMap = {
     Pending: "## 3. Pending Proposals",
     Approved: "## 1. Approved Patterns",
-    Rejected: "## 4. Rejected Patterns",
+    Rejected: "## 2. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];
@@ -55,7 +93,7 @@ function removeProposal(
   const sectionMap = {
     Pending: "## 3. Pending Proposals",
     Approved: "## 1. Approved Patterns",
-    Rejected: "## 4. Rejected Patterns",
+    Rejected: "## 2. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];
@@ -161,7 +199,7 @@ function appendToSection(
   const sectionMap = {
     Pending: "## 3. Pending Proposals",
     Approved: "## 1. Approved Patterns",
-    Rejected: "## 4. Rejected Patterns",
+    Rejected: "## 2. Rejected Patterns",
   };
 
   const sectionHeader = sectionMap[section];

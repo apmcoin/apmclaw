@@ -173,6 +173,17 @@ export function createTelegramBot(opts: TelegramBotOptions) {
     return skipped;
   };
 
+  // 프로세스 시작 이전 메시지 무시 (다운타임 중 밀린 메시지 대응)
+  const processStartEpoch = Math.floor(Date.now() / 1000);
+  bot.use(async (ctx, next) => {
+    const msgDate = ctx.message?.date ?? ctx.editedMessage?.date ?? ctx.channelPost?.date;
+    if (typeof msgDate === "number" && msgDate < processStartEpoch) {
+      logVerbose(`telegram: skipping pre-startup message (date=${msgDate} < start=${processStartEpoch})`);
+      return;
+    }
+    await next();
+  });
+
   bot.use(async (ctx, next) => {
     const updateId = resolveTelegramUpdateId(ctx);
     if (typeof updateId === "number") {

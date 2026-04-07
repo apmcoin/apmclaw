@@ -538,6 +538,49 @@ export const registerTelegramNativeCommands = ({
     linkPreview: telegramCfg.linkPreview,
   });
 
+  // /menu: URL buttons sent directly, no LLM processing
+  if (typeof (bot as unknown as { command?: unknown }).command === "function") {
+    bot.command("menu", async (ctx: TelegramNativeCommandContext) => {
+      const msg = ctx.message;
+      if (!msg) return;
+      if (shouldSkipUpdate(ctx)) return;
+      const chatId = msg.chat.id;
+      const messageThreadId = (msg as { message_thread_id?: number }).message_thread_id;
+      const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
+      const isForum = "is_forum" in msg.chat && Boolean(msg.chat.is_forum);
+      const threadSpec = resolveTelegramThreadSpec({ isGroup, isForum, messageThreadId });
+      const threadParams = buildTelegramThreadParams(threadSpec) ?? {};
+      await withTelegramApiErrorLogging({
+        operation: "sendMessage",
+        runtime,
+        fn: () =>
+          bot.api.sendMessage(chatId, "apM Official Links\nAI-Powered Innovation in the Fashion Industry", {
+            ...threadParams,
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "Website", url: "https://apm.fashion/" },
+                  { text: "Members", url: "https://apm-members.com/" },
+                ],
+                [
+                  { text: "Whitepaper", url: "https://apm.fashion/whitepaper/apm_en_wp.pdf" },
+                  { text: "Etherscan", url: "https://etherscan.io/token/0xc8c424b91d8ce0137bab4b832b7f7d154156ba6c" },
+                ],
+                [
+                  { text: "Medium", url: "https://medium.com/apmcoin" },
+                  { text: "X (Twitter)", url: "https://x.com/apmcoin" },
+                ],
+                [
+                  { text: "Telegram EN", url: "https://t.me/apmcoin_official" },
+                  { text: "Telegram KR", url: "https://t.me/apmcoin_kor" },
+                ],
+              ],
+            },
+          }),
+      });
+    });
+  }
+
   if (commandsToRegister.length > 0 || pluginCatalog.commands.length > 0) {
     if (typeof (bot as unknown as { command?: unknown }).command !== "function") {
       logVerbose("telegram: bot.command unavailable; skipping native handlers");

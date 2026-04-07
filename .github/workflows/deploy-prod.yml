@@ -181,7 +181,8 @@ jobs:
             rm -rf workspace/
             mkdir -p workspace
             if [ -f /tmp/_memory_backup.md ]; then mv /tmp/_memory_backup.md workspace/MEMORY.md; fi
-            # 세션은 유지 — 관리자가 /reset 명시할 때만 초기화
+            # 메모리 인덱스 삭제 (MEMORY.md 변경 시 재인덱싱 강제)
+            rm -f config/memory/*.sqlite
 
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile

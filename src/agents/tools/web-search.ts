@@ -438,7 +438,7 @@ function resolveSearchApiKey(search?: WebSearchConfig): string | undefined {
         })
       : undefined;
   const fromConfig = normalizeSecretInput(fromConfigRaw);
-  const fromEnv = normalizeSecretInput(process.env.BRAVE_API_KEY);
+  const fromEnv = normalizeSecretInput(process.env.BRAVE_API_KEY) || normalizeSecretInput(process.env.BRAVE_SEARCH_API_KEY);
   return fromConfig || fromEnv || undefined;
 }
 

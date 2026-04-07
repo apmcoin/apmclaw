@@ -27,7 +27,7 @@ export function createSpamDeleteTool(options: {
     label: "Spam Delete",
     name: "spam_delete",
     description:
-      "Delete a message that is 100% certain spam (matches AGENTS.md rules or MEMORY.md Approved Patterns). Forwards to spam archive before deletion. Do NOT use for uncertain messages — use spam_delete_and_pattern_report instead.",
+      "Delete a message that is certain spam (matches AGENTS.md spam patterns). Forwards to spam archive before deletion. For uncertain messages, ignore silently and let admin handle manually.",
     parameters: SpamDeleteSchema,
     execute: async (_toolCallId, params) => {
       // 코드 레벨 어드민 차단: senderIsOwner이면 무조건 blocked

@@ -38,7 +38,7 @@ Real protection happens in TypeScript code and Telegram API calls, not system pr
 
 **1. Attack Surface Reduction**
 - **6 tools only**: `message`, `spam_delete`, `memory_search`, `memory_get`, `web_search`, `web_fetch`
-- Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`, Docker support
+- Removed: `browser`, `subagents`, `sessions_*`, `cron`, `image`, `session_status`, `memory_save`, Docker support
 
 **2. Code-Level Authorization**
 ```typescript
@@ -48,10 +48,8 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 ```
 
 **3. Spam Handling**
-- Certain spam → `spam_delete` (forward to archive + delete, no memory write)
+- Certain spam → `spam_delete` (forward to archive + delete)
 - Uncertain spam → ignored silently (admin handles manually)
-
-> **TODO**: Spam Pattern Learning (admin-approved pattern storage) — to be redesigned during codebase compression phase
 
 **4. Group Access Control**
 - `groupPolicy: "allowlist"` — only responds in registered groups
@@ -60,7 +58,6 @@ const isAdmin = ["administrator", "creator"].includes(member.status);
 
 **5. Network Security**
 - HTTPS-only, local network blocking (`127.0.0.0/8`, `10.0.0.0/8`, `192.168.0.0/16`)
-- Metadata endpoint blocking (`169.254.169.254`)
 
 ---
 
@@ -126,6 +123,7 @@ PM-E's behavior is defined by templates in `docs/reference/templates/`:
 - `SOUL.md` - Identity and communication style
 - `AGENTS.md` - Operation guidelines and spam patterns
 - `TOOLS.md` - Available capabilities
+- `MEMORY.md` - apM project wiki (links, news, exchanges)
 
 These are auto-generated to `workspace/` on first run.
 

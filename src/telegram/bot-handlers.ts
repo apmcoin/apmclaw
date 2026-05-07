@@ -66,6 +66,7 @@ import { buildInlineKeyboard } from "./send.js";
 import { wasSentByBot } from "./sent-message-cache.js";
 
 function isMediaSizeLimitError(err: unknown): boolean {
+  if (err instanceof MediaFetchError && err.code === "max_bytes") return true;
   const errMsg = String(err);
   return errMsg.includes("exceeds") && errMsg.includes("MB limit");
 }
@@ -887,29 +888,10 @@ export const registerTelegramHandlers = ({
       media = await resolveMedia(ctx, mediaMaxBytes, opts.token, opts.proxyFetch);
     } catch (mediaErr) {
       if (isMediaSizeLimitError(mediaErr)) {
-        if (sendOversizeWarning) {
-          const limitMb = Math.round(mediaMaxBytes / (1024 * 1024));
-          await withTelegramApiErrorLogging({
-            operation: "sendMessage",
-            runtime,
-            fn: () =>
-              bot.api.sendMessage(chatId, `⚠️ File too large. Maximum size is ${limitMb}MB.`, {
-                reply_to_message_id: msg.message_id,
-              }),
-          }).catch(() => {});
-        }
         logger.warn({ chatId, error: String(mediaErr) }, oversizeLogMessage);
-        return;
+      } else {
+        logger.warn({ chatId, error: String(mediaErr) }, "media fetch failed");
       }
-      logger.warn({ chatId, error: String(mediaErr) }, "media fetch failed");
-      await withTelegramApiErrorLogging({
-        operation: "sendMessage",
-        runtime,
-        fn: () =>
-          bot.api.sendMessage(chatId, "⚠️ Failed to download media. Please try again.", {
-            reply_to_message_id: msg.message_id,
-          }),
-      }).catch(() => {});
       return;
     }
 
@@ -1355,11 +1337,9 @@ export const registerTelegramHandlers = ({
         const autoDelete = groupCfg?.autoDeleteSystemMessages ?? account?.autoDeleteSystemMessages;
 
         if (autoDelete) {
-          withTelegramApiErrorLogging({
-            operation: "deleteMessage (service message)",
-            runtime,
-            fn: () => bot.api.deleteMessage(event.chatId, event.msg.message_id),
-          }).catch(() => {});
+          await bot.api.deleteMessage(event.chatId, event.msg.message_id).catch(() => {
+            logVerbose(`deleteMessage (service) failed: chat=${event.chatId} msg=${event.msg.message_id}`);
+          });
         }
         return;
       }

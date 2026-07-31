@@ -159,7 +159,7 @@ jobs:
                 },
                 "groupPolicy": "allowlist",
                 "streaming": "off",
-                "autoDeleteSystemMessages": true,
+                "moderationOnly": true,
                 "forwardSpamChatId": "${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_DEV }}"
               }
             },
@@ -177,12 +177,11 @@ jobs:
             sed -i 's/^[[:space:]]*//' config/apmclaw.json
 
             # workspace 전체 초기화 (봇 시작 시 템플릿에서 자동 복사됨)
-            rm -rf "$HOME/.apmclaw/workspace"
+            # 주의: $HOME/.apmclaw/workspace는 prod와 공유 경로이므로 삭제 금지
             rm -rf workspace/
 
             # 메모리 인덱스 삭제 (재인덱싱 강제)
             rm -f config/memory/*.sqlite
-            rm -f "$HOME/.apmclaw/memory/"*.sqlite
 
             # 의존성 설치 & 빌드
             pnpm install --frozen-lockfile

@@ -176,6 +176,12 @@ export type TelegramAccountConfig = {
    * Telegram expects unicode emoji (e.g., "👀") rather than shortcodes.
    */
   ackReaction?: string;
+  /**
+   * Run Telegram as a silent moderation bot.
+   * Only non-admin group messages are evaluated for spam, only `spam_delete`
+   * is exposed to the agent, and new-member service messages are deleted.
+   */
+  moderationOnly?: boolean;
   /** Automatically delete service messages (new members, left members, etc.) to keep chat clean. */
   autoDeleteSystemMessages?: boolean;
   /** Chat ID to forward spam messages before deletion (for spam archiving). */

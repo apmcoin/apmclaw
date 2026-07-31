@@ -285,10 +285,14 @@ export function createTelegramBot(opts: TelegramBotOptions) {
     globalSetting: cfg.commands?.native,
   });
   const useAccessGroups = cfg.commands?.useAccessGroups !== false;
-  const ackReactionScope = cfg.messages?.ackReactionScope ?? "group-mentions";
+  const ackReactionScope =
+    telegramCfg.moderationOnly === true
+      ? "off"
+      : (cfg.messages?.ackReactionScope ?? "group-mentions");
   const mediaMaxBytes = (opts.mediaMaxMb ?? telegramCfg.mediaMaxMb ?? 100) * 1024 * 1024;
   const logger = getChildLogger({ module: "telegram-auto-reply" });
-  const streamMode = resolveTelegramStreamMode(telegramCfg);
+  const streamMode =
+    telegramCfg.moderationOnly === true ? ("off" as const) : resolveTelegramStreamMode(telegramCfg);
   const resolveGroupPolicy = (chatId: string | number) =>
     resolveChannelGroupPolicy({
       cfg,

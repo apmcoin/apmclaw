@@ -23,6 +23,20 @@ import { createPdfTool } from "./tools/pdf-tool.js";
 import { createWebFetchTool, createWebSearchTool } from "./tools/web-tools.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 
+export function isTelegramModerationOnly(options?: {
+  agentChannel?: GatewayMessageChannel;
+  agentAccountId?: string;
+  config?: ApmClawConfig;
+}): boolean {
+  if (options?.agentChannel !== "telegram") {
+    return false;
+  }
+  const telegram = options.config?.channels?.telegram;
+  const accountId = options.agentAccountId?.trim();
+  const accountOverride = accountId ? telegram?.accounts?.[accountId]?.moderationOnly : undefined;
+  return (accountOverride ?? telegram?.moderationOnly) === true;
+}
+
 /**
  * PM-E Tool Registry (apM Claw Engine)
  * Refined for "Lean & Strong" security. Removed browser, subagents, and gateway.
@@ -58,6 +72,16 @@ export function createApmClawTools(options?: {
   sessionId?: string;
 }): AnyAgentTool[] {
   const workspaceDir = resolveWorkspaceRoot(options?.workspaceDir);
+  const spamDeleteTool = createSpamDeleteTool({
+    config: options?.config,
+    senderIsOwner: options?.senderIsOwner,
+  });
+
+  // Moderation-only Telegram runs must not be able to send messages, search,
+  // read memory, or invoke plugin tools. Spam deletion is the only capability.
+  if (isTelegramModerationOnly(options)) {
+    return [spamDeleteTool];
+  }
 
   // Removed: Lean Strong Claw - image tool (modelHasVision=true makes this redundant)
   // const imageTool = options?.agentDir?.trim()
@@ -145,10 +169,7 @@ export function createApmClawTools(options?: {
         config: options?.config,
         agentSessionKey: options?.agentSessionKey,
       }),
-      createSpamDeleteTool({
-        config: options?.config,
-        senderIsOwner: options?.senderIsOwner,
-      }),
+      spamDeleteTool,
       // Removed: Lean Strong Claw - session_status (system info, not PM-E's job)
       // createSessionStatusTool({
       //   agentSessionKey: options?.agentSessionKey,

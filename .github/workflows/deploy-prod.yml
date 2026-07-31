@@ -158,7 +158,7 @@ jobs:
                 },
                 "groupPolicy": "allowlist",
                 "streaming": "off",
-                "autoDeleteSystemMessages": true,
+                "moderationOnly": true,
                 "forwardSpamChatId": "${{ secrets.TELEGRAM_CHAT_IDS_FORWARD_SPAM_PROD }}"
               }
             },

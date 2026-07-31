@@ -158,6 +158,38 @@ export const dispatchTelegramMessage = async ({
     statusReactionController,
   } = context;
 
+  if (telegramCfg.moderationOnly === true) {
+    try {
+      await dispatchReplyWithBufferedBlockDispatcher({
+        ctx: ctxPayload,
+        cfg,
+        dispatcherOptions: {
+          // spam_delete may run, but assistant payloads are never delivered.
+          deliver: async () => {},
+          onError: (err, info) => {
+            runtime.error?.(
+              danger(`telegram moderation ${info.kind} processing failed: ${String(err)}`),
+            );
+          },
+        },
+        replyOptions: {
+          skillFilter,
+          disableBlockStreaming: true,
+          suppressTyping: true,
+        },
+      });
+    } finally {
+      if (isGroup && historyKey) {
+        clearHistoryEntriesIfEnabled({
+          historyMap: groupHistories,
+          historyKey,
+          limit: historyLimit,
+        });
+      }
+    }
+    return;
+  }
+
   const draftMaxChars = Math.min(textLimit, 4096);
   const tableMode = resolveMarkdownTableMode({
     cfg,

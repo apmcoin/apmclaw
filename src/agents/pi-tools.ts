@@ -12,7 +12,7 @@ type ProcessToolDefaults = Record<string, unknown>;
 import { listChannelAgentTools } from "./channel-tools.js";
 import { resolveImageSanitizationLimits } from "./image-sanitization.js";
 import type { ModelAuthMode } from "./model-auth.js";
-import { createApmClawTools } from "./openclaw-tools.js";
+import { createApmClawTools, isTelegramModerationOnly } from "./openclaw-tools.js";
 import { wrapToolWithAbortSignal } from "./pi-tools.abort.js";
 import { wrapToolWithBeforeToolCallHook } from "./pi-tools.before-tool-call.js";
 import {
@@ -277,7 +277,7 @@ export function createApmClawCodingTools(options?: {
     return [tool];
   });
 
-  const tools: AnyAgentTool[] = [
+  const availableTools: AnyAgentTool[] = [
     ...base,
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...listChannelAgentTools({ cfg: options?.config }),
@@ -322,6 +322,15 @@ export function createApmClawCodingTools(options?: {
       sessionId: options?.sessionId,
     }),
   ];
+  // createApmClawTools already returns only spam_delete in this mode. Filter the
+  // full registry as well so base and channel/plugin tools cannot leak through.
+  const tools = isTelegramModerationOnly({
+    agentChannel: resolveGatewayMessageChannel(options?.messageProvider),
+    agentAccountId: options?.agentAccountId,
+    config: options?.config,
+  })
+    ? availableTools.filter((tool) => tool.name === "spam_delete")
+    : availableTools;
   const toolsForMessageProvider = applyMessageProviderToolPolicy(tools, options?.messageProvider);
   const toolsForModelProvider = applyModelProviderToolPolicy(toolsForMessageProvider, {
     modelProvider: options?.modelProvider,

@@ -353,6 +353,19 @@ export const registerTelegramNativeCommands = ({
   shouldSkipUpdate,
   opts,
 }: RegisterTelegramNativeCommandsParams) => {
+  if (telegramCfg.moderationOnly === true) {
+    // Clear previously published commands and omit every command handler,
+    // including the otherwise unconditional /menu handler.
+    syncTelegramMenuCommands({
+      bot,
+      runtime,
+      commandsToRegister: [],
+      accountId,
+      botIdentity: opts.token,
+    });
+    return;
+  }
+
   const boundRoute =
     nativeEnabled && nativeSkillsEnabled
       ? resolveAgentRoute({ cfg, channel: "telegram", accountId })

@@ -211,6 +211,7 @@ export const TelegramAccountSchemaBase = z
     linkPreview: z.boolean().optional(),
     responsePrefix: z.string().optional(),
     ackReaction: z.string().optional(),
+    moderationOnly: z.boolean().optional(),
     autoDeleteSystemMessages: z.boolean().optional(),
     forwardSpamChatId: z.union([z.string(), z.number()]).optional(),
   })

@@ -642,6 +642,9 @@ export const registerTelegramHandlers = ({
 
   // Handle emoji reactions to messages.
   bot.on("message_reaction", async (ctx) => {
+    if (telegramCfg.moderationOnly === true) {
+      return;
+    }
     try {
       const reaction = ctx.messageReaction;
       if (!reaction) {
@@ -943,6 +946,9 @@ export const registerTelegramHandlers = ({
       runtime,
       fn: answerCallbackQuery,
     }).catch(() => {});
+    if (telegramCfg.moderationOnly === true) {
+      return;
+    }
     try {
       const data = (callback.data ?? "").trim();
       const callbackMessage = callback.message;
@@ -1334,7 +1340,10 @@ export const registerTelegramHandlers = ({
           currentConfig.channels?.telegram;
         const groupCfg = account?.groups?.[String(event.chatId)];
 
-        const autoDelete = groupCfg?.autoDeleteSystemMessages ?? account?.autoDeleteSystemMessages;
+        const autoDelete =
+          telegramCfg.moderationOnly === true
+            ? Boolean(event.msg.new_chat_members)
+            : (groupCfg?.autoDeleteSystemMessages ?? account?.autoDeleteSystemMessages);
 
         if (autoDelete) {
           await bot.api.deleteMessage(event.chatId, event.msg.message_id).catch(() => {
